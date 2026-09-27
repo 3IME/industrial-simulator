@@ -38,8 +38,14 @@ func _init(raw: Dictionary = {}) -> void:
 
 ## Retourne un IoMapping valide, ou null si le JSON est invalide,
 ## vide, ou contient des adresses/variables dupliquees.
+## Utilise le parseur d'instance (silencieux) : le parseur statique
+## JSON.parse_string affiche une erreur reelle sur stderr pour tout
+## texte invalide, ce qui pollue la sortie des tests volontairement negatifs.
 static func from_json_text(text: String):
-    var parsed = JSON.parse_string(text)
+    var json := JSON.new()
+    if json.parse(text) != OK:
+        return null
+    var parsed = json.get_data()
     if parsed == null or not (parsed is Dictionary):
         return null
     var mapping = new(parsed)
