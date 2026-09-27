@@ -6,6 +6,10 @@
     "timestep": 0.0166666666666667,
     "input_timeout_usec": 0
   },
+  "modbus": {
+    "port": 502,
+    "unit_id": 1
+  },
   "io_mapping": "res://config/conveyor_io_map.json",
   "machines": [
     {

@@ -34,7 +34,7 @@ Règles absolues :
 | `simulator/io` | Modèle d'E/S abstrait : `IoPoint`, `IoTable`, `IoMapping`, `EdgeCounter` | rien |
 | `simulator/simulation` | `SimulationEngine` (cycle en 6 temps, timestep fixe, horloge simulée) et `FactoryBuilder` (définition d'usine JSON) | rien (reçoit tout par injection) |
 | `simulator/machines` | Machines virtuelles logiques (`Conveyor`, puis vérins, moteurs…) | `io` |
-| `simulator/communication` | Contrat `PlcLink` + implémentations (`NullPlcLink`, puis Modbus TCP) | `io` (contrat uniquement) |
+| `simulator/communication` | Contrat `PlcLink` + `NullPlcLink` + **serveur Modbus TCP** (`ModbusTcpServer`, `ModbusAddressMap`, `ModbusPlcLink` — Phase 2) | `io` (contrat uniquement) |
 | `simulator/scenes`, `simulator/ui` | Rendu Godot, HUD — Phase 5 | cœur, en lecture d'état |
 | `plc/` | Programmes OpenPLC, mappings — Phase 3 | rien (projet séparé) |
 | `backend/` | Différé — voir ADR-003 | — |
@@ -92,8 +92,11 @@ GDScript n'a pas d'interfaces natives : les frontières sont des **contrats duck
 
 | Méthode | Rôle |
 |---|---|
-| `publish_inputs(io)` | transmet les entrées au PLC (Phase 2 : côté Modbus, le PLC les lit) |
-| `pull_outputs(io)` | récupère les sorties écrites par le PLC |
+| `publish_inputs(io)` | transmet les entrées au PLC (Modbus : copie table → banques d'entrées) |
+| `pull_outputs(io)` | récupère les sorties écrites par le PLC (Modbus : seules les sorties réellement écrites par le maître) |
+| `poll()` *(optionnel)* | traite le réseau ; appelé par le moteur au temps 0 du cycle |
+
+Implémentations : `NullPlcLink` (aucun automate), `ModbusPlcLink` (serveur Modbus TCP, voir [docs/protocols/modbus_tcp.md](docs/protocols/modbus_tcp.md)). Le pilotage headless complet est fourni par `simulator/run_headless.gd` (`scripts/run_simulator.bat`).
 
 ## Cycle de simulation
 
@@ -138,3 +141,4 @@ Registre complet : [docs/architecture/decisions.md](docs/architecture/decisions.
 * **ADR-008** — Godot 4.7.2 est la version de référence.
 * **ADR-009** — définition d'usine déclarative JSON + registre de types de machines.
 * **ADR-010** — horloge simulée injectée + watchdog de qualité.
+* **ADR-011** — esclave Modbus TCP intégré en GDScript, image d'E/S synchronisée au cycle.

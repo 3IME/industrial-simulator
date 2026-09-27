@@ -1,16 +1,8 @@
 # Documentation des protocoles
 
-## Modbus TCP — Phase 2 (à venir)
+## Modbus TCP — Phase 2 (terminée)
 
-Ce dossier documentera précisément :
-
-* les **quatre zones** Modbus exposées par le simulateur (esclave) :
-  * *coils* — sorties digitales écrites par le PLC (`%QX`)
-  * *discrete inputs* — entrées digitales lues par le PLC (`%IX`)
-  * *input registers* — entrées analogiques/compteurs lus par le PLC (`%IW`)
-  * *holding registers* — sorties analogiques écrites par le PLC (`%QW`)
-* la **table de projection** configurable entre adresses canoniques IEC 61131-3 et offsets Modbus (ADR-004) ;
-* le port par défaut, le format des trames attendues et les tests automatisés associés.
+La documentation complète du serveur Modbus TCP intégré (zones, projection des adresses IEC, codes fonction, exceptions, échelles, synchronisation au cycle, exemples de client) se trouve dans **[modbus_tcp.md](modbus_tcp.md)**.
 
 ## OPC UA — Phase 8 (à venir)
 

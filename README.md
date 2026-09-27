@@ -1,6 +1,6 @@
 # Industrial Simulator
 
-Plateforme open source de **simulation d'automatisation industrielle**, inspirée conceptuellement de Factory I/O. Une usine virtuelle 3D est contrôlée par un **véritable automate programmable** (OpenPLC, SoftPLC, automate physique ou tout client Modbus TCP) : la logique d'automatisme vit dans le PLC, jamais dans le simulateur.
+Plateforme open source de **simulation d'automatisation industrielle** : une usine virtuelle 3D est contrôlée par un **véritable automate programmable** (OpenPLC, SoftPLC, automate physique ou tout client Modbus TCP) — la logique d'automatisme vit dans le PLC, jamais dans le simulateur.
 
 ## Principe
 
@@ -26,9 +26,9 @@ Règles de séparation fondamentales :
 
 ## Statut
 
-**Phase 1 terminée** : squelette du dépôt, modèle I/O complet (entrées/sorties digitales et analogiques, **compteurs, encodeurs, qualité avec watchdog**), moteur de simulation déterministe (cycle en 6 temps, horloge simulée injectée), machine virtuelle « convoyeur » avec capteurs, compteurs et encodeur, **définition d'usine déclarative JSON** (`simulator/config/factory.json`) et tests unitaires headless.
+**Phase 2 terminée** : modèle I/O complet, moteur de simulation déterministe, usine déclarative JSON, et **serveur Modbus TCP intégré** (esclave, GDScript pur, zéro dépendance) — un client Modbus externe peut déjà lire les capteurs et commander le convoyeur du prototype. Lanceur : `scripts\run_simulator.bat`.
 
-Voir [ROADMAP.md](ROADMAP.md) pour les phases suivantes (Modbus TCP, OpenPLC, 3D…).
+Voir [ROADMAP.md](ROADMAP.md) pour les phases suivantes (OpenPLC, 3D…).
 
 ## Prérequis
 
@@ -56,6 +56,14 @@ godot --headless --path simulator --script res://tests/run_tests.gd
 ```
 
 Code de sortie `0` = tous les tests passent.
+
+## Lancer l'usine avec Modbus TCP
+
+```bat
+scripts\run_simulator.bat
+```
+
+Démarre l'usine du prototype avec le serveur Modbus TCP à l'écoute (port 502 par défaut, unit id 1). N'importe quel client Modbus peut alors lire les capteurs (`%IX0.0`, `%IX0.1`) et commander le convoyeur (`%QX0.0`) — détails et exemples Python dans [docs/protocols/modbus_tcp.md](docs/protocols/modbus_tcp.md). Options : `--port=1502`, `--box=8` (boîte toutes les 8 s), `--no-spawn`.
 
 ## Ouvrir le simulateur
 

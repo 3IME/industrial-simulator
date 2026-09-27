@@ -36,6 +36,11 @@ func elapsed_seconds() -> float:
 
 ## Un cycle complet, dans l'ordre documente dans docs/simulation/simulation_cycle.md.
 func step(dt: float) -> void:
+    # 0. Reseau (hook optionnel du PlcLink) : requetes du PLC en attente.
+    #    Modbus : ecritures du maitre -> banques de sorties (appliquees au temps 4).
+    if plc_link != null and plc_link.has_method("poll"):
+        plc_link.poll()
+
     sim_time_usec += int(round(dt * 1000000.0))
     if io != null:
         io.clock_usec = sim_time_usec

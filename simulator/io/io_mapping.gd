@@ -31,7 +31,12 @@ func _init(raw: Dictionary = {}) -> void:
                 var address: String = str(entry["address"])
                 var variable: String = str(entry["variable"])
                 if address != "" and variable != "":
-                    entries.append({"address": address, "variable": variable})
+                    var entry_dict := { "address": address, "variable": variable }
+                    # Champ optionnel "scale" (conversion vers registre Modbus, Phase 2)
+                    var scale = entry.get("scale")
+                    if scale != null and (scale is int or scale is float):
+                        entry_dict["scale"] = float(scale)
+                    entries.append(entry_dict)
                     _by_address[address] = variable
                     _by_variable[variable] = address
 

@@ -6,7 +6,7 @@ Le projet avance **par phases**, dans l'ordre. Une phase n'est commencée que lo
 |---|---|---|
 | 0 | Architecture + squelette du projet | ✅ Terminée |
 | 1 | I/O Engine complet (compteurs, encodeurs, qualité, snapshot) | ✅ Terminée |
-| 2 | Modbus TCP (serveur esclave dans le simulateur) | ⬜ |
+| 2 | Modbus TCP (serveur esclave dans le simulateur) | ✅ Terminée |
 | 3 | OpenPLC : programme, mapping, documentation de bout en bout | ⬜ |
 | 4 | Convoyeur + capteurs + boîte (logique industrielle complète) | ⬜ |
 | 5 | Simulation 3D (sol, convoyeur, boîte, caméra, HUD) | ⬜ |
@@ -22,7 +22,7 @@ Le projet avance **par phases**, dans l'ordre. Une phase n'est commencée que lo
 
 * **Phase 0 — Architecture + squelette** : structure du dépôt, documentation fondatrice, modèle I/O de base (`IoPoint`, `IoTable`, `IoMapping`), `SimulationEngine` minimal déterministe, machine logique `Conveyor`, tests unitaires headless, squelette Godot (scène minimale). *Aucune 3D réelle, pas d'OPC UA, pas de robots.*
 * **Phase 1 — I/O Engine** *(terminée)* : compteurs d'événements (`EdgeCounter`) exposés en points `COUNTER` sur le convoyeur, encodeur de bande (`ENCODER`), RAZ des compteurs par commande PLC, horloge simulée injectée dans la table (horodatages déterministes), watchdog de qualité (`input_timeout_usec` : entrées non rafraîchies → `BAD`), définition d'usine déclarative JSON via `FactoryBuilder` (registre de types, adresses écrasées par le mapping, timestep configurable), suite de tests de contrat automatique pour toute machine du registre.
-* **Phase 2 — Modbus TCP** : serveur Modbus TCP (esclave) dans `simulator/communication`, zones coils / discrete inputs / input registers / holding registers, projection configurable depuis les adresses `%`, tests automatisés (client de test Modbus).
+* **Phase 2 — Modbus TCP** *(terminée)* : serveur **esclave Modbus TCP** en GDScript pur, zéro dépendance — FC 01/02/03/04/05/06/0F/10 + exceptions 01/02/03 ; projection automatique des adresses `%IEC` vers coils / discrete inputs / input registers / holding registers depuis le mapping JSON (`ModbusAddressMap`) ; image d'E/S synchronisée au cycle (`ModbusPlcLink`, seules les sorties réellement écrites par le maître sont rapatriées) ; échelle ×100 par défaut pour les analogiques, surcharge par entrée ; lanceur headless `scripts/run_simulator.bat` pour brancher un vrai client ; tests sur sockets réelles en boucle locale, y compris la chaîne complète capteur → Modbus → client → convoyeur. Documentation : [docs/protocols/modbus_tcp.md](docs/protocols/modbus_tcp.md).
 * **Phase 3 — OpenPLC** : programme minimal (`si sensor_entry alors conveyor`, `si sensor_exit alors stop`), mapping, documentation pas-à-pas (installation OpenPLC, connexion au simulateur).
 * **Phase 4 — Convoyeur + capteurs** : machine virtuelle complète avec boîte, capteurs d'entrée/sortie, comportement logique validé de bout en bout.
 * **Phase 5 — Simulation 3D** : sol, convoyeur, boîte, capteurs rendus en 3D, caméra contrôlable, HUD (RUN/STOP, états des capteurs, vitesse).
@@ -38,7 +38,7 @@ Le premier milestone n'est atteint que lorsque **toutes** les cases suivantes so
 | 2 | Un convoyeur virtuel existe (logique) | ✅ (Phase 0, headless) |
 | 3 | Deux capteurs existent (logique) | ✅ (Phase 0, headless) |
 | 4 | Le moteur d'I/O fonctionne | ✅ (Phase 0, testé) |
-| 5 | Modbus TCP fonctionne | ⬜ (Phase 2) |
+| 5 | Modbus TCP fonctionne | ✅ (Phase 2, testé sur sockets réelles) |
 | 6 | OpenPLC lit les capteurs | ⬜ (Phase 3) |
 | 7 | OpenPLC commande le convoyeur | ⬜ (Phase 3) |
 | 8 | Une boîte virtuelle se déplace en 3D | ⬜ (Phase 5) |

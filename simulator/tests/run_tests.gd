@@ -16,13 +16,15 @@ const SUITES = [
     preload("res://tests/test_conveyor.gd"),
     preload("res://tests/test_simulation_engine.gd"),
     preload("res://tests/test_machine_contract.gd"),
+    preload("res://tests/test_modbus_address_map.gd"),
+    preload("res://tests/test_modbus_tcp.gd"),
     preload("res://tests/test_factory_builder.gd"),
 ]
 
 
 func _initialize() -> void:
     var t := TestFramework.new()
-    print("=== Industrial Simulator - tests Phases 0-1 ===")
+    print("=== Industrial Simulator - tests Phases 0-2 ===")
     for suite in SUITES:
         suite.new().run(t)
     print("")

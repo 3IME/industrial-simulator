@@ -26,6 +26,7 @@ const MACHINE_TYPES = {
 const IoTableScript = preload("res://io/io_table.gd")
 const IoMappingScript = preload("res://io/io_mapping.gd")
 const SimulationEngineScript = preload("res://simulation/simulation_engine.gd")
+const ModbusPlcLinkScript = preload("res://communication/modbus_plc_link.gd")
 
 
 static func build_from_file(path: String) -> Dictionary:
@@ -86,8 +87,9 @@ static func build_from_dict(def: Dictionary) -> Dictionary:
 
     # --- Mapping : les adresses du fichier ecrasent les adresses par defaut ---
     var warnings: Array = []
+    var mapping = null
     if def.has("io_mapping"):
-        var mapping = IoMappingScript.from_file(str(def["io_mapping"]))
+        mapping = IoMappingScript.from_file(str(def["io_mapping"]))
         if mapping == null:
             return _error("mapping introuvable ou invalide : " + str(def["io_mapping"]))
         for point in io.all_points():
@@ -98,6 +100,24 @@ static func build_from_dict(def: Dictionary) -> Dictionary:
         for entry in mapping.entries:
             if not io.has_point(str(entry["variable"])):
                 warnings.append("variable du mapping sans point d'E/S correspondant : " + str(entry["variable"]))
+
+    # --- Modbus TCP (optionnel) : cree le lien, n'ecoute PAS automatiquement ---
+    var modbus_link = null
+    if def.has("modbus"):
+        if mapping == null:
+            return _error("la section 'modbus' exige un 'io_mapping'")
+        var mod = def["modbus"]
+        if not (mod is Dictionary):
+            return _error("section 'modbus' invalide (objet attendu)")
+        var modbus_port := int(mod.get("port", 502))
+        if modbus_port <= 0 or modbus_port > 65535:
+            return _error("port Modbus invalide : " + str(modbus_port))
+        var modbus_unit := int(mod.get("unit_id", 1))
+        if modbus_unit < 1 or modbus_unit > 255:
+            return _error("unit_id Modbus invalide : " + str(modbus_unit))
+        modbus_link = ModbusPlcLinkScript.new(io, mapping, modbus_port, modbus_unit)
+        if not modbus_link.address_map.errors.is_empty():
+            return _error("; ".join(modbus_link.address_map.errors))
 
     # --- Parametres de simulation ---
     var sim = def.get("simulation", {})
@@ -112,6 +132,8 @@ static func build_from_dict(def: Dictionary) -> Dictionary:
 
     var engine = SimulationEngineScript.new(io, null)
     engine.input_timeout_usec = input_timeout
+    if modbus_link != null:
+        engine.plc_link = modbus_link
     for machine in machines:
         engine.add_machine(machine)
 
@@ -124,6 +146,7 @@ static func build_from_dict(def: Dictionary) -> Dictionary:
         "timestep": timestep,
         "input_timeout_usec": input_timeout,
         "warnings": warnings,
+        "modbus": modbus_link,
     }
 
 

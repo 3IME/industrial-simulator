@@ -8,10 +8,11 @@ Le `SimulationEngine` exécute un **cycle déterministe** à pas de temps fixe, 
 
 | Temps | Appel | Description |
 |---|---|---|
+| 0 | `poll()` | **Réseau** (hook optionnel du `PlcLink`) : requêtes Modbus en attente traitées — les écritures du PLC atterrissent dans les banques de sorties (rapatriées au temps 3). |
 | 1 | `scan_inputs(io)` | Les machines publient capteurs et états dans la table d'E/S (entrées PLC). |
 | 1b | `mark_stale_inputs` | **Watchdog qualité** (si `input_timeout_usec > 0`) : toute entrée non rafraîchie depuis ce délai est marquée `BAD`. |
-| 2 | `publish_inputs(io)` | Le lien PLC transmet les entrées à l'automate (en Modbus : l'automate vient les lire ; en Phase 0, le lien est `NullPlcLink`). |
-| 3 | `pull_outputs(io)` | Le lien PLC récupère les sorties écrites par l'automate. |
+| 2 | `publish_inputs(io)` | Le lien PLC transmet les entrées à l'automate (en Modbus : copie de la table vers les banques d'entrées que le PLC lira). |
+| 3 | `pull_outputs(io)` | Le lien PLC récupère les sorties écrites par l'automate (en Modbus : seules les sorties **réellement écrites** par le maître sont rapatriées). |
 | 4 | `apply_outputs(io)` | Les sorties PLC sont appliquées aux actionneurs (commandes des machines). |
 | 5 | `update(dt)` | La simulation avance : physique et logique des machines. |
 | 6 | `refresh_sensors(dt)` | Les capteurs recalculent leur état brut — **il ne sera lu qu'au temps 1 du cycle suivant**. |
@@ -20,10 +21,13 @@ Le `SimulationEngine` exécute un **cycle déterministe** à pas de temps fixe, 
       ┌──────────────────────────────────────────────┐
       │                                              │
       ▼                                              │
- 1. scan_inputs ──► 2. publish_inputs ──► 3. pull_outputs
-                                                        │
-                                                        ▼
- 6. refresh_sensors ◄── 5. update(dt) ◄── 4. apply_outputs
+ 0. poll reseau                                      │
+      │                                              │
+      ▼                                              │
+ 1. scan_inputs ──► 1b. watchdog ──► 2. publish_inputs ──► 3. pull_outputs
+                                                                    │
+                                                                    ▼
+ 6. refresh_sensors ◄──────────── 5. update(dt) ◄──────────── 4. apply_outputs
 ```
 
 ## Pourquoi les capteurs sont rafraîchis *après* la mise à jour

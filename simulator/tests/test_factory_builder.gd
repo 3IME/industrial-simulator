@@ -21,7 +21,7 @@ const TEST_MAPPING := """
   "mappings": [
     { "address": "%IX0.0", "variable": "sensor_entry" },
     { "address": "%QX0.0", "variable": "conv_a.run" },
-    { "address": "%IW9.9", "variable": "variable_fantome" }
+    { "address": "%IW9", "variable": "variable_fantome" }
   ]
 }
 """
@@ -63,6 +63,7 @@ func run(t) -> void:
     t.check(real.get("ok", false), "factory.json du depot se construit")
     t.check_eq(real.get("io", null).point_count(), 12, "factory.json : 12 points")
     t.check(real.get("warnings", []).is_empty(), "factory.json : aucun avertissement")
+    t.check_not_null(real.get("modbus", null), "factory.json : lien Modbus present (a l'ecoute sur demande)")
     t.check_eq(
         real["io"].get_by_address("%IW4").id, "conveyor_01.belt_encoder",
         "factory.json : adresse de l'encodeur"
@@ -114,6 +115,27 @@ func run(t) -> void:
     )
     var broken = FactoryBuilder.build_from_dict({ "machines": [{ "type": "fusee", "id": "f1" }] })
     t.check(str(broken.get("error", "")).contains("fusee"), "message d'erreur explicite")
+
+    # --- Section modbus (Phase 2) : lien cree, a l'ecoute seulement sur demande ---
+    var json_mod := JSON.new()
+    json_mod.parse(VALID)    # reutilise la definition valide (io_mapping en user://)
+    var def_mod: Dictionary = json_mod.get_data()
+    def_mod["modbus"] = { "port": 15022, "unit_id": 3 }
+    var built_mod: Dictionary = FactoryBuilder.build_from_dict(def_mod)
+    t.check(
+        built_mod.get("ok", false),
+        "usine avec section modbus construite (erreur : " + str(built_mod.get("error", "")) + ")"
+    )
+    t.check_not_null(built_mod.get("modbus", null), "lien Modbus present dans le resultat")
+    t.check_eq(built_mod["modbus"].server.port, 15022, "port Modbus applique")
+    t.check_eq(built_mod["modbus"].server.unit_id, 3, "unit id applique")
+    t.check(not built_mod["modbus"].server.is_listening(), "le serveur n'ecoute pas automatiquement")
+    t.check(built_mod["engine"].plc_link != null, "lien branche au moteur")
+
+    var nomap: Dictionary = { "machines": [{ "type": "conveyor", "id": "c1" }], "modbus": { "port": 502 } }
+    t.check(not FactoryBuilder.build_from_dict(nomap).get("ok", true), "modbus sans io_mapping -> erreur")
+    var badport: Dictionary = { "machines": one_conveyor, "io_mapping": "user://indusim_test_mapping.json", "modbus": { "port": 99999 } }
+    t.check(not FactoryBuilder.build_from_dict(badport).get("ok", true), "port Modbus invalide -> erreur")
 
     # Menage du fichier temporaire
     var dir = DirAccess.open("user://")

@@ -12,6 +12,7 @@ Merci de votre intérêt ! Ce projet est jeune (Phase 0) : le meilleur point d'e
 6. **Toute décision architecturale non triviale est consignée** dans [docs/architecture/decisions.md](docs/architecture/decisions.md).
 7. **Pas de fonctionnalité hors roadmap** : le roadmap fixe l'ordre des priorités.
 8. **Pas de nouvelle dépendance importante sans justification écrite** (ADR).
+9. **Aucune mention de nom de produit commercial ou de marque tierce** dans les fichiers, la documentation ou les messages de commit : le projet se décrit par lui-même.
 
 ## Workflow
 
