@@ -4,24 +4,39 @@ extends RefCounted
 const Conveyor = preload("res://machines/conveyor.gd")
 const IoMapping = preload("res://io/io_mapping.gd")
 const IoTable = preload("res://io/io_table.gd")
+const EdgeCounter = preload("res://io/edge_counter.gd")
 
 
 func run(t) -> void:
     t.begin_suite("conveyor")
 
+    # --- EdgeCounter : composant genrique des points COUNTER ---
+    var ec = EdgeCounter.new()
+    t.check(not ec.observe(false), "pas de front au repos")
+    t.check(ec.observe(true), "front montant detecte")
+    t.check_eq(ec.count, 1, "compteur incremente")
+    t.check(not ec.observe(true), "signal haut maintenu : pas de nouveau front")
+    ec.observe(false)
+    t.check(ec.observe(true), "second front compte")
+    t.check_eq(ec.count, 2, "compteur = 2")
+    ec.reset()
+    t.check_eq(ec.count, 0, "RAZ du compteur")
+    t.check(not ec.observe(true), "apres RAZ, signal tenu haut : toujours pas de front")
+
+    # --- Machine ---
     var c = Conveyor.new()
     t.check(c.spawn_box(), "pose d'une boite")
     t.check(not c.spawn_box(), "pas deux boites simultanees")
     t.check(c.box_present, "boite presente")
     t.check_almost_eq(c.box_position, c.entry_position, 0.000001, "boite posee sur le capteur d'entree")
 
-    # Points d'E/S : 8, ids uniques, coherents avec le fichier de mapping
+    # Points d'E/S : 12, ids uniques, coherents avec le fichier de mapping
     var points = c.create_io_points()
-    t.check_eq(points.size(), 8, "8 points d'E/S")
+    t.check_eq(points.size(), 12, "12 points d'E/S")
     var ids := {}
     for point in points:
         ids[point.id] = true
-    t.check_eq(ids.size(), 8, "ids uniques")
+    t.check_eq(ids.size(), 12, "ids uniques")
 
     var mapping = IoMapping.from_file("res://config/conveyor_io_map.json")
     t.check_not_null(mapping, "mapping du prototype charge")

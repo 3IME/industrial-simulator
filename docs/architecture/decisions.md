@@ -59,3 +59,17 @@ Chaque décision non triviale est consignée ici : contexte, décision, conséqu
 * **Contexte** : Godot 4.x évolue vite ; les projets Godot ne sont pas toujours transposables entre versions majeures/mineures.
 * **Décision** : la version de référence est **Godot 4.7.2 stable** (édition standard). Le binaire console peut être posé dans `tools/godot/` (ignoré par git) ; les scripts de test utilisent `GODOT_BIN` ou ce chemin, sinon `godot` du PATH.
 * **Conséquences** : environnement reproductible pour tous les contributeurs ; montée de version = décision explicite + ADR + passage des tests.
+
+## ADR-009 — Définition d'usine déclarative JSON + registre de types de machines
+
+* **Date** : 2026-09-27 (Phase 1)
+* **Contexte** : il faut pouvoir décrire une usine (machines, paramètres, mapping, timestep) sans écrire de code, et ajouter de nouveaux types de machines (Phases 6-11) sans toucher au moteur ni au chargeur.
+* **Décision** : `FactoryBuilder` (`simulator/simulation/factory_builder.gd`) construit moteur + table d'E/S + machines depuis un JSON (`simulator/config/factory.json`). Les types de machines sont référencés dans un registre (`MACHINE_TYPES`) : ajouter une machine = sa classe (contrat machine) + une entrée au registre. Les adresses des points sont écrasées par celles du mapping JSON ; les paramètres numériques sont validés strictement par chaque machine (`configure()`).
+* **Conséquences** : les erreurs de définition sont détectées à la construction avec un message explicite (retour `{ok: false, error}`) ; le même fichier alimente la future scène 3D et l'éditeur (Phase 6) ; limite connue actuelle : les ids `sensor_entry`/`sensor_exit` du convoyeur ne sont pas préfixés par l'id machine, une usine à deux convoyeurs est donc rejetée (correction prévue avec les machines multiples).
+
+## ADR-010 — Horloge simulée injectée + watchdog de qualité
+
+* **Date** : 2026-09-27 (Phase 1)
+* **Contexte** : l'horodatage des points d'E/S par l'horloge OS rendait les snapshots non reproductibles ; et la notion de qualité (`GOOD/BAD/UNCERTAIN`) exigée par le cahier des charges n'avait pas de mécanisme concret.
+* **Décision** : le moteur tient une horloge simulée (`sim_time_usec`, avance de `round(dt × 10⁶)` par pas) et l'injecte dans la table (`IoTable.clock_usec`) : toute écriture non horodatée utilise cette horloge. Le moteur applique en outre un watchdog paramétrable (`input_timeout_usec`) : au temps 1b du cycle, toute **entrée** non rafraîchie depuis ce délai est marquée `BAD` ; une réécriture la repasse `GOOD`. Les sorties (écrites par le PLC) ne sont pas concernées.
+* **Conséquences** : snapshots et horodatages déterministes ; le PLC (Phase 3) pourra détecter un capteur mort via la qualité, comme sur une vraie installation ; le coût par cycle reste négligeable (parcours des seules entrées).

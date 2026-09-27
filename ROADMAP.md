@@ -5,7 +5,7 @@ Le projet avance **par phases**, dans l'ordre. Une phase n'est commencée que lo
 | Phase | Objectif | Statut |
 |---|---|---|
 | 0 | Architecture + squelette du projet | ✅ Terminée |
-| 1 | I/O Engine complet (compteurs, encodeurs, qualité, snapshot) | ⬜ |
+| 1 | I/O Engine complet (compteurs, encodeurs, qualité, snapshot) | ✅ Terminée |
 | 2 | Modbus TCP (serveur esclave dans le simulateur) | ⬜ |
 | 3 | OpenPLC : programme, mapping, documentation de bout en bout | ⬜ |
 | 4 | Convoyeur + capteurs + boîte (logique industrielle complète) | ⬜ |
@@ -21,7 +21,7 @@ Le projet avance **par phases**, dans l'ordre. Une phase n'est commencée que lo
 ## Détail des phases
 
 * **Phase 0 — Architecture + squelette** : structure du dépôt, documentation fondatrice, modèle I/O de base (`IoPoint`, `IoTable`, `IoMapping`), `SimulationEngine` minimal déterministe, machine logique `Conveyor`, tests unitaires headless, squelette Godot (scène minimale). *Aucune 3D réelle, pas d'OPC UA, pas de robots.*
-* **Phase 1 — I/O Engine** : complétude du modèle (compteurs, encodeurs, qualité/timeout, horodatage), chargement d'une définition d'usine depuis JSON, snapshot complet, tests de contrat.
+* **Phase 1 — I/O Engine** *(terminée)* : compteurs d'événements (`EdgeCounter`) exposés en points `COUNTER` sur le convoyeur, encodeur de bande (`ENCODER`), RAZ des compteurs par commande PLC, horloge simulée injectée dans la table (horodatages déterministes), watchdog de qualité (`input_timeout_usec` : entrées non rafraîchies → `BAD`), définition d'usine déclarative JSON via `FactoryBuilder` (registre de types, adresses écrasées par le mapping, timestep configurable), suite de tests de contrat automatique pour toute machine du registre.
 * **Phase 2 — Modbus TCP** : serveur Modbus TCP (esclave) dans `simulator/communication`, zones coils / discrete inputs / input registers / holding registers, projection configurable depuis les adresses `%`, tests automatisés (client de test Modbus).
 * **Phase 3 — OpenPLC** : programme minimal (`si sensor_entry alors conveyor`, `si sensor_exit alors stop`), mapping, documentation pas-à-pas (installation OpenPLC, connexion au simulateur).
 * **Phase 4 — Convoyeur + capteurs** : machine virtuelle complète avec boîte, capteurs d'entrée/sortie, comportement logique validé de bout en bout.

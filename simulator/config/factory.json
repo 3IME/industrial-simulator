@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "name": "Prototype convoyeur",
+  "description": "Usine minimale de demonstration : un convoyeur, deux capteurs, une boite",
+  "simulation": {
+    "timestep": 0.0166666666666667,
+    "input_timeout_usec": 0
+  },
+  "io_mapping": "res://config/conveyor_io_map.json",
+  "machines": [
+    {
+      "type": "conveyor",
+      "id": "conveyor_01",
+      "params": {
+        "length": 2.0,
+        "max_speed": 0.5,
+        "entry_position": 0.3,
+        "exit_position": 1.7
+      }
+    }
+  ]
+}

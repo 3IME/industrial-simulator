@@ -1,14 +1,18 @@
 {
   "version": 1,
-  "description": "Mapping PLC <-> simulation du prototype convoyeur (Phase 0)",
+  "description": "Mapping PLC <-> simulation du prototype convoyeur (Phases 0-1)",
   "mappings": [
     { "address": "%IX0.0", "variable": "sensor_entry" },
     { "address": "%IX0.1", "variable": "sensor_exit" },
     { "address": "%IX1.0", "variable": "conveyor_01.running" },
     { "address": "%IW0", "variable": "conveyor_01.speed" },
     { "address": "%IW1", "variable": "conveyor_01.position" },
+    { "address": "%IW2", "variable": "conveyor_01.counter_entry" },
+    { "address": "%IW3", "variable": "conveyor_01.counter_exit" },
+    { "address": "%IW4", "variable": "conveyor_01.belt_encoder" },
     { "address": "%QX0.0", "variable": "conveyor_01.run" },
     { "address": "%QX0.1", "variable": "conveyor_01.stop" },
+    { "address": "%QX1.0", "variable": "conveyor_01.reset_counters" },
     { "address": "%QW0", "variable": "conveyor_01.speed_command" }
   ]
 }

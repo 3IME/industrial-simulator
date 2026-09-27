@@ -16,18 +16,38 @@ var plc_link = null        # implemente le contrat PlcLink
 var machines: Array = []
 var step_count := 0
 
+## Horloge simulee (ADR-010) : avance de dt a chaque pas ; injectee dans la
+## table d'E/S pour des horodatages deterministes.
+var sim_time_usec := 0
+
+## Watchdog qualite : si > 0, les entrees non rafraichies depuis ce delai
+## (microsecondes) sont marquees BAD en debut de cycle. 0 = desactive.
+var input_timeout_usec := 0
+
 
 func _init(p_io = null, p_plc_link = null) -> void:
     io = p_io
     plc_link = p_plc_link
 
 
+func elapsed_seconds() -> float:
+    return sim_time_usec / 1000000.0
+
+
 ## Un cycle complet, dans l'ordre documente dans docs/simulation/simulation_cycle.md.
 func step(dt: float) -> void:
+    sim_time_usec += int(round(dt * 1000000.0))
+    if io != null:
+        io.clock_usec = sim_time_usec
+
     # 1. Lire les entrees de simulation (capteurs -> table d'E/S)
     for machine in machines:
         if machine.has_method("scan_inputs"):
             machine.scan_inputs(io)
+
+    # 1b. Watchdog qualite : entrees non rafraichies -> BAD
+    if input_timeout_usec > 0 and io != null:
+        io.mark_stale_inputs(sim_time_usec - input_timeout_usec, sim_time_usec)
 
     # 2. Publier les entrees vers le PLC
     if plc_link != null:

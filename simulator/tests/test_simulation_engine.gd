@@ -90,6 +90,24 @@ func run(t) -> void:
     t.check_eq(conveyor.boxes_exited, 0, "aucune boite sortie dans ce scenario")
     t.check_eq(engine.io.get_value("conveyor_01.running"), false, "etat arrete publie dans la table")
 
+    # Compteurs et encodeur (Phase 1)
+    t.check_eq(engine.io.get_value("conveyor_01.counter_entry"), 1, "compteur d'entree = 1")
+    t.check_eq(engine.io.get_value("conveyor_01.counter_exit"), 1, "compteur de sortie = 1")
+    var pulses: int = int(engine.io.get_value("conveyor_01.belt_encoder"))
+    t.check(
+        pulses >= 1395 and pulses <= 1420,
+        "encodeur ~1400 impulsions (bande arretee au capteur de sortie, obtenu : " + str(pulses) + ")"
+    )
+
+    # RAZ des compteurs par commande PLC (front montant sur reset_counters)
+    engine.io.set_value("conveyor_01.reset_counters", true)
+    engine.step(dt)   # front detecte, RAZ appliquee
+    engine.step(dt)   # publication des valeurs RAZ
+    t.check_eq(engine.io.get_value("conveyor_01.counter_entry"), 0, "RAZ : compteur d'entree a zero")
+    t.check_eq(engine.io.get_value("conveyor_01.counter_exit"), 0, "RAZ : compteur de sortie a zero")
+    t.check_eq(engine.io.get_value("conveyor_01.belt_encoder"), 0, "RAZ : encodeur a zero")
+    t.check_almost_eq(conveyor.belt_travel, 0.0, 0.000001, "RAZ : distance de bande a zero")
+
     # --- Scenario 2 : PLC qui maintient la marche -> la boite sort du convoyeur ---
     var built2 = _build(RunAlwaysPlc.new())
     var engine2 = built2[0]
@@ -101,6 +119,23 @@ func run(t) -> void:
     t.check_eq(conveyor2.boxes_exited, 1, "compteur de sortie = 1")
     t.check_eq(engine2.io.get_value("conveyor_01.position"), -1.0, "position -1 publiee")
     t.check_eq(engine2.io.get_value("conveyor_01.speed"), 0.5, "vitesse 0.5 publiee")
+
+    # Compteurs et encodeur en marche continue (Phase 1)
+    t.check_eq(engine2.io.get_value("conveyor_01.counter_entry"), 1, "un passage compte a l'entree")
+    t.check_eq(engine2.io.get_value("conveyor_01.counter_exit"), 1, "un passage compte a la sortie")
+    # Valeur interne exacte : 10 s a 0.5 m/s = 5 m = 5000 impulsions.
+    var internal_pulses: int = conveyor2.encoder_pulses()
+    t.check(
+        internal_pulses >= 4998 and internal_pulses <= 5002,
+        "encodeur interne = 5000 impulsions (obtenu : " + str(internal_pulses) + ")"
+    )
+    # Valeur publiee dans la table : en retard d'un pas (decalage de scrutation,
+    # voir docs/simulation/simulation_cycle.md) -> 599 pas de bande = ~4992.
+    var pulses2: int = int(engine2.io.get_value("conveyor_01.belt_encoder"))
+    t.check(
+        pulses2 >= 4989 and pulses2 <= 4995,
+        "encodeur publie avec un pas de retard (obtenu : " + str(pulses2) + ")"
+    )
 
     # --- Scenario 3 : NullPlcLink : le cycle tourne sans automate, rien ne bouge ---
     var built3 = _build(NullPlcLink.new())

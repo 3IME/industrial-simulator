@@ -31,8 +31,8 @@ Règles absolues :
 
 | Module | Rôle | Dépend de |
 |---|---|---|
-| `simulator/io` | Modèle d'E/S abstrait : `IoPoint`, `IoTable`, `IoMapping` | rien |
-| `simulator/simulation` | `SimulationEngine` : le cycle en 6 temps, timestep fixe | rien (reçoit tout par injection) |
+| `simulator/io` | Modèle d'E/S abstrait : `IoPoint`, `IoTable`, `IoMapping`, `EdgeCounter` | rien |
+| `simulator/simulation` | `SimulationEngine` (cycle en 6 temps, timestep fixe, horloge simulée) et `FactoryBuilder` (définition d'usine JSON) | rien (reçoit tout par injection) |
 | `simulator/machines` | Machines virtuelles logiques (`Conveyor`, puis vérins, moteurs…) | `io` |
 | `simulator/communication` | Contrat `PlcLink` + implémentations (`NullPlcLink`, puis Modbus TCP) | `io` (contrat uniquement) |
 | `simulator/scenes`, `simulator/ui` | Rendu Godot, HUD — Phase 5 | cœur, en lecture d'état |
@@ -71,9 +71,13 @@ Le fichier JSON (ex. [`simulator/config/conveyor_io_map.json`](simulator/config/
 
 Le mapping se modifie **sans toucher au code**. Les adresses `%IX/%QX/%IW/%QW` sont la référence canonique du projet ; leur projection vers les zones Modbus (coils, discrete inputs, input registers, holding registers) sera une table de conversion configurable documentée en Phase 2 (ADR-004).
 
+## Définition d'usine (JSON, Phase 1)
+
+Une usine entière se décrit déclarativement dans [`simulator/config/factory.json`](simulator/config/factory.json) : machines (type, id, paramètres), mapping, timestep, watchdog qualité. `FactoryBuilder` la construit et **valide tout** (types connus, ids uniques, paramètres positifs, mapping complet), en retournant des erreurs explicites plutôt qu'en plantant. Les types de machines disponibles vivent dans son registre `MACHINE_TYPES` — ajouter une machine (Phase 6+) = sa classe + une entrée au registre, sans toucher au moteur (ADR-009).
+
 ## Contrats d'interfaces
 
-GDScript n'a pas d'interfaces natives : les frontières sont des **contrats duck-typés**, documentés ici et vérifiés par les tests.
+GDScript n'a pas d'interfaces natives : les frontières sont des **contrats duck-typés**, documentés ici et vérifiés par les tests (dont une suite de contrat automatique, `test_machine_contract.gd`, qui s'applique à tout type présent dans le registre).
 
 **Machine** (objet passé à `SimulationEngine.machines`) :
 
@@ -102,7 +106,7 @@ Résumé (détail et justification : [docs/simulation/simulation_cycle.md](docs/
 5. `update(dt)` — mise à jour de la simulation
 6. `refresh_sensors(dt)` — mise à jour des capteurs (lus au cycle suivant)
 
-Le moteur est **déterministe** : pas de temps fixe, pas d'horloge OS dans le cœur (l'horloge temps réel arrivera en Phase 5 via un `Node` Godot qui pilote `step()`).
+Le moteur est **déterministe** : pas de temps fixe, horloge simulée injectée dans la table d'E/S (`sim_time_usec`), watchdog de qualité optionnel (`input_timeout_usec` — entrées non rafraîchies marquées `BAD`, ADR-010). Le pilotage temps réel arrivera en Phase 5 (un `Node` Godot qui pilote `step()`).
 
 ## Exemple de flux complet (cible Phase 3)
 
@@ -132,3 +136,5 @@ Registre complet : [docs/architecture/decisions.md](docs/architecture/decisions.
 * **ADR-006** — moteur déterministe, temps injecté.
 * **ADR-007** — licence MIT.
 * **ADR-008** — Godot 4.7.2 est la version de référence.
+* **ADR-009** — définition d'usine déclarative JSON + registre de types de machines.
+* **ADR-010** — horloge simulée injectée + watchdog de qualité.

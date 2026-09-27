@@ -8,6 +8,10 @@ extends RefCounted
 
 const IoPointScript = preload("res://io/io_point.gd")
 
+## Horloge injectee (ADR-010) : si >= 0, toute ecriture sans horodatage
+## explicite utilise cette valeur (microsecondes simulees) ; -1 = horloge reelle.
+var clock_usec := -1
+
 var _by_id := {}          # id -> IoPoint
 var _by_address := {}     # address -> id
 
@@ -54,7 +58,10 @@ func set_value(point_id: String, new_value: Variant, time_usec: int = -1) -> Err
     var point = get_point(point_id)
     if point == null:
         return ERR_DOES_NOT_EXIST
-    point.set_value(new_value, time_usec)
+    var stamp := time_usec
+    if stamp < 0:
+        stamp = clock_usec    # -1 => horloge reelle (defaut du point)
+    point.set_value(new_value, stamp)
     return OK
 
 
@@ -81,6 +88,21 @@ func inputs() -> Array:
 ## Points ecrits par le PLC (actionneurs, consignes).
 func outputs() -> Array:
     return all_points().filter(func(point): return point.is_output())
+
+
+## Watchdog qualite (ADR-010) : marque BAD toutes les entrees dont l'horodatage
+## est plus ancien que oldest_allowed_usec. Les sorties (ecrites par le PLC) ne
+## sont pas concernees. Retourne le nombre de points marques.
+func mark_stale_inputs(oldest_allowed_usec: int, time_usec: int = -1) -> int:
+    var marked := 0
+    var stamp := time_usec
+    if stamp < 0:
+        stamp = clock_usec
+    for point in inputs():
+        if point.quality != IoPointScript.Quality.BAD and point.timestamp_usec < oldest_allowed_usec:
+            point.set_bad(stamp)
+            marked += 1
+    return marked
 
 
 ## Instantane serialisable (future API REST / WebSocket).

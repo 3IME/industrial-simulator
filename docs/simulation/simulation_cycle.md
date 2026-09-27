@@ -9,6 +9,7 @@ Le `SimulationEngine` exécute un **cycle déterministe** à pas de temps fixe, 
 | Temps | Appel | Description |
 |---|---|---|
 | 1 | `scan_inputs(io)` | Les machines publient capteurs et états dans la table d'E/S (entrées PLC). |
+| 1b | `mark_stale_inputs` | **Watchdog qualité** (si `input_timeout_usec > 0`) : toute entrée non rafraîchie depuis ce délai est marquée `BAD`. |
 | 2 | `publish_inputs(io)` | Le lien PLC transmet les entrées à l'automate (en Modbus : l'automate vient les lire ; en Phase 0, le lien est `NullPlcLink`). |
 | 3 | `pull_outputs(io)` | Le lien PLC récupère les sorties écrites par l'automate. |
 | 4 | `apply_outputs(io)` | Les sorties PLC sont appliquées aux actionneurs (commandes des machines). |
@@ -32,10 +33,10 @@ Cela reproduit le **décalage de scrutation** d'une vraie chaîne automate/capte
 ## Déterminisme
 
 * Pas de temps `dt` fixe, fourni au moteur ; aucune horloge OS dans le cœur.
-* Les horodatages des points d'E/S acceptent un temps injecté (`set_value(valeur, time_usec)`).
+* Le moteur tient une **horloge simulée** (`sim_time_usec`, +`round(dt × 10⁶)` par pas) qu'il injecte dans la table : tous les horodatages sont reproductibles au microseconde près (ADR-010).
 * `advance(secondes, dt)` exécute exactement `round(secondes / dt)` cycles — même nombre, même ordre, mêmes résultats à chaque exécution.
 
-Le pilotage temps réel (accumuler le temps réel dans un `Node` Godot et appeler `step()` le bon nombre de fois) arrive en Phase 5. Le timestep deviendra alors configurable (par scène/JSON) sans modification du moteur.
+Le pilotage temps réel (accumuler le temps réel dans un `Node` Godot et appeler `step()` le bon nombre de fois) arrive en Phase 5. Le timestep est déjà **configurable par usine** via `factory.json` (`simulation.timestep`).
 
 ## Exemple concret (convoyeur, dt = 1/60 s)
 
