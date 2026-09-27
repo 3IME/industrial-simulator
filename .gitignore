@@ -1,0 +1,18 @@
+# Godot : cache généré (recréé automatiquement à l'ouverture du projet)
+.godot/
+*.translation
+export_presets.cfg
+
+# Outils locaux (binaire Godot téléchargé, non versionné)
+tools/
+
+# Spécification fondatrice locale (prompt initial, hors dépôt public)
+Readme.txt
+
+# Futur backend .NET (le dossier backend/ reste, pas ses artefacts)
+bin/
+obj/
+
+# Système
+Thumbs.db
+.DS_Store
