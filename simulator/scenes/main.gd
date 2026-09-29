@@ -581,7 +581,7 @@ func _build_props() -> void:
     # Recule du mur : l'animation de salut deplace les hanches de ~30 cm
     # lateralement, trop pres il penetrerait le mur pendant le salut.
     var adult := _place_prop(PROP_ADULT,
-        Vector3(HALL_MIN_X + 1.4, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
+        Vector3(HALL_MIN_X + 16.4, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
     if adult != null:
         var guard := Node3D.new()
         guard.set_script(preload("res://ui/adult_scale_guard.gd"))
