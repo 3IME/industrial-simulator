@@ -55,26 +55,31 @@ func _build() -> void:
     _add_part(PART_BASE, grey)
 
     # A1 : lacisage (axe Y)
-    var j1 := _joint(P_A1, Vector3.UP)
+    var j1 := _joint(P_A1, P_A1, Vector3.UP)
     _add_part(PART_COLUMN, orange, j1)
     # A2 : epaule (axe Z)
-    var j2 := _joint(P_A2 - P_A1, Vector3.FORWARD, j1)
+    var j2 := _joint(P_A2 - P_A1, P_A2, Vector3.FORWARD, j1)
     _add_part(PART_ARM, orange, j2)
     # A3 + A4 : coude et roulis de l'avant-bras
-    var j3 := _joint(P_A3 - P_A2, Vector3.FORWARD, j2)
-    var j4 := _joint(P_A4 - P_A3, Vector3.RIGHT, j3)
+    var j3 := _joint(P_A3 - P_A2, P_A3, Vector3.FORWARD, j2)
+    var j4 := _joint(P_A4 - P_A3, P_A4, Vector3.RIGHT, j3)
     _add_part(PART_FOREARM_JOINT, grey, j4)
     _add_part(PART_FOREARM_COVER, orange, j4)
     # A5 : poignet ; A6 : bride outil
-    var j5 := _joint(P_A5 - P_A4, Vector3.FORWARD, j4)
+    var j5 := _joint(P_A5 - P_A4, P_A5, Vector3.FORWARD, j4)
     _add_part(PART_HEAD, grey, j5)
-    var j6 := _joint(P_A6 - P_A5, Vector3.RIGHT, j5)
+    var j6 := _joint(P_A6 - P_A5, P_A6, Vector3.RIGHT, j5)
     _add_part(PART_TOOL, grey, j6)
 
     joints = [j1, j2, j3, j4, j5, j6]
 
 
-func _joint(offset: Vector3, axis: Vector3, parent: Node = null) -> Node3D:
+## offset = position RELATIVE au parent (composition FK) ;
+## pivot_absolu = position du pivot dans le repere d'ASSEMBLAGE.
+## Le contre-noeud doit annuler le pivot ABSOLU pour que les pieces,
+## posees a leurs coordonnees d'assemblage, retombent a leur place :
+## annuler l'offset relatif laisserait le repere a P_(i-1), pas a l'origine.
+func _joint(offset: Vector3, pivot_absolu: Vector3, axis: Vector3, parent: Node = null) -> Node3D:
     var joint := Node3D.new()
     joint.position = offset
     joint.rotation = Vector3.ZERO
@@ -82,9 +87,8 @@ func _joint(offset: Vector3, axis: Vector3, parent: Node = null) -> Node3D:
         add_child(joint)
     else:
         parent.add_child(joint)
-    # Le decalage inverse place les pieces dans le repere d'assemblage
     var counter := Node3D.new()
-    counter.position = -offset
+    counter.position = -pivot_absolu
     joint.add_child(counter)
     joint.set_meta("counter", counter)
     joint.set_meta("axis", axis)
@@ -106,6 +110,7 @@ func _add_part(path: String, material: StandardMaterial3D, joint: Node = null) -
         mesh.material_override = material
 
 
+
 func _process(_delta: float) -> void:
     if machine == null:
         return
@@ -116,3 +121,4 @@ func _process(_delta: float) -> void:
         var joint: Node3D = joints[i]
         var axis: Vector3 = joint.get_meta("axis")
         joint.rotation = axis * deg_to_rad(float(angles[i]))
+

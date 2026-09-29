@@ -647,6 +647,16 @@ func _capture_and_quit() -> void:
         var closeup := get_viewport().get_texture().get_image()
         closeup.save_png("res://capture_3d_extinguisher.png")
         print("Capture ecrite : res://capture_3d_extinguisher.png")
+    # Gros plan sur le bras robot : preuve de l'articulation corrigee
+    if player_node != null:
+        player_node.position = Vector3(1.2, 0.0, 0.6)
+        player_node.rotation.y = -0.57
+        for cam in player_node.find_children("*", "Camera3D"):
+            cam.rotation.x = 0.12
+        await get_tree().create_timer(0.6).timeout
+        var robot_shot := get_viewport().get_texture().get_image()
+        robot_shot.save_png("res://capture_3d_robot.png")
+        print("Capture ecrite : res://capture_3d_robot.png")
     # Liberer la souris avant de quitter (sinon curseur confine sous Windows)
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     get_tree().quit(0)
