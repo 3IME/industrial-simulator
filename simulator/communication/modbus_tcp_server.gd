@@ -131,6 +131,11 @@ func _process_peer(p: Dictionary) -> bool:
     if peer.poll() != Error.OK:
         return false
     var available: int = peer.get_available_bytes()
+    if available == -1:
+        # Socket mort pour l'OS (fermeture sale du client) alors que le
+        # statut Godot est encore CONNECTED : eviction, sinon erreur
+        # "!is_open()" a chaque poll.
+        return false
     # NB : PackedByteArray est copy-on-write — on reconstruit le buffer local
     # puis on le restocke explicitement dans le Dictionary (jamais de mutation
     # via un simple cast, qui n'ecrirait que sur une copie temporaire).

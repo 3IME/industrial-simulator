@@ -32,11 +32,11 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   mètres et squelette en centimètres (racine `scale 0.01`) — les données
   POSITION du maillage ont été multipliées par 100 pour rétablir la cohérence
   skinnage/animation.
-* `adult_static.glb` : pose de salut figée en maillage statique (sans
-  squelette — aucune dérive d'échelle possible au rendu), générée par
-  `scripts/bake_static_adult.py` (convention IBM vérifiée par
-  `scripts/diag_skinning.py` : G avec échelle Armature × IBM transposée =
-  identité exacte au repos), normalisée à 1,60 m pieds au sol.
+* `adult_static.glb` : variante STATIQUE de secours (pose de salut figée,
+  sans squelette), générée par `scripts/bake_static_adult.py` (convention
+  IBM vérifiée par `scripts/diag_skinning.py`). Non utilisée par défaut :
+  la scène charge le modèle animé `adult_waving.glb`, surveillé par un
+  garde-fou d'échelle par frame (`ui/adult_scale_guard.gd`).
 
 ## Équipements de sécurité (dossier `safety/`)
 

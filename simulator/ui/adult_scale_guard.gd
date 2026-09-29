@@ -20,6 +20,10 @@ func _ready() -> void:
     for node in _host.find_children("*", "Skeleton3D", true, false):
         _skeleton = node
         break
+    if _skeleton == null:
+        push_warning("garde-fou adulte : aucun squelette trouve")
+    else:
+        print("garde-fou adulte actif : ", _skeleton.get_bone_count(), " os surveilles")
 
 
 func _process(_delta: float) -> void:
@@ -35,3 +39,4 @@ func _process(_delta: float) -> void:
     var ratio := TARGET_H / max_world_y
     if absf(ratio - 1.0) > TOLERANCE:
         _host.scale *= ratio
+        push_warning("garde-fou adulte : hauteur os max %.2f m -> recallee a %.2f m" % [max_world_y, TARGET_H])

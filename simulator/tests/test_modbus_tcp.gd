@@ -206,6 +206,14 @@ func _test_protocol(t) -> void:
     t.check(noresp.is_empty(), "unit id different : pas de reponse")
 
     t.check(server.requests_served > 0, "requetes comptabilisees")
+
+    # Regression : fermeture du client sans adieu — le serveur doit evincer
+    # le pair (socket mort pour l'OS) au lieu de le garder indefiniment
+    # (spam "!is_open()" a chaque poll).
+    client.peer.disconnect_from_host()
+    for i in range(6):
+        server.poll()
+    t.check_eq(server._peers.size(), 0, "pair mort evince apres fermeture du client")
     server.stop()
 
 
