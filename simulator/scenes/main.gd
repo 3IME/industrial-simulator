@@ -76,6 +76,9 @@ var exit_lamp: MeshInstance3D
 var hud = null
 
 
+const BUILD_TAG := "e9553ef · adulte 1,60 m + garde-fou auto"
+
+
 func _ready() -> void:
     var config_path := "res://config/factory.json"
     var modbus_port := -1
@@ -130,8 +133,27 @@ func _ready() -> void:
         func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     )
     print("Scene prete. ZQSD/WASD : marcher | souris : regarder | Maj : courir | Espace : saut | B : boite")
+    _show_build_badge()
     if capture_mode:
         _capture_and_quit()
+
+
+## Badge de version affiche 15 s au lancement : permet de verifier d'un
+## coup d'oeil que la fenetre ouverte est bien la version courante.
+func _show_build_badge() -> void:
+    var layer := CanvasLayer.new()
+    layer.layer = 10
+    add_child(layer)
+    var label := Label.new()
+    label.text = "BUILD " + BUILD_TAG
+    label.position = Vector2(12, 8)
+    label.add_theme_font_size_override("font_size", 18)
+    label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3))
+    layer.add_child(label)
+    var tween := create_tween()
+    tween.tween_interval(15.0)
+    tween.tween_property(label, "modulate:a", 0.0, 1.0)
+    tween.tween_callback(layer.queue_free)
 
 
 func _physics_process(delta: float) -> void:
@@ -156,7 +178,7 @@ func _process(delta: float) -> void:
         _adult_check += delta
         if _adult_check >= 2.0:
             _adult_check = 0.0
-            _clamp_prop_height(_adult_node, 1.68, "adulte")
+            _clamp_prop_height(_adult_node, 1.60, "adulte")
     _sync_visuals()
     if hud != null:
         hud.refresh()
@@ -561,7 +583,7 @@ func _build_props() -> void:
     var adult := _place_prop(PROP_ADULT,
         Vector3(HALL_MIN_X + 1.4, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
     if adult != null:
-        _clamp_prop_height(adult, 1.68, "adulte")
+        _clamp_prop_height(adult, 1.60, "adulte")
         _adult_node = adult
         for anim_player in adult.find_children("*", "AnimationPlayer"):
             for anim_name in anim_player.get_animation_list():
