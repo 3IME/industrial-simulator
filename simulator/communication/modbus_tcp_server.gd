@@ -130,11 +130,15 @@ func _process_peer(p: Dictionary) -> bool:
         return false
     if peer.poll() != Error.OK:
         return false
+    # poll() peut faire basculer le statut (socket ferme par le distant) :
+    # re-verifier AVANT get_available_bytes, dont l'appel sur un socket mort
+    # affiche une erreur interne Godot ("!is_open()") meme s'il renvoie -1.
+    if peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+        return false
     var available: int = peer.get_available_bytes()
     if available == -1:
-        # Socket mort pour l'OS (fermeture sale du client) alors que le
-        # statut Godot est encore CONNECTED : eviction, sinon erreur
-        # "!is_open()" a chaque poll.
+        # Dernier recours : fermeture sale invisible pour poll() — l'erreur
+        # moteur s'affiche une fois, puis le pair est evince (plus de spam).
         return false
     # NB : PackedByteArray est copy-on-write — on reconstruit le buffer local
     # puis on le restocke explicitement dans le Dictionary (jamais de mutation
