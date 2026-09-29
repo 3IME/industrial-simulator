@@ -24,35 +24,46 @@ func _ready() -> void:
     var column := VBoxContainer.new()
     column.set_anchors_preset(Control.PRESET_FULL_RECT)
     column.alignment = BoxContainer.ALIGNMENT_CENTER
-    column.add_theme_constant_override("separation", 18)
+    column.add_theme_constant_override("separation", 12)
     add_child(column)
 
     var logo := TextureRect.new()
     var texture = load(LOGO_PATH)
     if texture != null:
-        # Rond blanc derriere le logo, centrage manuel (pas d'ancre) pour
-        # un placement deterministe : holder 460x460, logo 320x414 dedans.
+        # Rond blanc derriere le logo. L'artwork du SVG n'occupe qu'une partie
+        # de son canvas, decalee vers le bas-droit (mesure pixel) : on compense
+        # en positionnant le rect de texture pour que le VISIBLE soit centre.
         var holder := Control.new()
-        holder.custom_minimum_size = Vector2(460, 460)
+        holder.custom_minimum_size = Vector2(340, 340)
         var circle := Panel.new()
         var circle_style := StyleBoxFlat.new()
         circle_style.bg_color = Color.WHITE
-        circle_style.set_corner_radius_all(230)
+        circle_style.set_corner_radius_all(170)
         circle.add_theme_stylebox_override("panel", circle_style)
         circle.position = Vector2.ZERO
-        circle.size = Vector2(460, 460)
+        circle.size = Vector2(340, 340)
         holder.add_child(circle)
+        # Artwork reel du SVG (canvas 612x792, mesure alpha via Godot) :
+        # bbox (80,122)-(545,650), centre (312.5, 386.0), taille 466x529.
+        # Cible : artwork a ~62 % du diametre du cercle.
+        # PIEGE Godot : expand_mode AVANT size — sinon la taille est ecrasee
+        # par la taille native de la texture (min size par defaut).
+        var k := 315.0 / 792.0
+        var logo_size := Vector2(612.0 * k, 792.0 * k)
         logo.texture = texture
-        logo.position = Vector2(70, 23)
-        logo.size = Vector2(320, 414)
         logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
         logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+        # -8 px : le haut de la bbox est clairseme (ombre douce de l'engrenage),
+        # la masse optique reelle est ~8 px sous le centre geometrique.
+        logo.position = Vector2(170.0 - k * 312.5, 170.0 - k * 386.0 - 8.0)
+        logo.size = logo_size
         holder.add_child(logo)
+        logo.size = logo_size
         column.add_child(holder)
 
     var title := Label.new()
     title.text = "3IME"
-    title.add_theme_font_size_override("font_size", 72)
+    title.add_theme_font_size_override("font_size", 64)
     title.add_theme_color_override("font_color", Color(0.92, 0.93, 0.95))
     title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     column.add_child(title)

@@ -103,3 +103,15 @@ Chaque décision non triviale est consignée ici : contexte, décision, conséqu
 * **Contexte** : la scène 3D arrive (Phase 5) alors que tout le comportement est déjà logique et testé. La tentation historique des simulateurs est de mettre la logique dans le rendu ; c'est précisément ce que le projet interdit.
 * **Décision** : la scène (`simulator/scenes/main.gd`) construit le rendu **depuis les paramètres géométriques de la définition d'usine** (longueur du convoyeur, positions des capteurs, taille de la boîte) et, à chaque frame, **lit** l'état des machines (position, capteurs) pour placer les éléments et colorer les lampes. Le pilotage temps réel utilise un accumulateur à pas fixe (`_physics_process`), le serveur Modbus démarre au chargement. Toute « intelligence » reste dans le PLC externe ; aucun `if` métier dans le rendu (seuls des états d'affichage).
 * **Conséquences** : le rendu est remplaçable (éditeur 3D, autre moteur) sans toucher au cœur ; la géométrie reste déclarative (le JSON de l'usine décrit, la scène construit) ; la capture automatique (`--capture`) fournit une preuve visuelle exécutable en CI.
+
+## ADR-014 — Splash 3IME : centrage du logo et piège TextureRect
+
+* **Date** : 2026-09-29
+* **Contexte** : le splash affiche le logo 3IME (SVG fourni, canvas 612×792 dont l'artwork n'occupe que la bbox (80,122)-(545,650)) dans un rond blanc. Malgré des constantes de centrage recalculées, l'artwork restait décalé en bas-droite et débordait du cercle.
+* **Cause racine (piège Godot)** : sur un `TextureRect`, la taille minimale vaut par défaut la taille **native** de la texture (`EXPAND_KEEP_SIZE`). Si `texture` est assignée avant `size` alors que `expand_mode` n'est pas encore `EXPAND_IGNORE_SIZE`, l'assignation `size` est silencieusement **écrasée** à la taille native (612×792) ; régler `expand_mode` après ne rétrécit pas le contrôle. → **Toujours régler `expand_mode` avant `texture` et `size`.**
+* **Décisions** :
+  1. Ordre d'initialisation : `expand_mode` → `stretch_mode` → `texture` → `position` → `size`, puis re-paraphe de `size` après `add_child`.
+  2. Centrage calculé depuis la **bbox alpha mesurée par Godot lui-même** (`simulator/tests/measure_logo.gd` : charge le SVG, mesure la bbox des pixels opaques) et non depuis un rasteriseur externe — même si les deux coïncident ici, seule la mesure Godot fait foi.
+  3. Vérification déterministe en boucle : capture `--capture` puis mesure pixel du cercle (pixels quasi blancs) et de l'artwork (pixels non blancs dans le disque), critère |dx|,|dy| < 12 px.
+  4. Micro-décalage optique de −8 px : le haut de la bbox est clairsemé (ombre douce), la masse visuelle réelle est légèrement sous le centre géométrique.
+* **Conséquences** : le centrage est reproductible par la mesure, pas par l'à-peu-près visuel ; le piège `TextureRect` est consigné ; l'outil `measure_logo.gd` reste dans la suite pour tout futur changement de logo.
