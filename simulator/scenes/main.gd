@@ -718,6 +718,7 @@ func _capture_and_quit() -> void:
         for cam in player_node.find_children("*", "Camera3D"):
             cam.rotation.x = 0.12
         await get_tree().create_timer(0.6).timeout
+        await get_tree().create_timer(0.6).timeout
         var robot_shot := get_viewport().get_texture().get_image()
         robot_shot.save_png("res://capture_3d_robot.png")
         print("Capture ecrite : res://capture_3d_robot.png")

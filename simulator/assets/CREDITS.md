@@ -9,6 +9,19 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   (échelle cm → m, repère Z-up → Y-up) ; coordonnées d'assemblage d'origine
   conservées — 7 pièces : base, colonne, bras, avant-bras, carénage, poignet, bride.
 
+## Addon Footstepper (dossier `../addons/footstepper/`)
+
+* « Footstepper » par **Dragon1Freak** — code sous licence **MIT**
+  (https://store.godotengine.org/asset/dragon1freak/footstepper/,
+  source : https://github.com/dragon1freak/df-godot-utils).
+* Seul le cœur de l'addon est embarqué (scripts, icônes, plugin) ; les
+  scènes d'exemple et les sons d'exemple (dont certains sous licence
+  custom FilmCow, incompatibles avec la règle 9 de CONTRIBUTING) sont
+  exclus.
+* `sounds/default/` : sons **CC0** de Kenney — « Impact Sounds »
+  (https://kenney.nl/assets/impact-sounds) — 5 pas béton (randomizer),
+  saut (impactGeneric_light_000) et atterrissage (impactMetal_heavy_000).
+
 ## Props 3D (dossier `props/`)
 
 * Modèles fournis par **3IME** (propriétaire du projet) :

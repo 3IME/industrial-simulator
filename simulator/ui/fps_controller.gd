@@ -11,6 +11,9 @@ const JUMP_VELOCITY := 4.5
 const GRAVITY := 9.8
 const MOUSE_SENSITIVITY := 0.0025
 const EYE_HEIGHT := 1.6
+const FOOTSTEPPER_SCRIPT := preload("res://addons/footstepper/footstepper.gd")
+const FOOTSTEPPER_PROFILE := preload("res://addons/footstepper/footstepper_sound_profile.gd")
+const SOUNDS_DIR := "res://addons/footstepper/sounds/default"
 
 var pitch := 0.0
 var cam: Camera3D
@@ -29,6 +32,8 @@ func _ready() -> void:
     cam.position = Vector3(0, EYE_HEIGHT, 0)
     add_child(cam)
     cam.make_current()
+
+    _setup_footstepper()
 
 
 ## Ne JAMAIS quitter (ni changer de scene) en laissant la souris capturee :
@@ -76,3 +81,40 @@ func _physics_process(delta: float) -> void:
         velocity.z = move_toward(velocity.z, 0.0, speed)
 
     move_and_slide()
+
+
+## Sons de pas / saut / atterrisage (addon Footstepper, code MIT ;
+## sons CC0 Kenney - voir simulator/assets/CREDITS.md).
+## Mode automatique : l'enfant direct du CharacterBody3D detecte seul
+## la distance parcourue (pas), l'impulsion verticale (saut) et le
+## retour au sol (atterrissage).
+func _setup_footstepper() -> void:
+    var profile = FOOTSTEPPER_PROFILE.new()
+
+    # Varier les pas : randomizer sur les 5 pas béton
+    var steps := AudioStreamRandomizer.new()
+    var count := 0
+    for path in [
+        SOUNDS_DIR + "/footstep.ogg",
+        SOUNDS_DIR + "/footstep_001.ogg",
+        SOUNDS_DIR + "/footstep_002.ogg",
+        SOUNDS_DIR + "/footstep_003.ogg",
+        SOUNDS_DIR + "/footstep_004.ogg",
+    ]:
+        var stream = load(path)
+        if stream != null:
+            steps.add_stream(count, stream)
+            count += 1
+    if count > 0:
+        profile.sound_footstep = steps
+    profile.sound_jump = load(SOUNDS_DIR + "/jump.ogg")
+    profile.sound_land = load(SOUNDS_DIR + "/land.ogg")
+
+    var stepper = FOOTSTEPPER_SCRIPT.new()
+    stepper.name = "Footstepper"
+    stepper.footstep_distance = 1.8
+    stepper.audio_volume = -8.0
+    stepper.audio_pitch_variation = 0.12
+    stepper.audio_number_of_players = 4
+    stepper.default_sound_profile = profile
+    add_child(stepper)
