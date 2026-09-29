@@ -24,6 +24,12 @@ const EXTINGUISHER_SIGN := "res://assets/safety/sign_extinguisher_si31.png"
 # Modele source : bbox 0.565 x 1.088 x 0.34 m, base a y=0.
 # Cible : extincteur de 0.62 m pose sur support mural (base a 0.70 m).
 const EXTINGUISHER_SCALE := 0.62 / 1.088
+# Props 3D fournis par 3IME (dossier assets/props/, cf. CREDITS.md)
+const PROP_PENDANT_LAMP := "res://assets/props/pendant_lamp.glb"
+const PROP_FLUO_FIXTURE := "res://assets/props/fluorescent_fixture.glb"
+const PROP_SECURITY_DOOR := "res://assets/props/security_door.glb"
+const PROP_ADULT := "res://assets/props/adult_waving.glb"
+const PROP_GONDOLA := "res://assets/props/gondola.glb"
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
 const HALL_MIN_X := -58.0
@@ -299,23 +305,29 @@ func _build_hall(belt_length: float) -> void:
         plinth.material_override = plinth_mat
         add_child(plinth)
 
-    # Porte sur le mur x = HALL_MIN_X (encadrement + vantail)
-    var door_mat := StandardMaterial3D.new()
-    door_mat.albedo_color = Color(0.5, 0.55, 0.6)
-    var door := MeshInstance3D.new()
-    var door_box := BoxMesh.new()
-    door_box.size = Vector3(0.06, 2.2, 1.0)
-    door.mesh = door_box
-    door.position = Vector3(HALL_MIN_X + 0.02, 1.1, 0)
-    door.material_override = door_mat
-    add_child(door)
-    var frame := MeshInstance3D.new()
-    var frame_box := BoxMesh.new()
-    frame_box.size = Vector3(0.08, 2.4, 1.2)
-    frame.mesh = frame_box
-    frame.position = Vector3(HALL_MIN_X, 1.2, 0)
-    frame.material_override = plinth_mat
-    add_child(frame)
+    # Porte de securite 3D sur le mur x = HALL_MIN_X ; repli : porte plate
+    var door_prop := _place_prop(PROP_SECURITY_DOOR,
+        Vector3(HALL_MIN_X + 0.28, 0.0, 0.0),
+        Vector3(0.0, PI / 2.0, 0.0), 2.2)
+    if door_prop != null:
+        _add_static_box(Vector3(HALL_MIN_X + 0.28, 1.1, 0.0), Vector3(0.35, 2.3, 1.5))
+    else:
+        var door_mat := StandardMaterial3D.new()
+        door_mat.albedo_color = Color(0.5, 0.55, 0.6)
+        var door := MeshInstance3D.new()
+        var door_box := BoxMesh.new()
+        door_box.size = Vector3(0.06, 2.2, 1.0)
+        door.mesh = door_box
+        door.position = Vector3(HALL_MIN_X + 0.02, 1.1, 0)
+        door.material_override = door_mat
+        add_child(door)
+        var frame := MeshInstance3D.new()
+        var frame_box := BoxMesh.new()
+        frame_box.size = Vector3(0.08, 2.4, 1.2)
+        frame.mesh = frame_box
+        frame.position = Vector3(HALL_MIN_X, 1.2, 0)
+        frame.material_override = plinth_mat
+        add_child(frame)
 
     # Plafond texture tole
     var ceiling := MeshInstance3D.new()
@@ -368,6 +380,8 @@ func _build_hall(belt_length: float) -> void:
         _build_extinguisher(Vector3(x, 0, HALL_MIN_Z + 0.09), -PI / 2.0)
     for z in [-15.0, 15.0]:
         _build_extinguisher(Vector3(HALL_MAX_X - 0.09, 0, z), PI)
+
+    _build_props()
 
 
 func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
@@ -474,6 +488,56 @@ func _build_extinguisher_procedural(pivot: Node3D) -> void:
     bracket.position = Vector3(0.01, 1.35, 0)
     bracket.material_override = white
     pivot.add_child(bracket)
+
+
+## Pose un prop GLB fourni (retourne null si absent => l'appelant replie).
+func _place_prop(path: String, pos: Vector3, rot: Vector3, prop_scale := 1.0) -> Node3D:
+    if not ResourceLoader.exists(path):
+        return null
+    var scene = load(path)
+    if scene == null or not scene is PackedScene:
+        return null
+    var node: Node3D = scene.instantiate()
+    node.position = pos
+    node.rotation = rot
+    node.scale = Vector3.ONE * prop_scale
+    add_child(node)
+    return node
+
+
+## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
+func _build_props() -> void:
+    # Deux luminaires au plafond, au-dessus de la zone convoyeur / robot
+    _place_prop(PROP_PENDANT_LAMP, Vector3(1.0, HALL_HEIGHT - 0.01, 0.0), Vector3.ZERO)
+    _place_prop(PROP_FLUO_FIXTURE, Vector3(2.6, HALL_HEIGHT - 0.01, -1.6), Vector3(0.0, 0.6, 0.0))
+    var lamp_light := OmniLight3D.new()
+    lamp_light.position = Vector3(1.0, HALL_HEIGHT - 1.3, 0.0)
+    lamp_light.light_color = Color(1.0, 0.85, 0.7)
+    lamp_light.omni_range = 12.0
+    lamp_light.light_energy = 1.2
+    add_child(lamp_light)
+    var fluo_light := OmniLight3D.new()
+    fluo_light.position = Vector3(2.6, HALL_HEIGHT - 0.6, -1.6)
+    fluo_light.light_color = Color(0.95, 0.98, 1.0)
+    fluo_light.omni_range = 10.0
+    fluo_light.light_energy = 1.0
+    add_child(fluo_light)
+
+    # Adulte anime (salut) a cote de la porte, mur gauche
+    var adult := _place_prop(PROP_ADULT,
+        Vector3(HALL_MIN_X + 0.6, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
+    if adult != null:
+        for anim_player in adult.find_children("*", "AnimationPlayer"):
+            for anim_name in anim_player.get_animation_list():
+                var anim: Animation = anim_player.get_animation(anim_name)
+                anim.loop_mode = Animation.LOOP_LINEAR
+                anim_player.play(anim_name)
+
+    # Gondole (rayonnage) contre le mur gauche
+    var gondola := _place_prop(PROP_GONDOLA,
+        Vector3(HALL_MIN_X + 0.42, 0.95, 4.2), Vector3(0.0, PI / 2.0, 0.0))
+    if gondola != null:
+        _add_static_box(Vector3(HALL_MIN_X + 0.42, 0.95, 4.2), Vector3(0.62, 1.9, 1.0))
 
 
 # ---------------------------------------------------------------------------
@@ -657,6 +721,24 @@ func _capture_and_quit() -> void:
         var robot_shot := get_viewport().get_texture().get_image()
         robot_shot.save_png("res://capture_3d_robot.png")
         print("Capture ecrite : res://capture_3d_robot.png")
+        # Porte + adulte + gondole (mur gauche)
+        player_node.position = Vector3(-52.6, 0.0, 2.1)
+        player_node.rotation.y = PI / 2.0
+        for cam in player_node.find_children("*", "Camera3D"):
+            cam.rotation.x = 0.05
+        await get_tree().create_timer(0.4).timeout
+        var props_shot := get_viewport().get_texture().get_image()
+        props_shot.save_png("res://capture_3d_props.png")
+        print("Capture ecrite : res://capture_3d_props.png")
+        # Les deux luminaires au plafond
+        player_node.position = Vector3(4.0, 0.0, 4.0)
+        player_node.rotation.y = 0.43
+        for cam in player_node.find_children("*", "Camera3D"):
+            cam.rotation.x = 1.2
+        await get_tree().create_timer(0.4).timeout
+        var lamps_shot := get_viewport().get_texture().get_image()
+        lamps_shot.save_png("res://capture_3d_lamps.png")
+        print("Capture ecrite : res://capture_3d_lamps.png")
     # Liberer la souris avant de quitter (sinon curseur confine sous Windows)
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     get_tree().quit(0)

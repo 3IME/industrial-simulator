@@ -9,6 +9,17 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   (échelle cm → m, repère Z-up → Y-up) ; coordonnées d'assemblage d'origine
   conservées — 7 pièces : base, colonne, bras, avant-bras, carénage, poignet, bride.
 
+## Props 3D (dossier `props/`)
+
+* Modèles fournis par **3IME** (propriétaire du projet) :
+  * `pendant_lamp.glb`, `fluorescent_fixture.glb` (lampes au plafond),
+    `security_door.glb` (porte de sécurité murale), `gondola.glb`
+    (rayonnage mural), `adult_waving.glb` (personnage animé « salut »).
+* `adult_waving.glb` a été réparé : l'export source mélangeait maillage en
+  mètres et squelette en centimètres (racine `scale 0.01`) — les données
+  POSITION du maillage ont été multipliées par 100 pour rétablir la cohérence
+  skinnage/animation.
+
 ## Équipements de sécurité (dossier `safety/`)
 
 * `extinguisher.glb` et `sign_extinguisher_si31.png` (converti depuis un GIF —

@@ -6,7 +6,8 @@ const MAIN_SCENE := "res://scenes/main.tscn"
 const LOGO_PATH := "res://assets/branding/logo2.svg"
 const SOUND_PATH := "res://assets/branding/access_granted.mp3"
 const SITE_URL := "https://www.3ime.fr/"
-const DUREE_AFFICHAGE := 3.5
+const DUREE_AFFICHAGE := 3.5    # repli si le son est absent
+const MARGE_APRES_MUSIQUE := 1.5
 const FONDU := 0.4
 
 var finished := false
@@ -102,11 +103,14 @@ func _ready() -> void:
         add_child(player)
         player.play()
 
-    # Fondu d'entree puis minuterie
+    # Fondu d'entree puis minuterie : duree de la musique + 1,5 s
     modulate.a = 0.0
     var tween := create_tween()
     tween.tween_property(self, "modulate:a", 1.0, FONDU)
-    await get_tree().create_timer(DUREE_AFFICHAGE).timeout
+    var duree := DUREE_AFFICHAGE
+    if sound != null and sound is AudioStream:
+        duree = sound.get_length() + MARGE_APRES_MUSIQUE
+    await get_tree().create_timer(duree).timeout
     _finish()
 
 
