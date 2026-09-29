@@ -21,6 +21,13 @@
         "entry_position": 0.3,
         "exit_position": 1.7
       }
+    },
+    {
+      "type": "robot_kuka",
+      "id": "kuka_01",
+      "params": {
+        "demo": true
+      }
     }
   ]
 }

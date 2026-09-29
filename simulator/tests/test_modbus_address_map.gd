@@ -36,10 +36,10 @@ func run(t) -> void:
     var mapping = IoMapping.from_file("res://config/conveyor_io_map.json")
     var map = ModbusAddressMap.new(mapping)
     t.check(map.errors.is_empty(), "mapping du convoyeur projetable sans erreur")
-    t.check_eq(map.projections.size(), 12, "12 projections")
+    t.check_eq(map.projections.size(), 18, "18 projections (convoyeur + bras)")
     t.check_eq(map.bank_size(ModbusAddressMap.Zone.COILS), 9, "banque coils : 9 (offsets 0,1,8)")
     t.check_eq(map.bank_size(ModbusAddressMap.Zone.DISCRETE_INPUTS), 9, "banque discrete : 9")
-    t.check_eq(map.bank_size(ModbusAddressMap.Zone.INPUT_REGISTERS), 5, "banque input regs : 5 (0-4)")
+    t.check_eq(map.bank_size(ModbusAddressMap.Zone.INPUT_REGISTERS), 11, "banque input regs : 11 (0-10)")
     t.check_eq(map.bank_size(ModbusAddressMap.Zone.HOLDING_REGISTERS), 1, "banque holding regs : 1")
 
     var run_proj = map.projection_for_variable("conveyor_01.run")
@@ -47,7 +47,7 @@ func run(t) -> void:
     t.check_eq(run_proj["zone"], ModbusAddressMap.Zone.COILS, "conveyor_01.run -> coils")
     t.check_eq(run_proj["offset"], 0, "conveyor_01.run -> coil 0")
     t.check_eq(map.projection_for_variable("sensor_entry")["offset"], 0, "sensor_entry -> discrete 0")
-    t.check_eq(map.projections_for_zone(ModbusAddressMap.Zone.INPUT_REGISTERS).size(), 5, "5 registres d'entree projetes")
+    t.check_eq(map.projections_for_zone(ModbusAddressMap.Zone.INPUT_REGISTERS).size(), 11, "11 registres d'entree projetes")
     t.check_is_null(map.projection_for_variable("inconnu"), "variable inconnue -> null")
 
     # --- Echelle optionnelle par entree de mapping ---

@@ -15,6 +15,7 @@ const SUITES = [
     preload("res://tests/test_quality.gd"),
     preload("res://tests/test_conveyor.gd"),
     preload("res://tests/test_simulation_engine.gd"),
+    preload("res://tests/test_robot_kuka.gd"),
     preload("res://tests/test_machine_contract.gd"),
     preload("res://tests/test_modbus_address_map.gd"),
     preload("res://tests/test_modbus_tcp.gd"),

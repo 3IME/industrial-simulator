@@ -21,6 +21,7 @@ extends RefCounted
 
 const MACHINE_TYPES = {
     "conveyor": preload("res://machines/conveyor.gd"),
+    "robot_kuka": preload("res://machines/robot_kuka.gd"),
 }
 
 const IoTableScript = preload("res://io/io_table.gd")

@@ -74,6 +74,6 @@ func run(t) -> void:
     # Chargement du vrai fichier de configuration du prototype
     var real = IoMapping.from_file("res://config/conveyor_io_map.json")
     t.check_not_null(real, "fichier de mapping du prototype charge")
-    t.check_eq(real.size(), 12, "12 entrees dans conveyor_io_map.json")
+    t.check_eq(real.size(), 18, "18 entrees dans conveyor_io_map.json (convoyeur + bras)")
     t.check_eq(real.variable_for_address("%QW0"), "conveyor_01.speed_command", "projection %QW0")
     t.check_eq(real.variable_for_address("%IX0.1"), "sensor_exit", "projection %IX0.1")

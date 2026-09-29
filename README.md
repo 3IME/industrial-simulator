@@ -30,7 +30,7 @@ Règles de séparation fondamentales :
 
 ![Le hall industriel du prototype](docs/assets/scene_3d_hall_geant.png)
 
-Hall géant de 120 × 90 m sous 20 m de plafond, exploré **à pied en vue subjective** (ZQSD/WASD, souris, course, saut). Habillage 100 % libre de droits : sol en dalles de béton géométriques (PolyScan, CC0), murs béton et plafond tôle ondulée (Poly Haven, CC0), convoyeur et caisse du Factory Kit (Kenney, CC0) — voir `simulator/assets/CREDITS.md`. Rien n'est extrait d'un produit commercial (règle 9 de [CONTRIBUTING.md](CONTRIBUTING.md)). **Aucun asset sous copyright** : le projet n'embarque aucun modèle extrait d'un produit commercial (voir [CONTRIBUTING.md](CONTRIBUTING.md), règle 9).
+Hall géant de 120 × 90 m sous 20 m de plafond, exploré **à pied en vue subjective** (ZQSD/WASD, souris, course, saut). Habillage 100 % libre de droits : sol en dalles de béton géométriques (PolyScan, CC0), murs béton et plafond tôle ondulée (Poly Haven, CC0), convoyeur et caisse du Factory Kit (Kenney, CC0), et un **bras robot 6 axes** (STL fournis par 3IME, articulation A1–A6 animée) — voir `simulator/assets/CREDITS.md`. Rien n'est extrait d'un produit commercial (règle 9 de [CONTRIBUTING.md](CONTRIBUTING.md)). **Aucun asset sous copyright** : le projet n'embarque aucun modèle extrait d'un produit commercial (voir [CONTRIBUTING.md](CONTRIBUTING.md), règle 9).
 
 Voir [ROADMAP.md](ROADMAP.md) — prochaines étapes : éditeur de scènes, machines supplémentaires, OPC UA…
 

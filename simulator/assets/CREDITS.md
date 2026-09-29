@@ -3,6 +3,12 @@
 Ce dossier contient des assets librement réutilisables (aucun asset sous copyright
 de produit commercial — voir la règle 9 de CONTRIBUTING.md).
 
+## Bras robot 6 axes (dossier `kuka/`)
+
+* Fichiers STL fournis par **3IME** (propriétaire du projet), convertis en GLB
+  (échelle cm → m, repère Z-up → Y-up) ; coordonnées d'assemblage d'origine
+  conservées — 7 pièces : base, colonne, bras, avant-bras, carénage, poignet, bride.
+
 ## Kenney — Factory Kit (modèles 3D, `kenney_factory/`)
 
 * Auteur : Kenney (kenney.nl) — licence **CC0 1.0** (domaine public).

@@ -12,6 +12,7 @@ extends Node3D
 
 const FactoryBuilder = preload("res://simulation/factory_builder.gd")
 const FpsController = preload("res://ui/fps_controller.gd")
+const RobotKukaView = preload("res://ui/robot_kuka_view.gd")
 
 const BELT_COLOR := Color(0.25, 0.27, 0.30)
 const FRAME_COLOR := Color(0.55, 0.25, 0.08)
@@ -100,6 +101,7 @@ func _ready() -> void:
         belt_length = conveyor.length
     _build_hall(belt_length)
     _build_visuals()
+    _spawn_robot()
     _spawn_player()
 
     hud = get_node_or_null(^"HUD")
@@ -149,6 +151,24 @@ func _spawn_player() -> void:
     var player := FpsController.new()
     player.position = Vector3(3.5, 1.0, 4.5)
     add_child(player)
+
+
+## Bras robot 6 axes : vue articulaire pilotee par la machine logique.
+## Pose derriere la bande, portee tournee vers le convoyeur.
+func _spawn_robot() -> void:
+    var robot_machine = null
+    for machine in factory["machines"]:
+        if machine.get("angles_deg") != null:
+            robot_machine = machine
+    if robot_machine == null:
+        return
+    var view := RobotKukaView.new()
+    view.position = Vector3(2.6, 0, -1.6)
+    view.rotation.y = -PI / 2.0    # portee du bras (+X) tournee vers la bande (+Z)
+    add_child(view)
+    view.setup(robot_machine)
+    # Enveloppe de collision approximative du bras en mouvement
+    _add_static_box(Vector3(2.6, 0.6, -1.6), Vector3(1.4, 1.2, 1.4))
 
 
 # ---------------------------------------------------------------------------

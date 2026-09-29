@@ -61,7 +61,7 @@ func run(t) -> void:
     # --- Fichier reel du depot ---
     var real: Dictionary = FactoryBuilder.build_from_file("res://config/factory.json")
     t.check(real.get("ok", false), "factory.json du depot se construit")
-    t.check_eq(real.get("io", null).point_count(), 12, "factory.json : 12 points")
+    t.check_eq(real.get("io", null).point_count(), 18, "factory.json : 18 points (convoyeur + bras)")
     t.check(real.get("warnings", []).is_empty(), "factory.json : aucun avertissement")
     t.check_not_null(real.get("modbus", null), "factory.json : lien Modbus present (a l'ecoute sur demande)")
     t.check_eq(
