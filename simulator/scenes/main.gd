@@ -506,6 +506,29 @@ func _place_prop(path: String, pos: Vector3, rot: Vector3, prop_scale := 1.0) ->
 
 
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
+## Garde-fou d'echelle : mesure la hauteur rendue du prop et la ramene a
+## target_h si elle s'en ecarte (protection contre un cache d'import ou un
+## asset dont l'echelle varie). Ne fait rien si la hauteur est correcte.
+func _clamp_prop_height(node: Node3D, target_h: float, label: String) -> void:
+    var aabb := AABB()
+    var first := true
+    for m in node.find_children("*", "MeshInstance3D", true, false):
+        if m.mesh == null:
+            continue
+        var box: AABB = m.global_transform * m.mesh.get_aabb()
+        if first:
+            aabb = box
+            first = false
+        else:
+            aabb = aabb.merge(box)
+    if aabb.size.y <= 0.01:
+        return
+    var ratio := target_h / aabb.size.y
+    if absf(ratio - 1.0) > 0.08:
+        push_warning("prop %s : hauteur %.2f m recallee a %.2f m" % [label, aabb.size.y, target_h])
+        node.scale *= ratio
+
+
 func _build_props() -> void:
     # Deux luminaires au plafond, au-dessus de la zone convoyeur / robot
     _place_prop(PROP_PENDANT_LAMP, Vector3(1.0, HALL_HEIGHT - 3.0, 0.0), Vector3.ZERO)
@@ -523,10 +546,13 @@ func _build_props() -> void:
     fluo_light.light_energy = 1.0
     add_child(fluo_light)
 
-    # Adulte anime (salut) a cote de la porte, mur gauche
+    # Adulte anime (salut) a cote de la porte, mur gauche.
+    # Recule du mur : l'animation de salut deplace les hanches de ~30 cm
+    # lateralement, trop pres il penetrerait le mur pendant le salut.
     var adult := _place_prop(PROP_ADULT,
-        Vector3(HALL_MIN_X + 0.6, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
+        Vector3(HALL_MIN_X + 1.4, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
     if adult != null:
+        _clamp_prop_height(adult, 1.68, "adulte")
         for anim_player in adult.find_children("*", "AnimationPlayer"):
             for anim_name in anim_player.get_animation_list():
                 var anim: Animation = anim_player.get_animation(anim_name)
