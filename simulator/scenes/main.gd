@@ -508,10 +508,10 @@ func _place_prop(path: String, pos: Vector3, rot: Vector3, prop_scale := 1.0) ->
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
 func _build_props() -> void:
     # Deux luminaires au plafond, au-dessus de la zone convoyeur / robot
-    _place_prop(PROP_PENDANT_LAMP, Vector3(1.0, HALL_HEIGHT - 0.01, 0.0), Vector3.ZERO)
+    _place_prop(PROP_PENDANT_LAMP, Vector3(1.0, HALL_HEIGHT - 3.0, 0.0), Vector3.ZERO)
     _place_prop(PROP_FLUO_FIXTURE, Vector3(2.6, HALL_HEIGHT - 0.01, -1.6), Vector3(0.0, 0.6, 0.0))
     var lamp_light := OmniLight3D.new()
-    lamp_light.position = Vector3(1.0, HALL_HEIGHT - 1.3, 0.0)
+    lamp_light.position = Vector3(1.0, HALL_HEIGHT - 4.3, 0.0)
     lamp_light.light_color = Color(1.0, 0.85, 0.7)
     lamp_light.omni_range = 12.0
     lamp_light.light_energy = 1.2
@@ -739,6 +739,17 @@ func _capture_and_quit() -> void:
         var lamps_shot := get_viewport().get_texture().get_image()
         lamps_shot.save_png("res://capture_3d_lamps.png")
         print("Capture ecrite : res://capture_3d_lamps.png")
+        # Controle tardif : l'adulte reste-t-il a taille humaine apres
+        # plusieurs boucles d'animation ?
+        await get_tree().create_timer(12.0).timeout
+        player_node.position = Vector3(-52.6, 0.0, 2.1)
+        player_node.rotation.y = PI / 2.0
+        for cam in player_node.find_children("*", "Camera3D"):
+            cam.rotation.x = 0.05
+        await get_tree().create_timer(0.4).timeout
+        var late_shot := get_viewport().get_texture().get_image()
+        late_shot.save_png("res://capture_3d_props_tard.png")
+        print("Capture ecrite : res://capture_3d_props_tard.png")
     # Liberer la souris avant de quitter (sinon curseur confine sous Windows)
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     get_tree().quit(0)
