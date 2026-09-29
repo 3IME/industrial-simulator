@@ -86,18 +86,39 @@ def globals_at(T):
     return G
 
 
-# 1) instant le plus "debout" : position monde de la tete maximale
+# 1) instant le plus "naturel" une fois figé : tete haute, hanches peu
+# decalees (le salut deplace les hanches de ~30 cm), bras pres du corps.
+# On peau-teste chaque instant (les os seuls ne disent pas l'envergure).
 head_idx = next(i for i, n in enumerate(j["nodes"]) if n.get("name") == "Head")
-dur = acc_data(ANIM["samplers"][0]["input"])[:, 0].max()
-meilleur_t, meilleur_y = 0.0, -1e9
+hips_idx = next(i for i, n in enumerate(j["nodes"]) if n.get("name") == "Hips")
+skin_meta = j["skins"][0]
+IBMs_sel = acc_data(skin_meta["inverseBindMatrices"]).transpose(0, 2, 1)
+prim_sel = j["meshes"][0]["primitives"][0]
+at_sel = prim_sel["attributes"]
+V_sel = acc_data(at_sel["POSITION"])
+J_sel = acc_data(at_sel["JOINTS_0"]).astype(int)
+W_sel = acc_data(at_sel["WEIGHTS_0"])
+Vh_sel = np.hstack([V_sel, np.ones((len(V_sel), 1))])
+
+dur = float(acc_data(ANIM["samplers"][0]["input"])[:, 0].max())
+meilleur_t, meilleur_score = 0.0, -1e9
 t = 0.0
 while t <= dur:
-    y = globals_at(t)[head_idx][1, 3]
-    if y > meilleur_y:
-        meilleur_y, meilleur_t = y, t
+    Gt = globals_at(t)
+    Mt = np.stack([Gt[jb] @ IBMs_sel[k]
+                   for k, jb in enumerate(skin_meta["joints"])])
+    vo = np.zeros_like(V_sel)
+    for k in range(4):
+        vo += W_sel[:, k, None] * np.einsum('nij,nj->ni', Mt[J_sel[:, k]], Vh_sel)[:, :3]
+    envergure = vo[:, 0].max() - vo[:, 0].min()
+    tete = Gt[head_idx][1, 3]
+    hanches_dx = abs(Gt[hips_idx][0, 3])
+    score = tete - 3.0 * hanches_dx - 4.0 * max(0.0, envergure - 90.0)
+    if score > meilleur_score:
+        meilleur_score, meilleur_t = score, t
     t += 0.1
 T = round(meilleur_t, 2)
-print("instant retenu: t =", T, "s (tete la plus haute, pose debout)")
+print("instant retenu: t =", T, "s (droit, bras pres du corps)")
 
 G = globals_at(T)
 

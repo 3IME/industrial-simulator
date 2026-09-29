@@ -28,7 +28,7 @@ const EXTINGUISHER_SCALE := 0.62 / 1.088
 const PROP_PENDANT_LAMP := "res://assets/props/pendant_lamp.glb"
 const PROP_FLUO_FIXTURE := "res://assets/props/fluorescent_fixture.glb"
 const PROP_SECURITY_DOOR := "res://assets/props/security_door.glb"
-const PROP_ADULT := "res://assets/props/adult_waving.glb"
+const PROP_ADULT := "res://assets/props/adult_static.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
