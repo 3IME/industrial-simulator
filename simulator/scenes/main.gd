@@ -65,6 +65,8 @@ var accumulator := 0.0
 var auto_box := false
 var box_timer := 0.0
 var capture_mode := false
+var _adult_node: Node3D = null
+var _adult_check := 0.0
 var _extinguisher_model: PackedScene = null
 var player_node: Node3D = null
 
@@ -147,7 +149,14 @@ func _physics_process(delta: float) -> void:
             conveyor.spawn_box()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+    # Garde-fou periodique : si l'echelle rendue de l'adulte derive
+    # (quel que soit la cause), elle est recallee en moins de 2 s.
+    if _adult_node != null:
+        _adult_check += delta
+        if _adult_check >= 2.0:
+            _adult_check = 0.0
+            _clamp_prop_height(_adult_node, 1.68, "adulte")
     _sync_visuals()
     if hud != null:
         hud.refresh()
@@ -553,6 +562,7 @@ func _build_props() -> void:
         Vector3(HALL_MIN_X + 1.4, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
     if adult != null:
         _clamp_prop_height(adult, 1.68, "adulte")
+        _adult_node = adult
         for anim_player in adult.find_children("*", "AnimationPlayer"):
             for anim_name in anim_player.get_animation_list():
                 var anim: Animation = anim_player.get_animation(anim_name)
