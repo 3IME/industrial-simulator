@@ -17,6 +17,13 @@ const BOX_COLOR := Color(0.85, 0.65, 0.15)
 const SENSOR_OFF := Color(0.35, 0.08, 0.08)
 const SENSOR_ON := Color(0.95, 0.15, 0.15)
 
+# Dimensions du hall (le convoyeur occupe x=0..length, axe X)
+const HALL_MIN_X := -5.0
+const HALL_MAX_X := 7.0
+const HALL_MIN_Z := -4.5
+const HALL_MAX_Z := 4.5
+const HALL_HEIGHT := 4.0
+
 var factory: Dictionary = {}
 var engine = null
 var io = null
@@ -69,6 +76,10 @@ func _ready() -> void:
             return
         print("Modbus TCP esclave actif : port ", port, ", unit id ", link.server.unit_id)
 
+    var belt_length := 2.0
+    if conveyor != null:
+        belt_length = conveyor.length
+    _build_hall(belt_length)
     _build_visuals()
     hud = get_node_or_null(^"HUD")
     if hud != null:
@@ -117,6 +128,207 @@ func _unhandled_key_input(event: InputEvent) -> void:
             print("Boite posee sur le capteur d'entree.")
 
 
+## Hall industriel : sol beton, murs, plafond avec poutrelles et luminaires,
+## porte, extincteurs, marquage de securite. Tout est procedural (ADR-013) -
+## aucun asset externe sous copyright.
+func _build_hall(belt_length: float) -> void:
+    var hall_w: float = HALL_MAX_X - HALL_MIN_X
+    var hall_d: float = HALL_MAX_Z - HALL_MIN_Z
+    var center_x: float = (HALL_MIN_X + HALL_MAX_X) / 2.0
+    var center_z: float = (HALL_MIN_Z + HALL_MAX_Z) / 2.0
+
+    # Eclairage d'ambiance (le plafond ferme la scene)
+    var world_env := WorldEnvironment.new()
+    var env := Environment.new()
+    env.background_mode = Environment.BG_COLOR
+    env.background_color = Color(0.05, 0.06, 0.08)
+    env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+    env.ambient_light_color = Color(0.55, 0.56, 0.6)
+    env.ambient_light_energy = 0.7
+    world_env.environment = env
+    add_child(world_env)
+
+    var concrete := StandardMaterial3D.new()
+    concrete.albedo_color = Color(0.42, 0.42, 0.44)
+    var wall_mat := StandardMaterial3D.new()
+    wall_mat.albedo_color = Color(0.72, 0.74, 0.76)
+    var plinth_mat := StandardMaterial3D.new()
+    plinth_mat.albedo_color = Color(0.30, 0.33, 0.36)
+    var beam_mat := StandardMaterial3D.new()
+    beam_mat.albedo_color = Color(0.45, 0.48, 0.52)
+    var yellow_mat := StandardMaterial3D.new()
+    yellow_mat.albedo_color = Color(0.9, 0.75, 0.05)
+
+    # Sol (beton) - remplace le grand plan neutre de la premiere version
+    var floor_mesh := MeshInstance3D.new()
+    var plane := PlaneMesh.new()
+    plane.size = Vector2(hall_w, hall_d)
+    floor_mesh.mesh = plane
+    floor_mesh.position = Vector3(center_x, 0, center_z)
+    floor_mesh.material_override = concrete
+    add_child(floor_mesh)
+
+    # Marquage de securite : deux bandes jaunes le long du convoyeur
+    for z in [-0.65, 0.65]:
+        var strip := MeshInstance3D.new()
+        var strip_box := BoxMesh.new()
+        strip_box.size = Vector3(belt_length + 0.4, 0.005, 0.12)
+        strip.mesh = strip_box
+        strip.position = Vector3(belt_length / 2.0, 0.003, z)
+        strip.material_override = yellow_mat
+        add_child(strip)
+
+    # Murs (4) + plinthe
+    var wall_specs := [
+        [Vector3(center_x, HALL_HEIGHT / 2.0, HALL_MIN_Z), Vector2(hall_w, HALL_HEIGHT)],
+        [Vector3(center_x, HALL_HEIGHT / 2.0, HALL_MAX_Z), Vector2(hall_w, HALL_HEIGHT)],
+        [Vector3(HALL_MIN_X, HALL_HEIGHT / 2.0, center_z), Vector2(hall_d, HALL_HEIGHT)],
+        [Vector3(HALL_MAX_X, HALL_HEIGHT / 2.0, center_z), Vector2(hall_d, HALL_HEIGHT)],
+    ]
+    for spec in wall_specs:
+        var pos: Vector3 = spec[0]
+        var size: Vector2 = spec[1]
+        var along_x := absf(pos.z - center_z) > 0.01
+        var wall := MeshInstance3D.new()
+        var wall_box := BoxMesh.new()
+        wall_box.size = Vector3(size.x, size.y, 0.15) if along_x else Vector3(0.15, size.y, size.x)
+        wall.mesh = wall_box
+        wall.position = pos
+        wall.material_override = wall_mat
+        add_child(wall)
+        # Plinthe sombre en pied de mur
+        var plinth := MeshInstance3D.new()
+        var plinth_box := BoxMesh.new()
+        plinth_box.size = Vector3(size.x, 0.4, 0.18) if along_x else Vector3(0.18, 0.4, size.x)
+        plinth.mesh = plinth_box
+        plinth.position = pos + Vector3(0, -(HALL_HEIGHT / 2.0 - 0.2), 0)
+        plinth.material_override = plinth_mat
+        add_child(plinth)
+
+    # Porte sur le mur x = HALL_MIN_X (encadrement + vantail)
+    var door_mat := StandardMaterial3D.new()
+    door_mat.albedo_color = Color(0.5, 0.55, 0.6)
+    var door := MeshInstance3D.new()
+    var door_box := BoxMesh.new()
+    door_box.size = Vector3(0.06, 2.2, 1.0)
+    door.mesh = door_box
+    door.position = Vector3(HALL_MIN_X + 0.02, 1.1, 0)
+    door.material_override = door_mat
+    add_child(door)
+    var frame := MeshInstance3D.new()
+    var frame_box := BoxMesh.new()
+    frame_box.size = Vector3(0.08, 2.4, 1.2)
+    frame.mesh = frame_box
+    frame.position = Vector3(HALL_MIN_X, 1.2, 0)
+    frame.material_override = plinth_mat
+    add_child(frame)
+
+    # Plafond + poutrelles + luminaires
+    var ceiling := MeshInstance3D.new()
+    var ceiling_plane := PlaneMesh.new()
+    ceiling_plane.size = Vector2(hall_w, hall_d)
+    ceiling.mesh = ceiling_plane
+    ceiling.rotation = Vector3(PI, 0, 0)
+    ceiling.position = Vector3(center_x, HALL_HEIGHT, center_z)
+    ceiling.material_override = plinth_mat
+    add_child(ceiling)
+
+    for x in [HALL_MIN_X + 2.0, center_x, HALL_MAX_X - 2.0]:
+        var beam := MeshInstance3D.new()
+        var beam_box := BoxMesh.new()
+        beam_box.size = Vector3(0.25, 0.3, hall_d)
+        beam.mesh = beam_box
+        beam.position = Vector3(x, HALL_HEIGHT - 0.15, center_z)
+        beam.material_override = beam_mat
+        add_child(beam)
+
+    var lamp_mat := StandardMaterial3D.new()
+    lamp_mat.emission_enabled = true
+    lamp_mat.emission = Color(1.0, 0.97, 0.85)
+    lamp_mat.emission_energy_multiplier = 2.5
+    lamp_mat.albedo_color = Color(0.9, 0.9, 0.85)
+    for x in [center_x - 2.5, center_x + 2.5]:
+        var lamp := MeshInstance3D.new()
+        var lamp_box := BoxMesh.new()
+        lamp_box.size = Vector3(1.2, 0.08, 0.25)
+        lamp.mesh = lamp_box
+        lamp.position = Vector3(x, HALL_HEIGHT - 0.45, center_z)
+        lamp.material_override = lamp_mat
+        add_child(lamp)
+        var light := OmniLight3D.new()
+        light.position = Vector3(x, HALL_HEIGHT - 0.7, center_z)
+        light.omni_range = 7.0
+        light.light_energy = 1.1
+        light.light_color = Color(1.0, 0.97, 0.9)
+        add_child(light)
+
+    # Extincteurs muraux (2) avec panneau
+    _build_extinguisher(Vector3(HALL_MIN_X + 0.12, 0, -2.5), 0.0)
+    _build_extinguisher(Vector3(HALL_MAX_X - 0.12, 0, 2.5), PI)
+
+
+func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
+    var red := StandardMaterial3D.new()
+    red.albedo_color = Color(0.82, 0.05, 0.05)
+    var black := StandardMaterial3D.new()
+    black.albedo_color = Color(0.05, 0.05, 0.05)
+    var sign_red := StandardMaterial3D.new()
+    sign_red.emission_enabled = true
+    sign_red.albedo_color = Color(0.85, 0.1, 0.1)
+    sign_red.emission = Color(0.6, 0.02, 0.02)
+    var white := StandardMaterial3D.new()
+    white.albedo_color = Color(0.92, 0.92, 0.92)
+
+    var pivot := Node3D.new()
+    pivot.position = anchor
+    pivot.rotation.y = wall_rotation
+    add_child(pivot)
+
+    # Panneau "extincteur" au-dessus
+    var sign := MeshInstance3D.new()
+    var sign_box := BoxMesh.new()
+    sign_box.size = Vector3(0.03, 0.3, 0.3)
+    sign.mesh = sign_box
+    sign.position = Vector3(0, 2.1, 0)
+    sign.material_override = sign_red
+    pivot.add_child(sign)
+
+    # Corps rouge
+    var body := MeshInstance3D.new()
+    var body_cyl := CylinderMesh.new()
+    body_cyl.top_radius = 0.09
+    body_cyl.bottom_radius = 0.09
+    body_cyl.height = 0.55
+    body.mesh = body_cyl
+    body.position = Vector3(0.06, 1.35, 0)
+    body.material_override = red
+    pivot.add_child(body)
+
+    # Poignee noire + base
+    var handle := MeshInstance3D.new()
+    var handle_box := BoxMesh.new()
+    handle_box.size = Vector3(0.05, 0.1, 0.16)
+    handle.mesh = handle_box
+    handle.position = Vector3(0.06, 1.68, 0)
+    handle.material_override = black
+    pivot.add_child(handle)
+    var base := MeshInstance3D.new()
+    var base_box := BoxMesh.new()
+    base_box.size = Vector3(0.16, 0.03, 0.16)
+    base.mesh = base_box
+    base.position = Vector3(0.06, 1.06, 0)
+    base.material_override = black
+    pivot.add_child(base)
+    # Support mural
+    var bracket := MeshInstance3D.new()
+    var bracket_box := BoxMesh.new()
+    bracket_box.size = Vector3(0.03, 0.5, 0.12)
+    bracket.mesh = bracket_box
+    bracket.position = Vector3(0.01, 1.35, 0)
+    bracket.material_override = white
+    pivot.add_child(bracket)
+
+
 ## Construit le rendu a partir des parametres geometriques de la machine.
 ## Le convoyeur va de x=0 (entree) a x=length (sortie), axe X.
 func _build_visuals() -> void:
@@ -130,15 +342,7 @@ func _build_visuals() -> void:
         exit_x = conveyor.exit_position
         box_size = conveyor.box_length
 
-    # Sol
-    var floor_mesh := MeshInstance3D.new()
-    var plane := PlaneMesh.new()
-    plane.size = Vector2(20, 20)
-    floor_mesh.mesh = plane
-    var floor_mat := StandardMaterial3D.new()
-    floor_mat.albedo_color = Color(0.20, 0.22, 0.24)
-    floor_mesh.material_override = floor_mat
-    add_child(floor_mesh)
+    # Sol, murs, plafond, extincteurs : cf. _build_hall()
 
     # Bande du convoyeur
     var belt := MeshInstance3D.new()

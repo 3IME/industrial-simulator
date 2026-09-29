@@ -28,7 +28,9 @@ Règles de séparation fondamentales :
 
 **Premier milestone ATTEINT (Phases 0 → 5)** : modèle I/O complet, moteur de simulation déterministe, usine déclarative JSON, serveur Modbus TCP intégré, **cycle complet validé avec un vrai OpenPLC** (détection à l'entrée → marche → arrêt au capteur de sortie → évacuation, en boucle), et **scène 3D Godot** avec HUD et caméra orbitale.
 
-![Scène 3D du prototype](docs/assets/scene_3d_phase5.png)
+![Le hall industriel du prototype](docs/assets/scene_3d_hall.png)
+
+Scène construite à 100 % en géométrie procédurale (ADR-013) : hall fermé — murs, plinthes, plafond à poutrelles et luminaires, porte, extincteurs muraux, marquage de sécurité — convoyeur, boîte, capteurs à lampes. **Aucun asset sous copyright** : le projet n'embarque aucun modèle extrait d'un produit commercial (voir [CONTRIBUTING.md](CONTRIBUTING.md), règle 9).
 
 Voir [ROADMAP.md](ROADMAP.md) — prochaines étapes : éditeur de scènes, machines supplémentaires, OPC UA…
 

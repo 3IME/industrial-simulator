@@ -10,6 +10,9 @@ tools/
 # Spécification fondatrice locale (prompt initial, hors dépôt public)
 Readme.txt
 
+# Assets exportés d'un produit commercial (copyright) : JAMAIS dans le dépôt
+Assets Factory/
+
 # Futur backend .NET (le dossier backend/ reste, pas ses artefacts)
 bin/
 obj/
