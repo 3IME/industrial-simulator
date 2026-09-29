@@ -19,6 +19,11 @@ const FRAME_COLOR := Color(0.55, 0.25, 0.08)
 const BOX_COLOR := Color(0.85, 0.65, 0.15)
 const SENSOR_OFF := Color(0.35, 0.08, 0.08)
 const SENSOR_ON := Color(0.95, 0.15, 0.15)
+const EXTINGUISHER_MODEL := "res://assets/safety/extinguisher.glb"
+const EXTINGUISHER_SIGN := "res://assets/safety/sign_extinguisher_si31.png"
+# Modele source : bbox 0.565 x 1.088 x 0.34 m, base a y=0.
+# Cible : extincteur de 0.62 m pose sur support mural (base a 0.70 m).
+const EXTINGUISHER_SCALE := 0.62 / 1.088
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
 const HALL_MIN_X := -58.0
@@ -54,6 +59,8 @@ var accumulator := 0.0
 var auto_box := false
 var box_timer := 0.0
 var capture_mode := false
+var _extinguisher_model: PackedScene = null
+var player_node: Node3D = null
 
 var box_visual: Node3D
 var entry_lamp: MeshInstance3D
@@ -150,6 +157,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func _spawn_player() -> void:
     var player := FpsController.new()
     player.position = Vector3(3.5, 1.0, 4.5)
+    player_node = player
     add_child(player)
 
 
@@ -363,30 +371,75 @@ func _build_hall(belt_length: float) -> void:
 
 
 func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
-    var red := StandardMaterial3D.new()
-    red.albedo_color = Color(0.82, 0.05, 0.05)
-    var black := StandardMaterial3D.new()
-    black.albedo_color = Color(0.05, 0.05, 0.05)
-    var sign_red := StandardMaterial3D.new()
-    sign_red.emission_enabled = true
-    sign_red.albedo_color = Color(0.85, 0.1, 0.1)
-    sign_red.emission = Color(0.6, 0.02, 0.02)
-    var white := StandardMaterial3D.new()
-    white.albedo_color = Color(0.92, 0.92, 0.92)
-
     var pivot := Node3D.new()
     pivot.position = anchor
     pivot.rotation.y = wall_rotation
     add_child(pivot)
 
-    # Panneau "extincteur" au-dessus
+    _build_extinguisher_sign(pivot)
+
+    if _load_extinguisher_model():
+        var model: Node3D = _extinguisher_model.instantiate()
+        model.scale = Vector3.ONE * EXTINGUISHER_SCALE
+        # bbox source en x : [-0.26..+0.30] ; on degage le mur (X local = interieur)
+        model.position = Vector3(0.16, 0.70, 0)
+        pivot.add_child(model)
+    else:
+        _build_extinguisher_procedural(pivot)
+
+
+## Charge (une seule fois) le modele GLB de l'extincteur. Faux => fallback.
+func _load_extinguisher_model() -> bool:
+    if _extinguisher_model == null:
+        if not ResourceLoader.exists(EXTINGUISHER_MODEL):
+            return false
+        var loaded = load(EXTINGUISHER_MODEL)
+        if loaded == null or not loaded is PackedScene:
+            return false
+        _extinguisher_model = loaded
+    return true
+
+
+## Panneau normalise (pictogramme extincteur) au-dessus du support.
+func _build_extinguisher_sign(pivot: Node3D) -> void:
     var sign := MeshInstance3D.new()
-    var sign_box := BoxMesh.new()
-    sign_box.size = Vector3(0.03, 0.3, 0.3)
-    sign.mesh = sign_box
-    sign.position = Vector3(0, 2.1, 0)
-    sign.material_override = sign_red
+    var tex = load(EXTINGUISHER_SIGN)
+    if tex != null and tex is Texture2D:
+        var quad := QuadMesh.new()
+        quad.size = Vector2(0.36, 0.36)
+        var mat := StandardMaterial3D.new()
+        mat.albedo_texture = tex
+        mat.roughness = 0.75
+        mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+        # Leger effet lumineux : ces panneaux sont photoluminescents en vrai.
+        mat.emission_enabled = true
+        mat.emission = Color(0.35, 0.35, 0.35)
+        quad.material = mat
+        sign.mesh = quad
+        # Face avant du quad (+Z local du maillage) tournee vers l'interieur
+        # du hall (+X local du pivot).
+        sign.rotation.y = PI / 2.0
+    else:
+        var sign_red := StandardMaterial3D.new()
+        sign_red.emission_enabled = true
+        sign_red.albedo_color = Color(0.85, 0.1, 0.1)
+        sign_red.emission = Color(0.6, 0.02, 0.02)
+        var sign_box := BoxMesh.new()
+        sign_box.size = Vector3(0.03, 0.3, 0.3)
+        sign.mesh = sign_box
+        sign.material_override = sign_red
+    sign.position = Vector3(0.02, 2.05, 0)
     pivot.add_child(sign)
+
+
+## Repli procedurale si le modele GLB est absent.
+func _build_extinguisher_procedural(pivot: Node3D) -> void:
+    var red := StandardMaterial3D.new()
+    red.albedo_color = Color(0.82, 0.05, 0.05)
+    var black := StandardMaterial3D.new()
+    black.albedo_color = Color(0.05, 0.05, 0.05)
+    var white := StandardMaterial3D.new()
+    white.albedo_color = Color(0.92, 0.92, 0.92)
 
     # Corps rouge
     var body := MeshInstance3D.new()
@@ -584,6 +637,16 @@ func _capture_and_quit() -> void:
     var image := get_viewport().get_texture().get_image()
     image.save_png("res://capture_3d.png")
     print("Capture ecrite : res://capture_3d.png")
+    # Gros plan sur un extincteur du mur du fond : preuve des assets de securite
+    if player_node != null:
+        player_node.position = Vector3(10.0, 1.0, -41.0)
+        player_node.rotation.y = 0.0
+        for cam in player_node.find_children("*", "Camera3D"):
+            cam.rotation.x = 0.18
+        await get_tree().create_timer(0.4).timeout
+        var closeup := get_viewport().get_texture().get_image()
+        closeup.save_png("res://capture_3d_extinguisher.png")
+        print("Capture ecrite : res://capture_3d_extinguisher.png")
     # Liberer la souris avant de quitter (sinon curseur confine sous Windows)
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     get_tree().quit(0)

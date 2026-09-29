@@ -9,6 +9,13 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   (échelle cm → m, repère Z-up → Y-up) ; coordonnées d'assemblage d'origine
   conservées — 7 pièces : base, colonne, bras, avant-bras, carénage, poignet, bride.
 
+## Équipements de sécurité (dossier `safety/`)
+
+* `extinguisher.glb` et `sign_extinguisher_si31.png` (converti depuis un GIF —
+  Godot n'importe pas le GIF) fournis par **3IME** (propriétaire du projet).
+* Échelle ramenée à 0,62 m de haut, fixation murale à 0,70 m (poignée ~1,2 m,
+  hauteur normalisée de préhension), panneau à 2,05 m.
+
 ## Kenney — Factory Kit (modèles 3D, `kenney_factory/`)
 
 * Auteur : Kenney (kenney.nl) — licence **CC0 1.0** (domaine public).
