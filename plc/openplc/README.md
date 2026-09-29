@@ -34,13 +34,16 @@ Une boîte est posée sur le capteur d'entrée. Le rapport périodique affiche l
 
 ## 3. Charger le programme
 
-1. Page **Programs** → *Upload program* → sélectionner `plc/openplc/conveyor.st`, nommer (ex. « Convoyeur »).
+1. Page **Programs** → *Upload program* → sélectionner un des deux programmes de ce dossier :
+   * [`conveyor.st`](conveyor.st) — logique minimale du cahier des charges (la boîte s'immobilise au capteur de sortie) ;
+   * [`conveyor_cycle.st`](conveyor_cycle.st) — **cycle continu** : arrêt 2 s au capteur de sortie, évacuation de la boîte, attente de la suivante (temporisations TON dans le PLC).
 2. La compilation démarre automatiquement ; attendre « Compilation finished successfully » (une trentaine de secondes en Docker).
 
 ### Pourquoi ce fichier a cette forme (pièges)
 
 * **Programme IEC complet exigé** : `PROGRAM prog0 ... END_PROGRAM` + `CONFIGURATION Config0 ... END_CONFIGURATION` — des instructions ST nues sont refusées par matiec (`unknown syntax error`).
 * **Variables localisées par `AT`** : la syntaxe directe `IF %IX0.0` n'est pas acceptée par ce matiec ; on déclare `sensor_entry AT %IX100.0 : BOOL;`.
+* **Blocs `VAR` séparés** : variables `AT` et variables internes (instances TON, drapeaux) ne peuvent pas partager un même bloc `VAR` (`invalid located variable declaration`) — voir `conveyor_cycle.st` pour la structure à deux blocs.
 * **%I/%Q100, pas %I/%Q0** : OpenPLC range les E/S des *devices distants* à partir de **%IX100.0 / %QX100.0** (voir `updateBuffersIn_MB()` dans `core/modbus_master.cpp`). La bande basse %I0/%Q0 est l'image de son propre serveur Modbus. C'est LE piège principal : un programme sur %IX0.0 compile et tourne, mais ne voit jamais le simulateur.
 
 ## 4. Déclarer le simulateur comme slave device

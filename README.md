@@ -26,9 +26,11 @@ Règles de séparation fondamentales :
 
 ## Statut
 
-**Phase 3 terminée — le premier milestone logique est atteint avec un automate réel** : modèle I/O complet, moteur de simulation déterministe, usine déclarative JSON, serveur Modbus TCP intégré, et **programme OpenPLC validé de bout en bout** (capteur → Modbus → OpenPLC → convoyeur → arrêt au capteur de sortie). Reproduire le test : [plc/openplc/README.md](plc/openplc/README.md) ou sans OpenPLC via [examples/simple_conveyor](examples/simple_conveyor/README.md).
+**Premier milestone ATTEINT (Phases 0 → 5)** : modèle I/O complet, moteur de simulation déterministe, usine déclarative JSON, serveur Modbus TCP intégré, **cycle complet validé avec un vrai OpenPLC** (détection à l'entrée → marche → arrêt au capteur de sortie → évacuation, en boucle), et **scène 3D Godot** avec HUD et caméra orbitale.
 
-Voir [ROADMAP.md](ROADMAP.md) — il ne manque au premier milestone que le rendu 3D (Phase 5).
+![Scène 3D du prototype](docs/assets/scene_3d_phase5.png)
+
+Voir [ROADMAP.md](ROADMAP.md) — prochaines étapes : éditeur de scènes, machines supplémentaires, OPC UA…
 
 ## Prérequis
 
@@ -59,15 +61,21 @@ Code de sortie `0` = tous les tests passent.
 
 ## Lancer l'usine avec Modbus TCP
 
+**Avec la 3D** — ouvrir `simulator/project.godot` dans Godot 4.7.2 puis F5 : la scène démarre avec le serveur Modbus (port 502 par défaut). `B` pose une boîte, clic gauche + molette pour la caméra, le HUD affiche l'état temps réel. Ou en headless :
+
 ```bat
-scripts\run_simulator.bat
+scripts\run_simulator.bat --port=1502 --box=8
 ```
 
-Démarre l'usine du prototype avec le serveur Modbus TCP à l'écoute (port 502 par défaut, unit id 1). N'importe quel client Modbus peut alors lire les capteurs (`%IX0.0`, `%IX0.1`) et commander le convoyeur (`%QX0.0`) — détails et exemples Python dans [docs/protocols/modbus_tcp.md](docs/protocols/modbus_tcp.md). Options : `--port=1502`, `--box=8` (boîte toutes les 8 s), `--no-spawn`.
+N'importe quel client Modbus peut alors lire les capteurs (`%IX0.0`, `%IX0.1`) et commander le convoyeur (`%QX0.0`) — détails et exemples Python dans [docs/protocols/modbus_tcp.md](docs/protocols/modbus_tcp.md). Options : `--port=1502`, `--box=8` (boîte toutes les 8 s), `--no-spawn`.
+
+## Brancher OpenPLC
+
+Guide complet, testé avec un vrai OpenPLC v3 : [plc/openplc/README.md](plc/openplc/README.md) — deux programmes fournis : [`conveyor.st`](plc/openplc/conveyor.st) (logique minimale) et [`conveyor_cycle.st`](plc/openplc/conveyor_cycle.st) (cycle continu avec temporisations).
 
 ## Ouvrir le simulateur
 
-Ouvrir `simulator/project.godot` dans Godot 4.7.2 puis F5. La Phase 1 n'affiche qu'une scène minimale (sol, lumière, caméra) : la 3D réelle arrive en Phase 5.
+Ouvrir `simulator/project.godot` dans Godot 4.7.2 puis F5 : la scène 3D du prototype démarre (convoyeur, boîte, capteurs, HUD) avec le serveur Modbus actif. Capture automatique sans fenêtre : `godot --path simulator -- --capture` (écrit `simulator/capture_3d.png`).
 
 ## Structure du dépôt
 

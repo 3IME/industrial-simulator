@@ -94,4 +94,12 @@ Chaque décision non triviale est consignée ici : contexte, décision, conséqu
   2. **Bande %I/%Q100** : les E/S des *slave devices* distants atterrissent à partir de `%IX100.0` / `%QX100.0` (`updateBuffersIn_MB`), la bande basse étant l'image du serveur Modbus d'OpenPLC lui-même. Nos programmes cible donc toujours %I/%Q100.
   3. **Baud rate obligatoire** : le maître Modbus divise par le baud même en TCP → un baud vide tue le runtime (SIGFPE). Toujours 9600.
   4. **IPv4 obligatoire côté maître** : `host.docker.internal` peut ne résoudre qu'en IPv6 (Docker Desktop récent), que libmodbus rejette (`Invalid argument`) → pointer le slave device vers une IPv4 d'hôte.
+  5. **Blocs `VAR` séparés** : ce matiec refuse de mélanger variables localisées `AT` et variables internes (instances TON, drapeaux) dans un même bloc `VAR` (`invalid located variable declaration`) → deux blocs `VAR` successifs.
 * **Conséquences** : le simulateur reste générique (aucune connaissance d'OpenPLC) ; toutes ces conventions vivent dans le programme ST et la config OpenPLC, documentées dans le guide et le mapping. Le test de bout en bout (capteur → Modbus → OpenPLC → convoyeur) est validé et reproductible via `examples/simple_conveyor/`.
+
+## ADR-013 — Le rendu 3D ne fait que lire l'état
+
+* **Date** : 2026-09-29 (Phase 5)
+* **Contexte** : la scène 3D arrive (Phase 5) alors que tout le comportement est déjà logique et testé. La tentation historique des simulateurs est de mettre la logique dans le rendu ; c'est précisément ce que le projet interdit.
+* **Décision** : la scène (`simulator/scenes/main.gd`) construit le rendu **depuis les paramètres géométriques de la définition d'usine** (longueur du convoyeur, positions des capteurs, taille de la boîte) et, à chaque frame, **lit** l'état des machines (position, capteurs) pour placer les éléments et colorer les lampes. Le pilotage temps réel utilise un accumulateur à pas fixe (`_physics_process`), le serveur Modbus démarre au chargement. Toute « intelligence » reste dans le PLC externe ; aucun `if` métier dans le rendu (seuls des états d'affichage).
+* **Conséquences** : le rendu est remplaçable (éditeur 3D, autre moteur) sans toucher au cœur ; la géométrie reste déclarative (le JSON de l'usine décrit, la scène construit) ; la capture automatique (`--capture`) fournit une preuve visuelle exécutable en CI.
