@@ -28,7 +28,7 @@ const EXTINGUISHER_SCALE := 0.62 / 1.088
 const PROP_PENDANT_LAMP := "res://assets/props/pendant_lamp.glb"
 const PROP_FLUO_FIXTURE := "res://assets/props/fluorescent_fixture.glb"
 const PROP_SECURITY_DOOR := "res://assets/props/security_door.glb"
-const PROP_ADULT := "res://assets/props/adult_flipbook.glb"
+const PROP_ADULT := "res://assets/props/adult_static.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
@@ -583,9 +583,6 @@ func _build_props() -> void:
     var adult := _place_prop(PROP_ADULT,
         Vector3(HALL_MIN_X + 16.4, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
     if adult != null:
-        var flip := Node3D.new()
-        flip.set_script(preload("res://ui/adult_flipbook.gd"))
-        adult.add_child(flip)
         _clamp_prop_height(adult, 1.60, "adulte")
         _adult_node = adult
         for anim_player in adult.find_children("*", "AnimationPlayer"):
