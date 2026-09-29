@@ -50,30 +50,28 @@ for idx, node in enumerate(j["nodes"]):
 ANIM = j["animations"][0]
 
 
-def globals_at(T):
-    """Transformations globales de tous les noeuds a l'instant T,
-    racine Armature neutralisee (skin dans l'espace rig)."""
+def rot_z(deg):
+    a = np.radians(deg)
+    c, ss = np.cos(a), np.sin(a)
+    m = np.eye(4)
+    m[0, 0] = c; m[0, 1] = -ss; m[1, 0] = ss; m[1, 1] = c
+    return m
+
+
+def globals_at(_T=0.0):
+    """Transformations globales des noeuds AU REPOS (sans animation)."""
     local = {}
     for idx, node in enumerate(j["nodes"]):
         m = np.eye(4)
-        m[:3, :3] = quat_to_mat(node.get("rotation", [0, 0, 0, 1])) \
-            @ np.diag(node.get("scale", [1, 1, 1]))
+        m[:3, :3] = quat_to_mat(node.get("rotation", [0, 0, 0, 1]))             @ np.diag(node.get("scale", [1, 1, 1]))
         m[:3, 3] = node.get("translation", [0, 0, 0])
         local[idx] = m
-    for ch in ANIM["channels"]:
-        tgt = ch["target"]["node"]
-        samp = ANIM["samplers"][ch["sampler"]]
-        inp = acc_data(samp["input"])[:, 0]
-        i = int(np.argmin(np.abs(inp - T)))
-        out = acc_data(samp["output"])
-        p = ch["target"]["path"]
-        if p == "translation":
-            local[tgt][:3, 3] = out[i]
-        elif p == "rotation":
-            local[tgt][:3, :3] = quat_to_mat(out[i])
-    # Convention verifiee (diag_skinning.py) : G AVEC l'echelle Armature
-    # activee et IBM transpose donnent l'identite exacte au repos.
-
+    # bras de la pose en T rabattus le long du corps :
+    # bras gauche (+X) -> rotation Z de -90 deg ; bras droit (-X) -> +90 deg
+    for name, angle in [("LeftArm", -90.0), ("RightArm", 90.0)]:
+        for idx, node in enumerate(j["nodes"]):
+            if node.get("name") == name:
+                local[idx] = rot_z(angle) @ local[idx]
     G = {}
 
     def g(i):
@@ -86,40 +84,7 @@ def globals_at(T):
     return G
 
 
-# 1) instant le plus "naturel" une fois figé : tete haute, hanches peu
-# decalees (le salut deplace les hanches de ~30 cm), bras pres du corps.
-# On peau-teste chaque instant (les os seuls ne disent pas l'envergure).
-head_idx = next(i for i, n in enumerate(j["nodes"]) if n.get("name") == "Head")
-hips_idx = next(i for i, n in enumerate(j["nodes"]) if n.get("name") == "Hips")
-skin_meta = j["skins"][0]
-IBMs_sel = acc_data(skin_meta["inverseBindMatrices"]).transpose(0, 2, 1)
-prim_sel = j["meshes"][0]["primitives"][0]
-at_sel = prim_sel["attributes"]
-V_sel = acc_data(at_sel["POSITION"])
-J_sel = acc_data(at_sel["JOINTS_0"]).astype(int)
-W_sel = acc_data(at_sel["WEIGHTS_0"])
-Vh_sel = np.hstack([V_sel, np.ones((len(V_sel), 1))])
-
-dur = float(acc_data(ANIM["samplers"][0]["input"])[:, 0].max())
-meilleur_t, meilleur_score = 0.0, -1e9
-t = 0.0
-while t <= dur:
-    Gt = globals_at(t)
-    Mt = np.stack([Gt[jb] @ IBMs_sel[k]
-                   for k, jb in enumerate(skin_meta["joints"])])
-    vo = np.zeros_like(V_sel)
-    for k in range(4):
-        vo += W_sel[:, k, None] * np.einsum('nij,nj->ni', Mt[J_sel[:, k]], Vh_sel)[:, :3]
-    envergure = vo[:, 0].max() - vo[:, 0].min()
-    tete = Gt[head_idx][1, 3]
-    hanches_dx = abs(Gt[hips_idx][0, 3])
-    score = tete - 3.0 * hanches_dx - 4.0 * max(0.0, envergure - 90.0)
-    if score > meilleur_score:
-        meilleur_score, meilleur_t = score, t
-    t += 0.1
-T = round(meilleur_t, 2)
-print("instant retenu: t =", T, "s (droit, bras pres du corps)")
-
+T = 0.0
 G = globals_at(T)
 
 # 2) skinning (IBM column-major -> transpose)
