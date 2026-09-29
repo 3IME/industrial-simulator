@@ -50,7 +50,7 @@ func _ready() -> void:
     position_label = _make_label(box, "position       = -")
     encoder_label = _make_label(box, "encodeur       = -")
     modbus_label = _make_label(box, "modbus         = -")
-    hint_label = _make_label(box, "ZQSD/WASD marcher | Maj courir | Espace saut | B boite | Echap souris", false, true)
+    hint_label = _make_label(box, "ZQSD/WASD marcher | Maj courir | Espace saut | B boite | clic : souris | Echap : liberer", false, true)
     add_child(panel)
 
 

@@ -2,8 +2,8 @@ extends CharacterBody3D
 ## Personnage en vue subjective, a hauteur d'homme (1,60 m d'yeux).
 ##
 ## Controles : ZQSD/WASD (touches physiques, compatible AZERTY/QWERTY),
-## souris pour regarder, Maj pour courir, Espace pour sauter,
-## Echap pour liberer la souris, clic pour la recapturer.
+## souris pour regarder (clic dans la fenetre pour capturer la souris),
+## Maj pour courir, Espace pour sauter, Echap pour liberer la souris.
 
 const WALK_SPEED := 4.0
 const SPRINT_SPEED := 8.0
@@ -29,7 +29,17 @@ func _ready() -> void:
     cam.position = Vector3(0, EYE_HEIGHT, 0)
     add_child(cam)
     cam.make_current()
-    Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## Ne JAMAIS quitter (ni changer de scene) en laissant la souris capturee :
+## Windows maintiendrait le curseur confine au rectangle de la fenetre.
+func _exit_tree() -> void:
+    Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _notification(what: int) -> void:
+    if what == NOTIFICATION_WM_CLOSE_EVENT:
+        Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -559,4 +559,6 @@ func _capture_and_quit() -> void:
     var image := get_viewport().get_texture().get_image()
     image.save_png("res://capture_3d.png")
     print("Capture ecrite : res://capture_3d.png")
+    # Liberer la souris avant de quitter (sinon curseur confine sous Windows)
+    Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     get_tree().quit(0)
