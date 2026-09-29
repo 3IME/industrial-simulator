@@ -30,6 +30,15 @@ const PROP_FLUO_FIXTURE := "res://assets/props/fluorescent_fixture.glb"
 const PROP_SECURITY_DOOR := "res://assets/props/security_door.glb"
 const PROP_ADULT := "res://assets/props/adult_static.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
+const PROP_IRON_MINER := "res://assets/props/iron_miner.glb"
+const PROP_BRIDGE := "res://assets/props/bridge_fragment.glb"
+const PROP_VOXEL_MACHINE := "res://assets/props/voxel_machine.glb"
+const PROP_VOXEL_MACHINE_2 := "res://assets/props/voxel_machine_2.glb"
+const PROP_MODULAR_CONVEYOR := "res://assets/props/modular_conveyor.glb"
+const PROP_OFFICE_CHAIR := "res://assets/props/office_chair.glb"
+const PROP_GAME := "res://assets/props/industrial_game.glb"
+const PROP_DUMPSTER := "res://assets/props/steel_dumpster.glb"
+const PROP_ELEVATOR := "res://assets/props/elevator.glb"
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
 const HALL_MIN_X := -58.0
@@ -413,6 +422,7 @@ func _build_hall(belt_length: float) -> void:
         _build_extinguisher(Vector3(HALL_MAX_X - 0.09, 0, z), PI)
 
     _build_props()
+    _build_expo()
 
 
 func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
@@ -596,6 +606,48 @@ func _build_props() -> void:
         Vector3(HALL_MIN_X + 0.42, 0.95, 4.2), Vector3(0.0, PI / 2.0, 0.0))
     if gondola != null:
         _add_static_box(Vector3(HALL_MIN_X + 0.42, 0.95, 4.2), Vector3(0.62, 1.9, 1.0))
+
+
+## Ligne d'exposition : les modeles GLB fournis, espaces de 7 m a z = -10,
+## chacun avec son nom au sol (Label3D plat devant lui). Bbox mesurees via
+## tests/measure_props.gd (toutes debout a l'identite, echelle 1).
+func _build_expo() -> void:
+    var items := [
+        {"path": PROP_IRON_MINER, "nom": "Mineur de fer automatique",
+         "x": -36.0, "y": 0.76, "col": Vector3(1.9, 1.51, 1.33)},
+        {"path": PROP_VOXEL_MACHINE, "nom": "Machine industrielle voxel 1",
+         "x": -29.0, "y": 0.67, "col": Vector3(1.9, 1.35, 1.9)},
+        {"path": PROP_VOXEL_MACHINE_2, "nom": "Machine industrielle voxel 2",
+         "x": -22.0, "y": 0.95, "col": Vector3(0.7, 1.9, 0.7)},
+        {"path": PROP_MODULAR_CONVEYOR, "nom": "Convoyeur modulaire",
+         "x": -15.0, "y": 0.25, "col": Vector3(1.9, 0.51, 0.65)},
+        {"path": PROP_GAME, "nom": "Jeu industriel realiste",
+         "x": -8.0, "y": 0.30, "col": Vector3(1.9, 0.6, 1.42)},
+        {"path": PROP_DUMPSTER, "nom": "Benne en acier vert",
+         "x": -1.0, "y": 0.37, "col": Vector3(0.8, 0.73, 0.74)},
+        {"path": PROP_ELEVATOR, "nom": "Ascenseur",
+         "x": 6.0, "y": 0.43, "col": Vector3(0.63, 0.86, 0.61)},
+        {"path": PROP_OFFICE_CHAIR, "nom": "Chaise de bureau",
+         "x": 13.0, "y": 0.51, "col": Vector3(0.6, 1.02, 0.6)},
+        {"path": PROP_BRIDGE, "nom": "Fragment de pont",
+         "x": 20.0, "y": 0.0, "col": Vector3.ZERO},    # plat : pas de collision
+    ]
+    for item in items:
+        var node := _place_prop(item.path, Vector3(item.x, item.y, -10.0), Vector3.ZERO)
+        if node == null:
+            continue
+        if item.col != Vector3.ZERO:
+            _add_static_box(Vector3(item.x, item.y, -10.0), item.col)
+        # Nom au sol, devant l'objet (face au chemin de visite)
+        var label := Label3D.new()
+        label.text = item.nom
+        label.font_size = 48
+        label.modulate = Color(1.0, 0.95, 0.8)
+        label.outline_size = 12
+        label.outline_modulate = Color(0.05, 0.05, 0.08)
+        label.position = Vector3(item.x, 0.02, -10.0 + item.col.z / 2.0 + 1.1)
+        label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
+        add_child(label)
 
 
 # ---------------------------------------------------------------------------
@@ -798,6 +850,15 @@ func _capture_and_quit() -> void:
         var lamps_shot := get_viewport().get_texture().get_image()
         lamps_shot.save_png("res://capture_3d_lamps.png")
         print("Capture ecrite : res://capture_3d_lamps.png")
+        # Ligne d'exposition des modeles fournis
+        player_node.position = Vector3(-38.5, 0.0, -6.5)
+        player_node.rotation.y = -PI / 2.0
+        for cam in player_node.find_children("*", "Camera3D"):
+            cam.rotation.x = 0.04
+        await get_tree().create_timer(0.4).timeout
+        var expo_shot := get_viewport().get_texture().get_image()
+        expo_shot.save_png("res://capture_3d_expo.png")
+        print("Capture ecrite : res://capture_3d_expo.png")
         # Controle tardif : l'adulte reste-t-il a taille humaine apres
         # plusieurs boucles d'animation ?
         await get_tree().create_timer(12.0).timeout

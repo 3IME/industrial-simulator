@@ -25,6 +25,11 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
 ## Props 3D (dossier `props/`)
 
 * Modèles fournis par **3IME** (propriétaire du projet) :
+  * ligne d'exposition (z = -10, un nom au sol par objet, cf. `_build_expo`
+    dans `simulator/scenes/main.gd`) : `iron_miner.glb`,
+    `voxel_machine.glb`, `voxel_machine_2.glb`, `modular_conveyor.glb`,
+    `industrial_game.glb`, `steel_dumpster.glb`, `elevator.glb`,
+    `office_chair.glb`, `bridge_fragment.glb`
   * `pendant_lamp.glb`, `fluorescent_fixture.glb` (lampes au plafond),
     `security_door.glb` (porte de sécurité murale), `gondola.glb`
     (rayonnage mural), `adult_waving.glb` (personnage animé « salut »).
@@ -32,12 +37,6 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   mètres et squelette en centimètres (racine `scale 0.01`) — les données
   POSITION du maillage ont été multipliées par 100 pour rétablir la cohérence
   skinnage/animation.
-* `adult_flipbook.glb` : personnage en FOLIOSCOPE — 24 maillages simples
-  (un par instant de l'animation, sans squelette) défilés par
-  `ui/adult_flipbook.gd`. Généré par `scripts/bake_flipbook.py`
-  (échelle commune 1,60 m, pieds regroundés par image, recentrage sur
-  les hanches). Le mouvement revient sans rig : la taille ne peut pas
-  dériver au rendu.
 * `adult_static.glb` : variante figée de secours (pose de repos bras
   baissés), générée par `scripts/bake_static_adult.py` (convention IBM
   vérifiée par `scripts/diag_skinning.py`). Non utilisée par défaut.

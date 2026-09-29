@@ -8,6 +8,15 @@ const PROPS := [
     "res://assets/props/security_door.glb",
     "res://assets/props/adult_waving.glb",
     "res://assets/props/gondola.glb",
+    "res://assets/props/iron_miner.glb",
+    "res://assets/props/bridge_fragment.glb",
+    "res://assets/props/voxel_machine.glb",
+    "res://assets/props/voxel_machine_2.glb",
+    "res://assets/props/modular_conveyor.glb",
+    "res://assets/props/office_chair.glb",
+    "res://assets/props/industrial_game.glb",
+    "res://assets/props/steel_dumpster.glb",
+    "res://assets/props/elevator.glb",
 ]
 
 var frames := 0
