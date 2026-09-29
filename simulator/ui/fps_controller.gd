@@ -37,11 +37,6 @@ func _exit_tree() -> void:
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
-func _notification(what: int) -> void:
-    if what == NOTIFICATION_WM_CLOSE_EVENT:
-        Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-
-
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
         rotation.y -= event.relative.x * MOUSE_SENSITIVITY

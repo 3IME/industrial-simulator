@@ -88,11 +88,12 @@ func _ready() -> void:
     var link = factory.get("modbus")
     if link != null:
         var port: int = modbus_port if modbus_port > 0 else link.server.port
-        if link.listen(port) != Error.OK:
-            push_error("ecoute Modbus impossible sur le port " + str(port))
-            get_tree().quit(1)
-            return
-        print("Modbus TCP esclave actif : port ", port, ", unit id ", link.server.unit_id)
+        if link.listen(port) == Error.OK:
+            print("Modbus TCP esclave actif : port ", port, ", unit id ", link.server.unit_id)
+        else:
+            # Non fatal : la scene reste utilisable sans PLC (port deja pris ?)
+            push_warning("ecoute Modbus impossible sur le port " + str(port) + " ; simulation sans serveur")
+            link = null
 
     var belt_length := 2.0
     if conveyor != null:
@@ -107,6 +108,10 @@ func _ready() -> void:
 
     if conveyor != null:
         conveyor.spawn_box()
+    # Ceinture de securite : liberer la souris si la fenetre se ferme
+    get_tree().root.close_requested.connect(
+        func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+    )
     print("Scene prete. ZQSD/WASD : marcher | souris : regarder | Maj : courir | Espace : saut | B : boite")
     if capture_mode:
         _capture_and_quit()

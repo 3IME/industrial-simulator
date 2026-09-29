@@ -19,16 +19,19 @@ func _ready() -> void:
     bg.set_anchors_preset(Control.PRESET_FULL_RECT)
     add_child(bg)
 
-    # Colonne centree : logo, 3IME, sous-titre, lien
+    # Colonne centree : conteneur plein ecran, enfants centres en largeur
+    # (SIZE_SHRINK_CENTER) et bloc centre en hauteur (ALIGNMENT_CENTER).
     var column := VBoxContainer.new()
-    column.set_anchors_preset(Control.PRESET_CENTER)
+    column.set_anchors_preset(Control.PRESET_FULL_RECT)
+    column.alignment = BoxContainer.ALIGNMENT_CENTER
     column.add_theme_constant_override("separation", 18)
     add_child(column)
 
     var logo := TextureRect.new()
     var texture = load(LOGO_PATH)
     if texture != null:
-        # Rond blanc derriere le logo (le SVG gris disparait sur fond sombre)
+        # Rond blanc derriere le logo, centrage manuel (pas d'ancre) pour
+        # un placement deterministe : holder 460x460, logo 320x414 dedans.
         var holder := Control.new()
         holder.custom_minimum_size = Vector2(460, 460)
         var circle := Panel.new()
@@ -36,14 +39,14 @@ func _ready() -> void:
         circle_style.bg_color = Color.WHITE
         circle_style.set_corner_radius_all(230)
         circle.add_theme_stylebox_override("panel", circle_style)
-        circle.set_anchors_preset(Control.PRESET_FULL_RECT)
+        circle.position = Vector2.ZERO
+        circle.size = Vector2(460, 460)
         holder.add_child(circle)
         logo.texture = texture
-        # SVG au format portrait (612 x 792) : affichage ~320 px de large
-        logo.custom_minimum_size = Vector2(320, 414)
+        logo.position = Vector2(70, 23)
+        logo.size = Vector2(320, 414)
         logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
         logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-        logo.set_anchors_preset(Control.PRESET_CENTER)
         holder.add_child(logo)
         column.add_child(holder)
 
@@ -75,6 +78,10 @@ func _ready() -> void:
     hint.add_theme_color_override("font_color", Color(0.45, 0.47, 0.5))
     hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     column.add_child(hint)
+
+    # Tous les enfants de la colonne centres horizontalement
+    for child in column.get_children():
+        child.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 
     # Son d'accueil
     var player := AudioStreamPlayer.new()
