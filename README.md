@@ -26,9 +26,9 @@ Règles de séparation fondamentales :
 
 ## Statut
 
-**Phase 2 terminée** : modèle I/O complet, moteur de simulation déterministe, usine déclarative JSON, et **serveur Modbus TCP intégré** (esclave, GDScript pur, zéro dépendance) — un client Modbus externe peut déjà lire les capteurs et commander le convoyeur du prototype. Lanceur : `scripts\run_simulator.bat`.
+**Phase 3 terminée — le premier milestone logique est atteint avec un automate réel** : modèle I/O complet, moteur de simulation déterministe, usine déclarative JSON, serveur Modbus TCP intégré, et **programme OpenPLC validé de bout en bout** (capteur → Modbus → OpenPLC → convoyeur → arrêt au capteur de sortie). Reproduire le test : [plc/openplc/README.md](plc/openplc/README.md) ou sans OpenPLC via [examples/simple_conveyor](examples/simple_conveyor/README.md).
 
-Voir [ROADMAP.md](ROADMAP.md) pour les phases suivantes (OpenPLC, 3D…).
+Voir [ROADMAP.md](ROADMAP.md) — il ne manque au premier milestone que le rendu 3D (Phase 5).
 
 ## Prérequis
 

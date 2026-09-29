@@ -84,3 +84,14 @@ Chaque décision non triviale est consignée ici : contexte, décision, conséqu
   * `ModbusPlcLink` — implémente le contrat `PlcLink` : `publish_inputs` copie la table vers les banques d'entrées, `pull_outputs` rapatrie **uniquement les sorties réellement écrites par le maître** (suivi « dirty »), `poll()` (hook optionnel du moteur, temps 0 du cycle) traite le réseau.
 * **Détails retenus** : mise à l'échelle des registres ×100 par défaut pour les analogiques (surcharge `"scale"` par entrée de mapping), ×1 pour compteurs/encodeurs, complément à deux signé ; le serveur n'écoute jamais au simple chargement d'une usine — démarrage explicite (`run_headless.gd`, futur Node 3D).
 * **Conséquences** : zéro dépendance, testable en boucle locale TCP (le client de test vit dans la suite) ; deux pièges Godot documentés pour la maintenance : `PackedByteArray` est **copy-on-write** (jamais de mutation via un cast — restocker explicitement) et ses `encode_u16/decode_u16` sont **little-endian** alors que Modbus est **big-endian** (encodage octet par octet) ; les limites : pas de HTTPS-style sécurité, pas de Modbus RTU/série (hors périmètre actuel).
+
+## ADR-012 — Conventions OpenPLC v3 retenues pour l'interopérabilité
+
+* **Date** : 2026-09-29 (Phase 3)
+* **Contexte** : le branchement d'un vrai OpenPLC v3 (via Docker) a révélé quatre conventions/pièges non documentés ailleurs, qui ont chacun coûté un cycle de débogage. Ils sont consignés ici et dans le guide (`plc/openplc/README.md`) pour ne jamais les reperdre.
+* **Décisions/conventions** :
+  1. **Programme ST complet** : OpenPLC v3 exige `PROGRAM ... END_PROGRAM` + `CONFIGURATION ... END_CONFIGURATION` (instructions nues refusées), et les accès directs `%IX0.0` ne compilent pas : variables localisées `AT %IX100.0 : BOOL`.
+  2. **Bande %I/%Q100** : les E/S des *slave devices* distants atterrissent à partir de `%IX100.0` / `%QX100.0` (`updateBuffersIn_MB`), la bande basse étant l'image du serveur Modbus d'OpenPLC lui-même. Nos programmes cible donc toujours %I/%Q100.
+  3. **Baud rate obligatoire** : le maître Modbus divise par le baud même en TCP → un baud vide tue le runtime (SIGFPE). Toujours 9600.
+  4. **IPv4 obligatoire côté maître** : `host.docker.internal` peut ne résoudre qu'en IPv6 (Docker Desktop récent), que libmodbus rejette (`Invalid argument`) → pointer le slave device vers une IPv4 d'hôte.
+* **Conséquences** : le simulateur reste générique (aucune connaissance d'OpenPLC) ; toutes ces conventions vivent dans le programme ST et la config OpenPLC, documentées dans le guide et le mapping. Le test de bout en bout (capteur → Modbus → OpenPLC → convoyeur) est validé et reproductible via `examples/simple_conveyor/`.

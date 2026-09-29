@@ -123,8 +123,12 @@ func take_dirty_holding() -> Dictionary:
 
 func _process_peer(p: Dictionary) -> bool:
     var peer: StreamPeerTCP = p.peer
-    peer.poll()
-    if peer.get_status() == StreamPeerTCP.STATUS_ERROR:
+    # Verifier l'etat AVANT poll() : poll() sur un pair ferme affiche une
+    # erreur interne Godot ("!is_open()"). Un pair accepte est etabli ; tout
+    # autre etat (remote fermé, erreur) => eviction immediate.
+    if peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+        return false
+    if peer.poll() != Error.OK:
         return false
     var available: int = peer.get_available_bytes()
     # NB : PackedByteArray est copy-on-write — on reconstruit le buffer local

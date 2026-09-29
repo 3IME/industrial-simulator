@@ -1,12 +1,18 @@
 # Documentation PLC / OpenPLC
 
-## Phase 3 (à venir)
+## Phase 3 — terminée et validée avec un automate réel
 
-Ce dossier contiendra :
+Le guide complet de branchement (programme ST, slave device, pièges, vérification, dépannage) : **[plc/openplc/README.md](../../plc/openplc/README.md)**.
 
-* le **programme OpenPLC minimal** du premier prototype :
-  * `SI sensor_entry (%IX0.0) = TRUE ALORS conveyor (%QX0.0) = TRUE`
-  * `SI sensor_exit (%IX0.1) = TRUE ALORS conveyor (%QX0.0) = FALSE`
-* le **mapping** utilisé (également versionné dans `plc/mappings/`) ;
-* les **étapes pas-à-pas** : installer OpenPLC, charger le programme, configurer l'esclave Modbus TCP du simulateur, lancer et vérifier le cycle complet ;
-* la **procédure de reproduction du test** de bout en bout exigée par le premier milestone.
+* Programme : [`plc/openplc/conveyor.st`](../../plc/openplc/conveyor.st)
+* Mapping complet : [`plc/mappings/conveyor_openplc.md`](../../plc/mappings/conveyor_openplc.md)
+* Scénario de référence : [`examples/simple_conveyor/`](../../examples/simple_conveyor/) (avec client de répétition générale sans OpenPLC)
+* Runtime Docker testé : [`docker/README.md`](../docker/README.md)
+
+Trace du test réel (OpenPLC v3, 2026-09-29) :
+
+```
+[t=224.4s] entry=1 | run=0 | pos=0.30   <- boite sur le capteur d'entree
+[t=226.4s] entry=0 | run=1 speed=0.50   <- le PLC demarre le convoyeur
+[t=228.4s] exit=1  | run=0 pos=1.80     <- le PLC arrete au capteur de sortie
+```

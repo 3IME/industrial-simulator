@@ -120,4 +120,10 @@ func _report() -> void:
         float(io.get_value("conveyor_01.position", -1.0)),
         int(io.get_value("conveyor_01.belt_encoder", 0)),
     ]
+    var link = factory.get("modbus")
+    if link != null:
+        line += " | modbus: %d requetes servies, coil0=%d" % [
+            link.server.requests_served,
+            int(bool(link.server.coils[0])) if link.server.coils.size() > 0 else 0,
+        ]
     print(line)
