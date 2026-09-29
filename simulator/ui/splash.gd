@@ -28,12 +28,24 @@ func _ready() -> void:
     var logo := TextureRect.new()
     var texture = load(LOGO_PATH)
     if texture != null:
+        # Rond blanc derriere le logo (le SVG gris disparait sur fond sombre)
+        var holder := Control.new()
+        holder.custom_minimum_size = Vector2(460, 460)
+        var circle := Panel.new()
+        var circle_style := StyleBoxFlat.new()
+        circle_style.bg_color = Color.WHITE
+        circle_style.set_corner_radius_all(230)
+        circle.add_theme_stylebox_override("panel", circle_style)
+        circle.set_anchors_preset(Control.PRESET_FULL_RECT)
+        holder.add_child(circle)
         logo.texture = texture
-        # SVG au format portrait (612 x 792) : affichage ~300 px de large
-        logo.custom_minimum_size = Vector2(300, 388)
+        # SVG au format portrait (612 x 792) : affichage ~320 px de large
+        logo.custom_minimum_size = Vector2(320, 414)
         logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
         logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-        column.add_child(logo)
+        logo.set_anchors_preset(Control.PRESET_CENTER)
+        holder.add_child(logo)
+        column.add_child(holder)
 
     var title := Label.new()
     title.text = "3IME"

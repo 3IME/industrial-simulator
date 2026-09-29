@@ -37,8 +37,10 @@ const TEX_WALL_N := "res://assets/textures/concrete_wall_004_nor_gl.jpg"
 const TEX_ROOF_D := "res://assets/textures/corrugated_iron_02_diff.jpg"
 const TEX_ROOF_N := "res://assets/textures/corrugated_iron_02_nor_gl.jpg"
 
-# Modeles Kenney : conveyor.glb = 1 x 0.4 x 1 m, base a y=0 (dessus a 0.4)
-const BELT_TOP := 0.4
+# Modeles Kenney : conveyor.glb = 1 x 0.4 x 1 m, base a y=0.
+# Le convoyeur est rehausse (CONVEYOR_LIFT) a hauteur de travail reelle.
+const CONVEYOR_LIFT := 0.5
+const BELT_TOP := 0.4 + 0.5
 # Largeur du modele box-small.glb (0.595 m), pour la mise a l'echelle
 const BOX_MODEL_WIDTH := 0.595
 
@@ -328,21 +330,11 @@ func _build_hall(belt_length: float) -> void:
             light.light_color = Color(1.0, 0.97, 0.9)
             add_child(light)
 
-    # Poteaux porteurs autour de la zone du convoyeur + extincteurs
-    var pillar_mat := StandardMaterial3D.new()
-    pillar_mat.albedo_color = Color(0.5, 0.52, 0.55)
-    for px in [-1.6, 3.6]:
-        for pz in [-3.2, 3.2]:
-            var pillar := MeshInstance3D.new()
-            var pillar_box := BoxMesh.new()
-            pillar_box.size = Vector3(0.5, HALL_HEIGHT, 0.5)
-            pillar.mesh = pillar_box
-            pillar.position = Vector3(px, HALL_HEIGHT / 2.0, pz)
-            pillar.material_override = pillar_mat
-            add_child(pillar)
-            _add_static_box(Vector3(px, HALL_HEIGHT / 2.0, pz), Vector3(0.5, HALL_HEIGHT, 0.5))
-    _build_extinguisher(Vector3(3.6, 0, 3.2 - 0.26), PI)
-    _build_extinguisher(Vector3(-1.6, 0, -3.2 + 0.26), 0.0)
+    # Extincteurs muraux : mur du fond (z min) et mur droit (x max)
+    for x in [-20.0, 10.0, 40.0]:
+        _build_extinguisher(Vector3(x, 0, HALL_MIN_Z + 0.09), -PI / 2.0)
+    for z in [-15.0, 15.0]:
+        _build_extinguisher(Vector3(HALL_MAX_X - 0.09, 0, z), PI)
 
 
 func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
@@ -423,14 +415,16 @@ func _build_visuals() -> void:
         exit_x = conveyor.exit_position
         box_size = conveyor.box_length
 
-    # Convoyeur : modeles Kenney (1 m par piece) ou repli procedurale
+    # Convoyeur : modeles Kenney (1 m par piece) rehausse sur un chassssis,
+    # ou repli procedurale
     var conveyor_scene = load(CONVEYOR_PIECE)
     if conveyor_scene != null:
         var count := int(ceil(belt_length))
         for i in range(count):
             var piece = conveyor_scene.instantiate()
-            piece.position = Vector3(i + 0.5, 0, 0)
+            piece.position = Vector3(i + 0.5, CONVEYOR_LIFT, 0)
             add_child(piece)
+        _build_conveyor_frame(belt_length)
     else:
         _build_procedural_conveyor(belt_length)
     # Le personnage ne traverse pas le convoyeur
@@ -456,6 +450,29 @@ func _build_visuals() -> void:
         box_mesh_node.material_override = box_mat
         box_visual = box_mesh_node
     add_child(box_visual)
+
+
+## Chassis metallique sous le convoyeur (le modele Kenney etant une piece
+## pleine de 0,4 m, on le porte a hauteur de travail sur des longerres).
+func _build_conveyor_frame(belt_length: float) -> void:
+    var steel := StandardMaterial3D.new()
+    steel.albedo_color = Color(0.28, 0.30, 0.33)
+    for z in [-0.38, 0.38]:
+        var rail := MeshInstance3D.new()
+        var rail_box := BoxMesh.new()
+        rail_box.size = Vector3(belt_length, CONVEYOR_LIFT, 0.07)
+        rail.mesh = rail_box
+        rail.position = Vector3(belt_length / 2.0, CONVEYOR_LIFT / 2.0, z)
+        rail.material_override = steel
+        add_child(rail)
+    for x in [0.3, belt_length / 2.0, belt_length - 0.3]:
+        var foot := MeshInstance3D.new()
+        var foot_box := BoxMesh.new()
+        foot_box.size = Vector3(0.08, CONVEYOR_LIFT, 0.85)
+        foot.mesh = foot_box
+        foot.position = Vector3(x, CONVEYOR_LIFT / 2.0, 0)
+        foot.material_override = steel
+        add_child(foot)
 
 
 ## Repli si le kit Kenney est absent : bande + chassis proceduraux.
@@ -485,9 +502,9 @@ func _build_procedural_conveyor(belt_length: float) -> void:
 func _build_sensor(x_position: float, sensor_name: String) -> MeshInstance3D:
     var post := MeshInstance3D.new()
     var post_mesh := BoxMesh.new()
-    post_mesh.size = Vector3(0.05, 0.7, 0.05)
+    post_mesh.size = Vector3(0.05, BELT_TOP + 0.5, 0.05)
     post.mesh = post_mesh
-    post.position = Vector3(x_position, 0.35, 0.6)
+    post.position = Vector3(x_position, (BELT_TOP + 0.5) / 2.0, 0.6)
     var post_mat := StandardMaterial3D.new()
     post_mat.albedo_color = Color(0.1, 0.1, 0.1)
     post.material_override = post_mat
@@ -497,7 +514,7 @@ func _build_sensor(x_position: float, sensor_name: String) -> MeshInstance3D:
     var lamp_mesh := BoxMesh.new()
     lamp_mesh.size = Vector3(0.08, 0.08, 0.35)
     lamp.mesh = lamp_mesh
-    lamp.position = Vector3(x_position, 0.55, 0.42)
+    lamp.position = Vector3(x_position, BELT_TOP + 0.12, 0.42)
     lamp.name = sensor_name
     var lamp_mat := StandardMaterial3D.new()
     lamp_mat.emission_enabled = true
