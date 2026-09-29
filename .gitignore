@@ -3,6 +3,7 @@
 *.translation
 export_presets.cfg
 simulator/capture_3d.png
+simulator/capture_splash.png
 
 # Outils locaux (binaire Godot téléchargé, non versionné)
 tools/
