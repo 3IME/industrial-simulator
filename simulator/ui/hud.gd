@@ -50,7 +50,7 @@ func _ready() -> void:
     position_label = _make_label(box, "position       = -")
     encoder_label = _make_label(box, "encodeur       = -")
     modbus_label = _make_label(box, "modbus         = -")
-    hint_label = _make_label(box, "B : boite | clic+molette : camera", false, true)
+    hint_label = _make_label(box, "ZQSD/WASD marcher | Maj courir | Espace saut | B boite | Echap souris", false, true)
     add_child(panel)
 
 
@@ -58,7 +58,7 @@ func _make_label(parent: Control, text: String, bold := false, dim := false) -> 
     var label := Label.new()
     label.text = text
     if bold:
-        label.add_theme_font_size_override("font_size", 16)
+        label.add_theme_font_size_override("font_size", 18)
     if dim:
         label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
     parent.add_child(label)

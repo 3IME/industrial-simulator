@@ -14,6 +14,14 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
 
 * Source : polyhaven.com — licence **CC0 1.0** (domaine public).
 * Textures utilisées :
-  * `concrete_floor_worn_001` (sol béton usé) — diffuse + normale 1k
+  * `floor_tiles_1k_*` (sol, dalles béton géométriques) — voir PolyScan ci-dessous
   * `concrete_wall_004` (mur béton) — diffuse + normale 1k
   * `corrugated_iron_02` (tôle ondulée, plafond) — diffuse + normale 1k
+
+## PolyScan — texture de sol (dossier `textures/`)
+
+* Asset : « Geometric Concrete Floor Tiles » — polyscann.com
+  (https://polyscann.com/asset/geometric-concrete-floor-tiles-34e98a)
+* Licence **CC0 1.0** (domaine public).
+* Fichiers : `floor_tiles_1k_diff.jpg`, `floor_tiles_1k_nor.jpg`,
+  `floor_tiles_1k_rough.jpg` (extraits du pack 1K).

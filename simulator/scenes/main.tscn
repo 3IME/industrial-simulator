@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bphase5simulator3d"]
+[gd_scene load_steps=3 format=3 uid="uid://bphase5simulator3d"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1"]
-[ext_resource type="Script" path="res://ui/orbit_camera.gd" id="2"]
 [ext_resource type="Script" path="res://ui/hud.gd" id="3"]
 
 [node name="Main" type="Node3D"]
@@ -10,9 +9,6 @@ script = ExtResource("1")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 rotation = Vector3(-0.9, 0.6, 0)
 shadow_enabled = true
-
-[node name="Camera3D" type="Camera3D" parent="."]
-script = ExtResource("2")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3")

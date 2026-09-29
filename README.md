@@ -28,9 +28,9 @@ Règles de séparation fondamentales :
 
 **Premier milestone ATTEINT (Phases 0 → 5)** : modèle I/O complet, moteur de simulation déterministe, usine déclarative JSON, serveur Modbus TCP intégré, **cycle complet validé avec un vrai OpenPLC** (détection à l'entrée → marche → arrêt au capteur de sortie → évacuation, en boucle), et **scène 3D Godot** avec HUD et caméra orbitale.
 
-![Le hall industriel du prototype](docs/assets/scene_3d_hall.png)
+![Le hall industriel du prototype](docs/assets/scene_3d_hall_geant.png)
 
-Scène construite à 100 % en géométrie procédurale (ADR-013) : hall fermé — murs, plinthes, plafond à poutrelles et luminaires, porte, extincteurs muraux, marquage de sécurité — convoyeur, boîte, capteurs à lampes. **Aucun asset sous copyright** : le projet n'embarque aucun modèle extrait d'un produit commercial (voir [CONTRIBUTING.md](CONTRIBUTING.md), règle 9).
+Hall géant de 120 × 90 m sous 20 m de plafond, exploré **à pied en vue subjective** (ZQSD/WASD, souris, course, saut). Habillage 100 % libre de droits : sol en dalles de béton géométriques (PolyScan, CC0), murs béton et plafond tôle ondulée (Poly Haven, CC0), convoyeur et caisse du Factory Kit (Kenney, CC0) — voir `simulator/assets/CREDITS.md`. Rien n'est extrait d'un produit commercial (règle 9 de [CONTRIBUTING.md](CONTRIBUTING.md)). **Aucun asset sous copyright** : le projet n'embarque aucun modèle extrait d'un produit commercial (voir [CONTRIBUTING.md](CONTRIBUTING.md), règle 9).
 
 Voir [ROADMAP.md](ROADMAP.md) — prochaines étapes : éditeur de scènes, machines supplémentaires, OPC UA…
 
