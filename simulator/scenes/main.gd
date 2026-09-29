@@ -28,7 +28,7 @@ const EXTINGUISHER_SCALE := 0.62 / 1.088
 const PROP_PENDANT_LAMP := "res://assets/props/pendant_lamp.glb"
 const PROP_FLUO_FIXTURE := "res://assets/props/fluorescent_fixture.glb"
 const PROP_SECURITY_DOOR := "res://assets/props/security_door.glb"
-const PROP_ADULT := "res://assets/props/adult_waving.glb"
+const PROP_ADULT := "res://assets/props/adult_static.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
@@ -783,11 +783,11 @@ func _capture_and_quit() -> void:
         var robot_shot := get_viewport().get_texture().get_image()
         robot_shot.save_png("res://capture_3d_robot.png")
         print("Capture ecrite : res://capture_3d_robot.png")
-        # Porte + adulte + gondole (mur gauche)
-        player_node.position = Vector3(-52.6, 0.0, 2.1)
-        player_node.rotation.y = PI / 2.0
+        # Porte + gondole (mur gauche) et adulte (avance de 15 m)
+        player_node.position = Vector3(-36.9, 0.0, 2.6)
+        player_node.rotation.y = PI / 2.0 - 0.12
         for cam in player_node.find_children("*", "Camera3D"):
-            cam.rotation.x = 0.05
+            cam.rotation.x = 0.06
         await get_tree().create_timer(0.4).timeout
         var props_shot := get_viewport().get_texture().get_image()
         props_shot.save_png("res://capture_3d_props.png")

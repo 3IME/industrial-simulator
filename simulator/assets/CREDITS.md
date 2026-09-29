@@ -28,10 +28,15 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   * `pendant_lamp.glb`, `fluorescent_fixture.glb` (lampes au plafond),
     `security_door.glb` (porte de sécurité murale), `gondola.glb`
     (rayonnage mural), `adult_waving.glb` (personnage animé « salut »).
-* `adult_waving.glb` a été réparé : l'export source mélangeait maillage en
+* `adult_waving.glb` : l'export source mélangeait maillage en
   mètres et squelette en centimètres (racine `scale 0.01`) — les données
   POSITION du maillage ont été multipliées par 100 pour rétablir la cohérence
   skinnage/animation.
+* `adult_static.glb` : pose de salut figée en maillage statique (sans
+  squelette — aucune dérive d'échelle possible au rendu), générée par
+  `scripts/bake_static_adult.py` (convention IBM vérifiée par
+  `scripts/diag_skinning.py` : G avec échelle Armature × IBM transposée =
+  identité exacte au repos), normalisée à 1,60 m pieds au sol.
 
 ## Équipements de sécurité (dossier `safety/`)
 
