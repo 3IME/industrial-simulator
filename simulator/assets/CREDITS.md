@@ -32,11 +32,19 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   mètres et squelette en centimètres (racine `scale 0.01`) — les données
   POSITION du maillage ont été multipliées par 100 pour rétablir la cohérence
   skinnage/animation.
-* `adult_static.glb` : variante STATIQUE de secours (pose de salut figée,
-  sans squelette), générée par `scripts/bake_static_adult.py` (convention
-  IBM vérifiée par `scripts/diag_skinning.py`). Non utilisée par défaut :
-  la scène charge le modèle animé `adult_waving.glb`, surveillé par un
-  garde-fou d'échelle par frame (`ui/adult_scale_guard.gd`).
+* `adult_flipbook.glb` : personnage en FOLIOSCOPE — 24 maillages simples
+  (un par instant de l'animation, sans squelette) défilés par
+  `ui/adult_flipbook.gd`. Généré par `scripts/bake_flipbook.py`
+  (échelle commune 1,60 m, pieds regroundés par image, recentrage sur
+  les hanches). Le mouvement revient sans rig : la taille ne peut pas
+  dériver au rendu.
+* `adult_static.glb` : variante figée de secours (pose de repos bras
+  baissés), générée par `scripts/bake_static_adult.py` (convention IBM
+  vérifiée par `scripts/diag_skinning.py`). Non utilisée par défaut.
+* `adult_waving.glb` : le modèle animé d'origine (retouche unique :
+  POSITION ×100, son export mixant maillage en mètres et rig en cm).
+  Non chargé par défaut : son squelette rend géant chez l'utilisateur
+  (os mesurés à 1,5-1,75 m pendant que le maillage rend ×100).
 
 ## Équipements de sécurité (dossier `safety/`)
 
