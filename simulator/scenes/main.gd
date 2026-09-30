@@ -424,6 +424,16 @@ func _build_hall(belt_length: float) -> void:
         beam.material_override = beam_mat
         add_child(beam)
 
+    # Lumiere directionnelle douce avec OMBRES (une seule pour tout le
+    # hall : raisonnable sur GPU integre) — c'est elle qui donne au
+    # personnage et aux machines leur ombre portee.
+    var soleil := DirectionalLight3D.new()
+    soleil.rotation_degrees = Vector3(-48.0, -30.0, 0.0)
+    soleil.light_color = Color(1.0, 0.97, 0.92)
+    soleil.light_energy = 0.55
+    soleil.shadow_enabled = true
+    add_child(soleil)
+
     # Grille de luminaires (3 x 3) + lumieres reelles
     var lamp_mat := StandardMaterial3D.new()
     lamp_mat.emission_enabled = true
@@ -441,16 +451,6 @@ func _build_hall(belt_length: float) -> void:
             lamp.position = Vector3(lamp_x, HALL_HEIGHT - 1.0, lamp_z)
             lamp.material_override = lamp_mat
             add_child(lamp)
-    # Lumiere directionnelle douce avec OMBRES (une seule pour tout le
-    # hall : raisonnable sur GPU integre) — c'est elle qui donne au
-    # personnage et aux machines leur ombre portee.
-    var soleil := DirectionalLight3D.new()
-    soleil.rotation_degrees = Vector3(-48.0, -30.0, 0.0)
-    soleil.light_color = Color(1.0, 0.97, 0.92)
-    soleil.light_energy = 0.55
-    soleil.shadow_enabled = true
-    add_child(soleil)
-
             var light := OmniLight3D.new()
             light.position = Vector3(lamp_x, HALL_HEIGHT - 1.4, lamp_z)
             light.omni_range = 35.0
