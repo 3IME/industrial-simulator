@@ -23,14 +23,6 @@ func _initialize() -> void:
     for enfant in arms.get_children():
         if enfant is Node3D:
             enfant.position.x += 2.6 if "gauche" in enfant.name else -2.6
-            var mat := ShaderMaterial.new()
-            mat.shader = preload("res://ui/arms_fingers.gdshader")
-            mat.set_shader_parameter("pli", 0.0 if "gauche" in enfant.name else 1.6)
-            if enfant is MeshInstance3D and enfant.mesh != null:
-                var surf: Material = enfant.mesh.surface_get_material(0)
-                if surf is StandardMaterial3D:
-                    mat.set_shader_parameter("tex_albedo", surf.albedo_texture)
-                enfant.material_override = mat
 
 func _pose_candidate(pos: Vector3, rot_x: float, scale: float) -> void:
     if arms != null:
