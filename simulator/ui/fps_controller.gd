@@ -20,6 +20,7 @@ const ARMS_RAPPROCHE := 2.6
 const ARMS_SCALE := 0.06
 const ARMS_BASE := Vector3(0.0, -0.35, -0.10)
 const ARMS_ROT_X := PI / 2.0    # bras tendus vers l'avant, mains visibles
+const FOOTSTEPPER_SCRIPT := preload("res://addons/footstepper/footstepper.gd")
 const FOOTSTEPPER_PROFILE := preload("res://addons/footstepper/footstepper_sound_profile.gd")
 const SOUNDS_DIR := "res://addons/footstepper/sounds/default"
 
@@ -77,6 +78,8 @@ func _unhandled_input(event: InputEvent) -> void:
     elif event is InputEventMouseButton and event.pressed:
         if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
             Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+    elif event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+        Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
