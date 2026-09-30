@@ -157,7 +157,7 @@ func _ready() -> void:
     get_tree().root.close_requested.connect(
         func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     )
-    print("Scene prete. ZQSD/WASD : marcher | souris : regarder | Maj : courir | Espace : saut | B : boite")
+    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Espace : saut | B : boite")
     _show_build_badge()
     if capture_mode:
         _capture_and_quit()

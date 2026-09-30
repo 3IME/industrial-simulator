@@ -1,7 +1,7 @@
 extends CharacterBody3D
 ## Personnage en vue subjective, a hauteur d'homme (1,60 m d'yeux).
 ##
-## Controles : ZQSD/WASD (touches physiques, compatible AZERTY/QWERTY),
+## Controles : fleches directionnelles pour marcher,
 ## souris pour regarder (clic dans la fenetre pour capturer la souris),
 ## Maj pour courir, Espace pour sauter, Echap pour liberer la souris.
 
@@ -62,13 +62,13 @@ func _physics_process(delta: float) -> void:
 
     var forward := 0.0
     var side := 0.0
-    if Input.is_physical_key_pressed(KEY_W):
+    if Input.is_physical_key_pressed(KEY_UP):
         forward -= 1.0
-    if Input.is_physical_key_pressed(KEY_S):
+    if Input.is_physical_key_pressed(KEY_DOWN):
         forward += 1.0
-    if Input.is_physical_key_pressed(KEY_A):
+    if Input.is_physical_key_pressed(KEY_LEFT):
         side -= 1.0
-    if Input.is_physical_key_pressed(KEY_D):
+    if Input.is_physical_key_pressed(KEY_RIGHT):
         side += 1.0
 
     var speed := SPRINT_SPEED if Input.is_physical_key_pressed(KEY_SHIFT) else WALK_SPEED
