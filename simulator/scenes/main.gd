@@ -39,6 +39,23 @@ const PROP_OFFICE_CHAIR := "res://assets/props/office_chair.glb"
 const PROP_GAME := "res://assets/props/industrial_game.glb"
 const PROP_DUMPSTER := "res://assets/props/steel_dumpster.glb"
 const PROP_ELEVATOR := "res://assets/props/elevator.glb"
+const PROP_BOLLARD := "res://assets/props/bollard.glb"
+const PROP_TRACK_FENCE := "res://assets/props/track_fence.glb"
+const PROP_DECK_PLATE := "res://assets/props/deck_plate.glb"
+const PROP_MEZZANINE_FLOOR := "res://assets/props/mezzanine_floor.glb"
+const PROP_MEZZANINE_WALKWAY := "res://assets/props/mezzanine_walkway.glb"
+const PROP_STAIR_3M := "res://assets/props/stair_3m.glb"
+const PROP_CELL_STAIR := "res://assets/props/cell_stair.glb"
+const PROP_LADDER_CAGE := "res://assets/props/ladder_cage.glb"
+const PROP_OFFICE_CABIN := "res://assets/props/office_cabin.glb"
+const PROP_CLINICIAN_DESK := "res://assets/props/clinician_desk.glb"
+const PROP_ELECTRIC_MOTOR := "res://assets/props/electric_motor.glb"
+const PROP_ENGINE_LATHE := "res://assets/props/engine_lathe.glb"
+const PROP_PILLAR_DRILL := "res://assets/props/pillar_drill.glb"
+const PROP_PRESS_BRAKE := "res://assets/props/press_brake.glb"
+const PROP_HYDRAULIC_PRESS := "res://assets/props/hydraulic_press.glb"
+const PROP_VERTICAL_MILL := "res://assets/props/vertical_mill.glb"
+const PROP_AUTO_ROTATE := "res://assets/props/auto_rotate.glb"
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
 const HALL_MIN_X := -58.0
@@ -439,6 +456,7 @@ func _build_hall(belt_length: float) -> void:
 
     _build_props()
     _build_expo()
+    _build_expo2()
 
 
 func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
@@ -667,6 +685,65 @@ func _build_expo() -> void:
         label.outline_size = 12
         label.outline_modulate = Color(0.05, 0.05, 0.08)
         label.position = Vector3(item.x, 0.02, -10.0 + item.col.z / 2.0 + 1.1)
+        label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
+        add_child(label)
+
+
+## Deuxieme ligne d'exposition (z = -16) : modeles fournis en unitees
+## arbitraires (pipeline STEP), normalises par dimension cible. Table
+## generee depuis tests/measure_props.gd (cf. scripts/dequantize_gltf.py
+## pour la conversion KHR_mesh_quantization -> flottants).
+func _build_expo2() -> void:
+    var items := [
+        {"path": PROP_BOLLARD, "nom": "Borne de securite jaune",
+         "x": -56.0, "y": 0.75, "s": 0.000017, "col": Vector3(0.07, 1.0, 0.07)},
+        {"path": PROP_TRACK_FENCE, "nom": "Cloture de voie",
+         "x": -49.6, "y": 0.55, "s": 0.000007, "col": Vector3.ZERO},
+        {"path": PROP_DECK_PLATE, "nom": "Plaque de caillebotis",
+         "x": -43.2, "y": 0.03, "s": 0.000015, "col": Vector3.ZERO},
+        {"path": PROP_MEZZANINE_FLOOR, "nom": "Plancher de mezzanine",
+         "x": -36.8, "y": 1.17, "s": 0.000008, "col": Vector3(3.0, 1.33, 0.77)},
+        {"path": PROP_MEZZANINE_WALKWAY, "nom": "Passerelle de mezzanine",
+         "x": -30.4, "y": 1.5, "s": 0.000009, "col": Vector3(1.13, 2.0, 0.34)},
+        {"path": PROP_STAIR_3M, "nom": "Escalier 3 m",
+         "x": -24.0, "y": 2.25, "s": 0.000011, "col": Vector3(0.45, 3.0, 2.42)},
+        {"path": PROP_CELL_STAIR, "nom": "Escalier de cage",
+         "x": -17.6, "y": 2.25, "s": 0.000011, "col": Vector3(0.22, 3.0, 2.75)},
+        {"path": PROP_LADDER_CAGE, "nom": "Echelle a cage",
+         "x": -11.2, "y": 2.25, "s": 0.000011, "col": Vector3(0.15, 3.0, 0.14)},
+        {"path": PROP_OFFICE_CABIN, "nom": "Bureau de chantier",
+         "x": -4.8, "y": 0.53, "s": 0.000005, "col": Vector3(2.8, 0.69, 0.64)},
+        {"path": PROP_CLINICIAN_DESK, "nom": "Bureau medical",
+         "x": 1.6, "y": 0.49, "s": 0.000016, "col": Vector3(1.5, 0.58, 0.4)},
+        {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
+         "x": 8.0, "y": 0.58, "s": 0.000021, "col": Vector3(1.5, 0.72, 0.81)},
+        {"path": PROP_ENGINE_LATHE, "nom": "Tour d'atelier",
+         "x": 14.4, "y": 1.2, "s": 0.000016, "col": Vector3(2.5, 1.54, 0.61)},
+        {"path": PROP_PILLAR_DRILL, "nom": "Perceuse a colonne",
+         "x": 20.8, "y": 1.5, "s": 0.000015, "col": Vector3(0.46, 2.0, 0.47)},
+        {"path": PROP_PRESS_BRAKE, "nom": "Presse a plier la tole",
+         "x": 27.2, "y": 1.59, "s": 0.000016, "col": Vector3(2.5, 2.06, 0.87)},
+        {"path": PROP_HYDRAULIC_PRESS, "nom": "Presse hydraulique",
+         "x": 33.6, "y": 1.88, "s": 0.000017, "col": Vector3(1.57, 2.5, 0.55)},
+        {"path": PROP_VERTICAL_MILL, "nom": "Fraiseuse verticale",
+         "x": 40.0, "y": 1.65, "s": 0.000013, "col": Vector3(1.21, 2.2, 0.85)},
+        {"path": PROP_AUTO_ROTATE, "nom": "Plateau tournant",
+         "x": 46.4, "y": 0.53, "s": 0.000012, "col": Vector3(0.52, 0.68, 1.5)},
+    ]
+    for item in items:
+        var node := _place_prop(item.path, Vector3(item.x, item.y, -16.0),
+            Vector3.ZERO, item.s)
+        if node == null:
+            continue
+        if item.col != Vector3.ZERO:
+            _add_static_box(Vector3(item.x, item.col.y / 2.0, -16.0), item.col)
+        var label := Label3D.new()
+        label.text = item.nom
+        label.font_size = 48
+        label.modulate = Color(1.0, 0.95, 0.8)
+        label.outline_size = 12
+        label.outline_modulate = Color(0.05, 0.05, 0.08)
+        label.position = Vector3(item.x, 0.02, -16.0 + item.col.z / 2.0 + 1.1)
         label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
         add_child(label)
 

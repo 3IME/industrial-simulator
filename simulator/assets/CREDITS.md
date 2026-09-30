@@ -30,6 +30,14 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
     `voxel_machine.glb`, `voxel_machine_2.glb`, `modular_conveyor.glb`,
     `industrial_game.glb`, `steel_dumpster.glb`, `elevator.glb`,
     `office_chair.glb`, `bridge_fragment.glb`
+  * deuxième ligne d'exposition (z = -16, cf. `_build_expo2`) :
+    `bollard`, `track_fence`, `deck_plate`, `mezzanine_floor`,
+    `mezzanine_walkway`, `stair_3m`, `cell_stair`, `ladder_cage`,
+    `office_cabin`, `clinician_desk`, `electric_motor`, `engine_lathe`,
+    `pillar_drill`, `press_brake`, `hydraulic_press`, `vertical_mill`,
+    `auto_rotate` — **déquantisés** via `scripts/dequantize_gltf.py`
+    (l'extension `KHR_mesh_quantization` n'est pas supportée par
+    l'importateur Godot) et normalisés par dimension cible
   * `pendant_lamp.glb`, `fluorescent_fixture.glb` (lampes au plafond),
     `security_door.glb` (porte de sécurité murale), `gondola.glb`
     (rayonnage mural), `adult_waving.glb` (personnage animé « salut »).

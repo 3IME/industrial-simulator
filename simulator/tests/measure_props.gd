@@ -17,6 +17,23 @@ const PROPS := [
     "res://assets/props/industrial_game.glb",
     "res://assets/props/steel_dumpster.glb",
     "res://assets/props/elevator.glb",
+    "res://assets/props/auto_rotate.glb",
+    "res://assets/props/clinician_desk.glb",
+    "res://assets/props/deck_plate.glb",
+    "res://assets/props/electric_motor.glb",
+    "res://assets/props/engine_lathe.glb",
+    "res://assets/props/hydraulic_press.glb",
+    "res://assets/props/ladder_cage.glb",
+    "res://assets/props/mezzanine_floor.glb",
+    "res://assets/props/mezzanine_walkway.glb",
+    "res://assets/props/pillar_drill.glb",
+    "res://assets/props/press_brake.glb",
+    "res://assets/props/office_cabin.glb",
+    "res://assets/props/stair_3m.glb",
+    "res://assets/props/track_fence.glb",
+    "res://assets/props/vertical_mill.glb",
+    "res://assets/props/bollard.glb",
+    "res://assets/props/cell_stair.glb",
 ]
 
 var frames := 0

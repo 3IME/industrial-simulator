@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8mc500j63myw"
-path="res://.godot/imported/voxel_machine_1.jpg-288b6ae4b334dc2b975eba46c5850ca1.ctex"
+path.s3tc="res://.godot/imported/voxel_machine_1.jpg-288b6ae4b334dc2b975eba46c5850ca1.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "1a80f161fc7badc578b91d67af07b362"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/props/voxel_machine_1.jpg"
-dest_files=["res://.godot/imported/voxel_machine_1.jpg-288b6ae4b334dc2b975eba46c5850ca1.ctex"]
+dest_files=["res://.godot/imported/voxel_machine_1.jpg-288b6ae4b334dc2b975eba46c5850ca1.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
