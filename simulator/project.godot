@@ -13,5 +13,7 @@ config_version=5
 config/name="Industrial Simulator"
 config/description="Plateforme open source de simulation d'automatisation industrielle contrôlée par un PLC externe (OpenPLC) via Modbus TCP."
 run/main_scene="res://scenes/splash.tscn"
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0.04, 0.05, 0.08, 1)
 config/features=PackedStringArray("4.7")
 config/icon="res://assets/branding/logo2.svg"
