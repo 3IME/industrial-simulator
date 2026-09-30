@@ -604,9 +604,9 @@ func _build_props() -> void:
     # Chaise de bureau tout a droite de la porte (mur gauche).
     # Modele pose a y=0 (base du pied au sol, bbox mesuree min.y = 0).
     var chair := _place_prop(PROP_OFFICE_CHAIR,
-        Vector3(HALL_MIN_X + 0.45, 0.0, -2.0), Vector3.ZERO)
+        Vector3(HALL_MIN_X + 0.45, 0.0, -3.6), Vector3.ZERO)
     if chair != null:
-        _add_static_box(Vector3(HALL_MIN_X + 0.45, 0.51, -2.0), Vector3(0.6, 1.02, 0.6))
+        _add_static_box(Vector3(HALL_MIN_X + 0.45, 0.51, -3.6), Vector3(0.6, 1.02, 0.6))
 
     # Gondole (rayonnage) contre le mur gauche
     var gondola := _place_prop(PROP_GONDOLA,

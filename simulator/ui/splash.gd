@@ -130,7 +130,58 @@ func _finish() -> void:
         var image := get_viewport().get_texture().get_image()
         image.save_png("res://capture_splash.png")
         print("Capture ecrite : res://capture_splash.png")
-    var tween := create_tween()
-    tween.tween_property(self, "modulate:a", 0.0, FONDU)
-    await tween.finished
-    get_tree().change_scene_to_file(MAIN_SCENE)
+    _start_async_load()
+
+
+## Chargement de la scene principale EN ARRIERE-PLAN : change_scene_to_file
+## bloque le thread principal (ecran gris fige ~3 s avec notre usine).
+## Ici le splash reste visible et anime pendant le chargement threade.
+var _loading := false
+var _load_bar: ProgressBar
+
+
+func _start_async_load() -> void:
+    var err := ResourceLoader.load_threaded_request(MAIN_SCENE)
+    if err != Error.OK:
+        push_warning("chargement differe indisponible, repli synchrone")
+        get_tree().change_scene_to_file(MAIN_SCENE)
+        return
+    _loading = true
+
+    var label := Label.new()
+    label.text = "Chargement de l'usine..."
+    label.add_theme_font_size_override("font_size", 20)
+    label.add_theme_color_override("font_color", Color(0.75, 0.78, 0.85))
+    label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+    label.offset_bottom = -96.0
+    label.offset_top = -124.0
+    add_child(label)
+
+    _load_bar = ProgressBar.new()
+    _load_bar.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+    _load_bar.custom_minimum_size = Vector2(320, 12)
+    _load_bar.show_percentage = false
+    _load_bar.offset_bottom = -70.0
+    _load_bar.offset_top = -58.0
+    add_child(_load_bar)
+
+
+func _process(_delta: float) -> void:
+    if not _loading:
+        return
+    var progress: Array = []
+    var status := ResourceLoader.load_threaded_get_status(MAIN_SCENE, progress)
+    if _load_bar != null and progress.size() > 0:
+        _load_bar.value = float(progress[0]) * 100.0
+    if status == ResourceLoader.THREAD_LOAD_LOADED:
+        _loading = false
+        var packed = ResourceLoader.load_threaded_get(MAIN_SCENE)
+        var tween := create_tween()
+        tween.tween_property(self, "modulate:a", 0.0, 0.2)
+        tween.tween_callback(func() -> void:
+            get_tree().change_scene_to_packed(packed))
+    elif status == ResourceLoader.THREAD_LOAD_FAILED \
+            or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+        _loading = false
+        push_warning("chargement differe echoue, repli synchrone")
+        get_tree().change_scene_to_file(MAIN_SCENE)
