@@ -601,6 +601,13 @@ func _build_props() -> void:
                 anim.loop_mode = Animation.LOOP_LINEAR
                 anim_player.play(anim_name)
 
+    # Chaise de bureau tout a droite de la porte (mur gauche).
+    # Modele pose a y=0 (base du pied au sol, bbox mesuree min.y = 0).
+    var chair := _place_prop(PROP_OFFICE_CHAIR,
+        Vector3(HALL_MIN_X + 0.45, 0.0, -2.0), Vector3.ZERO)
+    if chair != null:
+        _add_static_box(Vector3(HALL_MIN_X + 0.45, 0.51, -2.0), Vector3(0.6, 1.02, 0.6))
+
     # Gondole (rayonnage) contre le mur gauche
     var gondola := _place_prop(PROP_GONDOLA,
         Vector3(HALL_MIN_X + 0.42, 0.95, 4.2), Vector3(0.0, PI / 2.0, 0.0))
@@ -624,11 +631,9 @@ func _build_expo() -> void:
         {"path": PROP_GAME, "nom": "Jeu industriel realiste",
          "x": -8.0, "y": 0.30, "col": Vector3(1.9, 0.6, 1.42)},
         {"path": PROP_DUMPSTER, "nom": "Benne en acier vert",
-         "x": -1.0, "y": 0.37, "col": Vector3(0.8, 0.73, 0.74)},
+         "x": -1.0, "y": 0.0, "col": Vector3(0.8, 0.73, 0.74)},
         {"path": PROP_ELEVATOR, "nom": "Ascenseur",
-         "x": 6.0, "y": 0.43, "col": Vector3(0.63, 0.86, 0.61)},
-        {"path": PROP_OFFICE_CHAIR, "nom": "Chaise de bureau",
-         "x": 13.0, "y": 0.51, "col": Vector3(0.6, 1.02, 0.6)},
+         "x": 6.0, "y": 0.0, "col": Vector3(0.63, 0.86, 0.61)},
         {"path": PROP_BRIDGE, "nom": "Fragment de pont",
          "x": 20.0, "y": 0.0, "col": Vector3.ZERO},    # plat : pas de collision
     ]
@@ -637,7 +642,7 @@ func _build_expo() -> void:
         if node == null:
             continue
         if item.col != Vector3.ZERO:
-            _add_static_box(Vector3(item.x, item.y, -10.0), item.col)
+            _add_static_box(Vector3(item.x, item.col.y / 2.0, -10.0), item.col)
         # Nom au sol, devant l'objet (face au chemin de visite)
         var label := Label3D.new()
         label.text = item.nom
