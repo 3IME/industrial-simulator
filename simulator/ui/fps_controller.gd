@@ -11,11 +11,19 @@ const JUMP_VELOCITY := 4.5
 const GRAVITY := 9.8
 const MOUSE_SENSITIVITY := 0.0025
 const EYE_HEIGHT := 1.6
+const EYE_CROUCH := 0.9
+const CROUCH_SPEED := 2.0
+const ARMS_MODEL := "res://assets/props/arms_viewmodel.glb"
+const ARMS_SCALE := 0.07
+const ARMS_BASE := Vector3(0.0, -0.34, -0.52)
 const FOOTSTEPPER_SCRIPT := preload("res://addons/footstepper/footstepper.gd")
 const FOOTSTEPPER_PROFILE := preload("res://addons/footstepper/footstepper_sound_profile.gd")
 const SOUNDS_DIR := "res://addons/footstepper/sounds/default"
 
 var pitch := 0.0
+var _eye := EYE_HEIGHT
+var _arms: Node3D = null
+var _bob := 0.0
 var cam: Camera3D
 
 
@@ -32,6 +40,15 @@ func _ready() -> void:
     cam.position = Vector3(0, EYE_HEIGHT, 0)
     add_child(cam)
     cam.make_current()
+
+    # Mains en vue subjective (maillage statique depouille de son squelette :
+    # echelle fiable dans tout contexte de rendu)
+    var arms_scene = load(ARMS_MODEL)
+    if arms_scene != null and arms_scene is PackedScene:
+        _arms = arms_scene.instantiate()
+        _arms.scale = Vector3.ONE * ARMS_SCALE
+        _arms.position = ARMS_BASE
+        cam.add_child(_arms)
 
     _setup_footstepper()
 
@@ -71,7 +88,13 @@ func _physics_process(delta: float) -> void:
     if Input.is_physical_key_pressed(KEY_RIGHT):
         side += 1.0
 
-    var speed := SPRINT_SPEED if Input.is_physical_key_pressed(KEY_SHIFT) else WALK_SPEED
+    var crouch := Input.is_physical_key_pressed(KEY_CTRL)
+    _eye = lerpf(_eye, EYE_CROUCH if crouch else EYE_HEIGHT,
+        clampf(delta * 10.0, 0.0, 1.0))
+    cam.position.y = _eye
+    var speed := CROUCH_SPEED if crouch else (
+        SPRINT_SPEED if Input.is_physical_key_pressed(KEY_SHIFT)
+        else WALK_SPEED)
     var direction := (transform.basis * Vector3(side, 0, forward)).normalized()
     if direction.length() > 0.0:
         velocity.x = direction.x * speed
@@ -81,6 +104,28 @@ func _physics_process(delta: float) -> void:
         velocity.z = move_toward(velocity.z, 0.0, speed)
 
     move_and_slide()
+    _animate_arms(delta, crouch)
+
+
+## Balancement procedural des mains, lie au deplacement reel :
+## cadence et amplitude suivent la vitesse (marche/course/accroupi),
+## petit dip sur les sauts et chutes.
+func _animate_arms(delta: float, crouch: bool) -> void:
+    if _arms == null:
+        return
+    var hspeed := Vector2(velocity.x, velocity.z).length()
+    var intensite := clampf(hspeed / WALK_SPEED, 0.0, 1.6)
+    _bob += delta * hspeed * 2.4
+    var cible := ARMS_BASE
+    if crouch:
+        cible.y -= 0.06
+    cible.y -= absf(cos(_bob)) * 0.022 * intensite
+    cible.x += sin(_bob) * 0.016 * intensite
+    cible.y += clampf(-velocity.y * 0.01, -0.05, 0.05)
+    _arms.position = _arms.position.lerp(cible, clampf(delta * 8.0, 0.0, 1.0))
+    var tangage := clampf(velocity.y * 0.012, -0.1, 0.1)
+    _arms.rotation.x = lerpf(_arms.rotation.x, tangage,
+        clampf(delta * 6.0, 0.0, 1.0))
 
 
 ## Sons de pas / saut / atterrisage (addon Footstepper, code MIT ;

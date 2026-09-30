@@ -52,6 +52,15 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
 * Échelle ramenée à 0,62 m de haut, fixation murale à 0,70 m (poignée ~1,2 m,
   hauteur normalisée de préhension), panneau à 2,05 m.
 
+## WRAD ARMS — mains en vue subjective (`props/arms_viewmodel.glb`)
+
+* « WRAD ARMS » par **wriks** — licence **CC0 1.0** (domaine public).
+  https://wriks.itch.io/wrad-arms — attribution : 'WRAD ARMS' by wriks.
+* `arms_viewmodel.glb` : maillage d'origine **dépouillé de son squelette**
+  (pose au repos figée, texture embarquée) — rendu d'échelle fiable dans
+  tout contexte ; l'animation (balancement de marche, dip de saut) est
+  procédurale, pilotée par la vitesse réelle du personnage.
+
 ## Kenney — Factory Kit (modèles 3D, `kenney_factory/`)
 
 * Auteur : Kenney (kenney.nl) — licence **CC0 1.0** (domaine public).
