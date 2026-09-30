@@ -19,7 +19,7 @@ func _initialize() -> void:
     lum.rotation_degrees = Vector3(-40, -30, 0)
     banc.add_child(lum)
     scene = load("res://assets/props/arms_viewmodel.glb")
-    _pose_candidate(Vector3(0.0, -0.36, -0.18), PI / 2.0, 0.06)
+    _pose_candidate(Vector3(0.0, -0.35, -0.10), PI / 2.0, 0.06)
 
 func _pose_candidate(pos: Vector3, rot_x: float, scale: float) -> void:
     if arms != null:
