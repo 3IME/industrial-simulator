@@ -133,16 +133,28 @@ func _finish() -> void:
     _start_async_load()
 
 
-## Chargement de la scene principale EN ARRIERE-PLAN : change_scene_to_file
-## bloque le thread principal (ecran gris fige ~3 s avec notre usine).
-## Ici le splash reste visible et anime pendant le chargement threade.
+## Chargement de TOUTES les ressources de l'usine EN ARRIERE-PLAN.
+## main.tscn seul ne suffit pas : la scene est construite par code dans
+## _ready() (une trentaine de load() de GLB/textures) — sans pre-charger
+## cette liste, la barre sautait a 100 % puis l'ecran gris revenait
+## pendant les chargements synchrones de _ready().
+const MAIN_SCRIPT = preload("res://scenes/main.gd")
+const ROBOT_VIEW = preload("res://ui/robot_kuka_view.gd")
+
 var _loading := false
+var _load_paths: Array = []
 var _load_bar: ProgressBar
 
 
 func _start_async_load() -> void:
-    var err := ResourceLoader.load_threaded_request(MAIN_SCENE)
-    if err != Error.OK:
+    _load_paths = [MAIN_SCENE]
+    _load_paths.append_array(MAIN_SCRIPT.heavy_resources())
+    _load_paths.append_array(ROBOT_VIEW.heavy_resources())
+    var demandes := 0
+    for path in _load_paths:
+        if ResourceLoader.load_threaded_request(path) == Error.OK:
+            demandes += 1
+    if demandes == 0:
         push_warning("chargement differe indisponible, repli synchrone")
         get_tree().change_scene_to_file(MAIN_SCENE)
         return
@@ -169,19 +181,24 @@ func _start_async_load() -> void:
 func _process(_delta: float) -> void:
     if not _loading:
         return
-    var progress: Array = []
-    var status := ResourceLoader.load_threaded_get_status(MAIN_SCENE, progress)
-    if _load_bar != null and progress.size() > 0:
-        _load_bar.value = float(progress[0]) * 100.0
-    if status == ResourceLoader.THREAD_LOAD_LOADED:
+    var termines := 0
+    var somme := 0.0
+    for path in _load_paths:
+        var progress: Array = []
+        var status := ResourceLoader.load_threaded_get_status(path, progress)
+        if status == ResourceLoader.THREAD_LOAD_LOADED \
+                or status == ResourceLoader.THREAD_LOAD_FAILED \
+                or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+            termines += 1
+            somme += 1.0
+        elif progress.size() > 0:
+            somme += float(progress[0])
+    if _load_bar != null:
+        _load_bar.value = 100.0 * somme / _load_paths.size()
+    if termines == _load_paths.size():
         _loading = false
         var packed = ResourceLoader.load_threaded_get(MAIN_SCENE)
         var tween := create_tween()
         tween.tween_property(self, "modulate:a", 0.0, 0.2)
         tween.tween_callback(func() -> void:
             get_tree().change_scene_to_packed(packed))
-    elif status == ResourceLoader.THREAD_LOAD_FAILED \
-            or status == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
-        _loading = false
-        push_warning("chargement differe echoue, repli synchrone")
-        get_tree().change_scene_to_file(MAIN_SCENE)

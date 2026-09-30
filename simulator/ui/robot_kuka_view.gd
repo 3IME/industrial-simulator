@@ -28,6 +28,11 @@ const P_A4 := Vector3(0.13, 0.97, -0.03)
 const P_A5 := Vector3(0.54, 0.985, -0.03)
 const P_A6 := Vector3(0.63, 0.985, -0.03)
 
+static func heavy_resources() -> Array:
+    return [PART_BASE, PART_COLUMN, PART_ARM, PART_FOREARM_JOINT,
+            PART_FOREARM_COVER, PART_HEAD, PART_TOOL]
+
+
 var machine = null    # RobotKuka (logique)
 var joints: Array = []
 

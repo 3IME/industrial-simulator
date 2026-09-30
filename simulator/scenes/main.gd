@@ -65,6 +65,22 @@ const BELT_TOP := 0.4 + 0.5
 # Largeur du modele box-small.glb (0.595 m), pour la mise a l'echelle
 const BOX_MODEL_WIDTH := 0.595
 
+## Ressources lourdes chargees par le code (pre-chargees en arriere-plan
+## par le splash — cf. ui/splash.gd) : le chargement threade de main.tscn
+## seul ne couvre rien, la scene est construite par _ready().
+static func heavy_resources() -> Array:
+    return [
+        CONVEYOR_PIECE, BOX_MODEL,
+        TEX_FLOOR_D, TEX_FLOOR_N, TEX_FLOOR_R, TEX_WALL_D, TEX_WALL_N,
+        TEX_ROOF_D, TEX_ROOF_N,
+        EXTINGUISHER_MODEL, EXTINGUISHER_SIGN,
+        PROP_PENDANT_LAMP, PROP_FLUO_FIXTURE, PROP_SECURITY_DOOR,
+        PROP_ADULT, PROP_GONDOLA, PROP_IRON_MINER, PROP_BRIDGE,
+        PROP_VOXEL_MACHINE, PROP_VOXEL_MACHINE_2, PROP_MODULAR_CONVEYOR,
+        PROP_OFFICE_CHAIR, PROP_GAME, PROP_DUMPSTER, PROP_ELEVATOR,
+    ]
+
+
 var factory: Dictionary = {}
 var engine = null
 var io = null
