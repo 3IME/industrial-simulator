@@ -14,8 +14,9 @@ const EYE_HEIGHT := 1.6
 const EYE_CROUCH := 0.9
 const CROUCH_SPEED := 2.0
 const ARMS_MODEL := "res://assets/props/arms_viewmodel.glb"
-const ARMS_SCALE := 0.07
-const ARMS_BASE := Vector3(0.0, -0.34, -0.52)
+const ARMS_SCALE := 0.06
+const ARMS_BASE := Vector3(0.0, -0.28, -0.45)
+const ARMS_ROT_X := PI / 2.0    # bras tendus vers l'avant, mains visibles
 const FOOTSTEPPER_SCRIPT := preload("res://addons/footstepper/footstepper.gd")
 const FOOTSTEPPER_PROFILE := preload("res://addons/footstepper/footstepper_sound_profile.gd")
 const SOUNDS_DIR := "res://addons/footstepper/sounds/default"
@@ -48,6 +49,7 @@ func _ready() -> void:
         _arms = arms_scene.instantiate()
         _arms.scale = Vector3.ONE * ARMS_SCALE
         _arms.position = ARMS_BASE
+        _arms.rotation.x = ARMS_ROT_X
         cam.add_child(_arms)
 
     _setup_footstepper()
@@ -124,7 +126,7 @@ func _animate_arms(delta: float, crouch: bool) -> void:
     cible.y += clampf(-velocity.y * 0.01, -0.05, 0.05)
     _arms.position = _arms.position.lerp(cible, clampf(delta * 8.0, 0.0, 1.0))
     var tangage := clampf(velocity.y * 0.012, -0.1, 0.1)
-    _arms.rotation.x = lerpf(_arms.rotation.x, tangage,
+    _arms.rotation.x = lerpf(_arms.rotation.x, ARMS_ROT_X + tangage,
         clampf(delta * 6.0, 0.0, 1.0))
 
 
