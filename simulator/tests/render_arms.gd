@@ -18,8 +18,11 @@ func _initialize() -> void:
     var lum := DirectionalLight3D.new()
     lum.rotation_degrees = Vector3(-40, -30, 0)
     banc.add_child(lum)
-    scene = load("res://assets/props/arms_viewmodel.glb")
+    scene = load("res://assets/props/arms_split.glb")
     _pose_candidate(Vector3(0.0, -0.35, -0.10), PI / 2.0, 0.06)
+    for enfant in arms.get_children():
+        if enfant is Node3D:
+            enfant.position.x += 2.6 if "gauche" in enfant.name else -2.6
 
 func _pose_candidate(pos: Vector3, rot_x: float, scale: float) -> void:
     if arms != null:

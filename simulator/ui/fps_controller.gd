@@ -13,7 +13,10 @@ const MOUSE_SENSITIVITY := 0.0025
 const EYE_HEIGHT := 1.6
 const EYE_CROUCH := 0.9
 const CROUCH_SPEED := 2.0
-const ARMS_MODEL := "res://assets/props/arms_viewmodel.glb"
+const ARMS_MODEL := "res://assets/props/arms_split.glb"
+# Rapprochement des mains : decalage local (unites du modele) de chaque
+# bras vers l'axe central (mesure par silhouette vue joueur).
+const ARMS_RAPPROCHE := 2.6
 const ARMS_SCALE := 0.06
 const ARMS_BASE := Vector3(0.0, -0.35, -0.10)
 const ARMS_ROT_X := PI / 2.0    # bras tendus vers l'avant, mains visibles
@@ -27,6 +30,7 @@ var _eye := EYE_HEIGHT
 var _arms: Node3D = null
 var _bob := 0.0
 var _press := 0.0        # geste d'appui au clic (1 = presse)
+var _arm_right: Node3D = null
 var _click_sound: AudioStreamPlayer = null
 var cam: Camera3D
 
@@ -54,6 +58,13 @@ func _ready() -> void:
         _arms.position = ARMS_BASE
         _arms.rotation.x = ARMS_ROT_X
         cam.add_child(_arms)
+        for enfant in _arms.get_children():
+            if enfant is Node3D:
+                if "gauche" in enfant.name:
+                    enfant.position.x += ARMS_RAPPROCHE
+                elif "droit" in enfant.name:
+                    enfant.position.x -= ARMS_RAPPROCHE
+                    _arm_right = enfant
 
     _click_sound = AudioStreamPlayer.new()
     var click_stream = load(CLICK_SOUND)
@@ -143,13 +154,12 @@ func _animate_arms(delta: float, crouch: bool) -> void:
     _arms.rotation.x = lerpf(_arms.rotation.x, ARMS_ROT_X + tangage,
         clampf(delta * 6.0, 0.0, 1.0))
 
-    # Geste d'appui au clic : la main droite pousse vers l'avant
-    # (pivot autour de l'axe vertical) puis revient — lu comme un
-    # appui de doigt sur un bouton.
+    # Geste d'appui au clic : SEUL le bras droit pousse vers l'avant
+    # (pivot du poignet + petite poussee), le gauche reste immobile.
     _press = maxf(0.0, _press - delta * 6.0)
-    if _arms != null:
-        _arms.rotation.y = _press * 0.20
-        _arms.position.z = cible.z - _press * 0.035
+    if _arm_right != null:
+        _arm_right.rotation.y = _press * 0.22
+        _arm_right.position.z = -_press * 0.58
 
 
 ## Sons de pas / saut / atterrisage (addon Footstepper, code MIT ;
