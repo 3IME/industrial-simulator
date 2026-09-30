@@ -44,6 +44,17 @@ func _ready() -> void:
     capsule.position = Vector3(0, 0.875, 0)
     add_child(capsule)
 
+    # Silhouette de corps : invisible mais projette une OMBRE (les FPS
+    # font voir l'ombre du joueur sans voir son corps).
+    var ombre_corps := MeshInstance3D.new()
+    var capsule_ombre := CapsuleMesh.new()
+    capsule_ombre.radius = 0.3
+    capsule_ombre.height = 1.75
+    ombre_corps.mesh = capsule_ombre
+    ombre_corps.position = Vector3(0, 0.875, 0)
+    ombre_corps.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+    add_child(ombre_corps)
+
     cam = Camera3D.new()
     cam.position = Vector3(0, EYE_HEIGHT, 0)
     add_child(cam)
@@ -57,6 +68,9 @@ func _ready() -> void:
         _arms.scale = Vector3.ONE * ARMS_SCALE
         _arms.position = ARMS_BASE
         _arms.rotation.x = ARMS_ROT_X
+        for mesh_enfant in _arms.get_children():
+            if mesh_enfant is GeometryInstance3D:
+                mesh_enfant.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
         cam.add_child(_arms)
         for enfant in _arms.get_children():
             if enfant is Node3D:
