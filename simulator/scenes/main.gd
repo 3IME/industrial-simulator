@@ -56,6 +56,17 @@ const PROP_PRESS_BRAKE := "res://assets/props/press_brake.glb"
 const PROP_HYDRAULIC_PRESS := "res://assets/props/hydraulic_press.glb"
 const PROP_VERTICAL_MILL := "res://assets/props/vertical_mill.glb"
 const PROP_AUTO_ROTATE := "res://assets/props/auto_rotate.glb"
+# Annonces sonores d'usine fournies par 3IME — touches 1 a 7
+const ANNONCES := [
+    {"touche": KEY_1, "nom": "evacuation", "chemin": "res://assets/sounds/annonces/evacuation.mp3"},
+    {"touche": KEY_2, "nom": "evacuation incendie", "chemin": "res://assets/sounds/annonces/evacuation_incendie.mp3"},
+    {"touche": KEY_3, "nom": "fumer", "chemin": "res://assets/sounds/annonces/fumer.mp3"},
+    {"touche": KEY_4, "nom": "maintenance", "chemin": "res://assets/sounds/annonces/maintenance.mp3"},
+    {"touche": KEY_5, "nom": "presse", "chemin": "res://assets/sounds/annonces/presse.mp3"},
+    {"touche": KEY_6, "nom": "camion", "chemin": "res://assets/sounds/annonces/camion.mp3"},
+    {"touche": KEY_7, "nom": "zone production", "chemin": "res://assets/sounds/annonces/zone_production.mp3"},
+]
+var _annonce_player: AudioStreamPlayer = null
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
 const HALL_MIN_X := -58.0
@@ -174,8 +185,11 @@ func _ready() -> void:
     get_tree().root.close_requested.connect(
         func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     )
-    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Espace : saut | B : boite")
+    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-7 : annonces")
     _show_build_badge()
+    _annonce_player = AudioStreamPlayer.new()
+    _annonce_player.volume_db = -4.0
+    add_child(_annonce_player)
     if capture_mode:
         _capture_and_quit()
 
@@ -196,6 +210,24 @@ func _show_build_badge() -> void:
     tween.tween_interval(15.0)
     tween.tween_property(label, "modulate:a", 0.0, 1.0)
     tween.tween_callback(layer.queue_free)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+    if event is InputEventKey and event.pressed and not event.echo:
+        for annonce in ANNONCES:
+            if event.keycode == annonce.touche:
+                _jouer_annonce(annonce.nom, annonce.chemin)
+                return
+
+
+func _jouer_annonce(nom: String, chemin: String) -> void:
+    var flux = load(chemin)
+    if flux == null or _annonce_player == null:
+        push_warning("annonce introuvable : " + chemin)
+        return
+    _annonce_player.stream = flux
+    _annonce_player.play()
+    print("Annonce : ", nom)
 
 
 func _physics_process(delta: float) -> void:

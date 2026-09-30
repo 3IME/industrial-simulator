@@ -9,6 +9,13 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   (échelle cm → m, repère Z-up → Y-up) ; coordonnées d'assemblage d'origine
   conservées — 7 pièces : base, colonne, bras, avant-bras, carénage, poignet, bride.
 
+## Annonces sonores d'usine (`sounds/annonces/`)
+
+* 7 fichiers MP3 fournis par **3IME** (propriétaire du projet) :
+  `evacuation`, `evacuation_incendie`, `fumer`, `maintenance`,
+  `presse`, `camion`, `zone_production` — jouables en jeu avec les
+  touches 1 à 7 (cf. `ANNONCES` dans `simulator/scenes/main.gd`).
+
 ## Addon Footstepper (dossier `../addons/footstepper/`)
 
 * « Footstepper » par **Dragon1Freak** — code sous licence **MIT**
