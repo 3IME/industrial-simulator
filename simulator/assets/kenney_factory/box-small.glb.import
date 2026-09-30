@@ -3,12 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cvhmtpdq3443p"
-valid=false
+uid="uid://dh7ulk3eyako3"
+path="res://.godot/imported/box-small.glb-f2007d60830e7cffd61f4d68f4e6a8d4.scn"
 
 [deps]
 
 source_file="res://assets/kenney_factory/box-small.glb"
+dest_files=["res://.godot/imported/box-small.glb-f2007d60830e7cffd61f4d68f4e6a8d4.scn"]
 
 [params]
 

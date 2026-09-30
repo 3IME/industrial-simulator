@@ -3,12 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://c7dq653mj6qbg"
-valid=false
+uid="uid://c070m7nwjh4n1"
+path="res://.godot/imported/conveyor.glb-71e1ac02809c28468035e07617436613.scn"
 
 [deps]
 
 source_file="res://assets/kenney_factory/conveyor.glb"
+dest_files=["res://.godot/imported/conveyor.glb-71e1ac02809c28468035e07617436613.scn"]
 
 [params]
 

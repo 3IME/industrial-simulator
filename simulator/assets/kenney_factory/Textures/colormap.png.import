@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://db2g2ohw0ysd1"
-valid=false
+uid="uid://co4ggso6q0o71"
+path="res://.godot/imported/colormap.png-192fab7dd02db05e6656e27dfa82b1c9.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/kenney_factory/Textures/colormap.png"
+dest_files=["res://.godot/imported/colormap.png-192fab7dd02db05e6656e27dfa82b1c9.ctex"]
 
 [params]
 
