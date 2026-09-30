@@ -31,6 +31,8 @@ var _arms: Node3D = null
 var _bob := 0.0
 var _press := 0.0        # geste d'appui au clic (1 = presse)
 var _arm_right: Node3D = null
+var _mat_gauche: ShaderMaterial = null
+var _mat_droit: ShaderMaterial = null
 var _click_sound: AudioStreamPlayer = null
 var cam: Camera3D
 
@@ -65,6 +67,7 @@ func _ready() -> void:
                 elif "droit" in enfant.name:
                     enfant.position.x -= ARMS_RAPPROCHE
                     _arm_right = enfant
+                _habiller_materiau_doigts(enfant)
 
     _click_sound = AudioStreamPlayer.new()
     var click_stream = load(CLICK_SOUND)
@@ -160,6 +163,13 @@ func _animate_arms(delta: float, crouch: bool) -> void:
     if _arm_right != null:
         _arm_right.rotation.y = _press * 0.22
         _arm_right.position.z = -_press * 0.58
+    # Doigts : mains legerement repliees au repos, l'index droit
+    # appuie franchement au clic (le gauche ne bouge pas au clic).
+    if _mat_gauche != null:
+        _mat_gauche.set_shader_parameter("pli", 0.18)
+    if _mat_droit != null:
+        _mat_droit.set_shader_parameter("pli", 0.18)
+        _mat_droit.set_shader_parameter("pli_index", _press * 0.9)
 
 
 ## Sons de pas / saut / atterrisage (addon Footstepper, code MIT ;
@@ -197,3 +207,25 @@ func _setup_footstepper() -> void:
     stepper.audio_number_of_players = 4
     stepper.default_sound_profile = profile
     add_child(stepper)
+
+
+## Remplace le materiau d'un bras par le shader a doigts articules,
+## en conservant la texture d'origine.
+func _habiller_materiau_doigts(bras: Node3D) -> void:
+    # le noeud bras EST le MeshInstance3D (les find_children ne voient
+    # que les descendants, pas le noeud lui-meme)
+    if bras is not MeshInstance3D or bras.mesh == null:
+        return
+    var surf: Material = bras.mesh.surface_get_material(0)
+    var texture
+    if surf is StandardMaterial3D:
+        texture = surf.albedo_texture
+    var mat := ShaderMaterial.new()
+    mat.shader = preload("res://ui/arms_fingers.gdshader")
+    if texture != null:
+        mat.set_shader_parameter("tex_albedo", texture)
+    bras.material_override = mat
+    if "droit" in bras.name:
+        _mat_droit = mat
+    else:
+        _mat_gauche = mat
