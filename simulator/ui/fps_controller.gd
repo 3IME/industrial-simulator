@@ -17,6 +17,7 @@ const ARMS_MODEL := "res://assets/props/arms_split.glb"
 # Rapprochement des mains : decalage local (unites du modele) de chaque
 # bras vers l'axe central (mesure par silhouette vue joueur).
 const ARMS_RAPPROCHE := 2.6
+const CLICK_SOUND := "res://addons/footstepper/sounds/default/jump.ogg"
 const ARMS_SCALE := 0.06
 const ARMS_BASE := Vector3(0.0, -0.35, -0.10)
 const ARMS_ROT_X := PI / 2.0    # bras tendus vers l'avant, mains visibles
@@ -28,6 +29,9 @@ var pitch := 0.0
 var _eye := EYE_HEIGHT
 var _arms: Node3D = null
 var _bob := 0.0
+var _press := 0.0        # avancee de la main au clic (1 = avancee)
+var _arm_right: Node3D = null
+var _click_sound: AudioStreamPlayer = null
 var cam: Camera3D
 
 
@@ -60,6 +64,14 @@ func _ready() -> void:
                     enfant.position.x += ARMS_RAPPROCHE
                 elif "droit" in enfant.name:
                     enfant.position.x -= ARMS_RAPPROCHE
+                    _arm_right = enfant
+
+    _click_sound = AudioStreamPlayer.new()
+    var click_stream = load(CLICK_SOUND)
+    if click_stream != null:
+        _click_sound.stream = click_stream
+        _click_sound.volume_db = -10.0
+        add_child(_click_sound)
 
     _setup_footstepper()
 
@@ -78,6 +90,10 @@ func _unhandled_input(event: InputEvent) -> void:
     elif event is InputEventMouseButton and event.pressed:
         if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
             Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+        elif event.button_index == MOUSE_BUTTON_LEFT:
+            _press = 1.0
+            if _click_sound != null:
+                _click_sound.play()
     elif event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -135,6 +151,12 @@ func _animate_arms(delta: float, crouch: bool) -> void:
     cible.x += sin(_bob) * 0.016 * intensite
     cible.y += clampf(-velocity.y * 0.01, -0.05, 0.05)
     _arms.position = _arms.position.lerp(cible, clampf(delta * 8.0, 0.0, 1.0))
+    # Clic : la main droite avance (le gauche ne bouge pas).
+    _press = maxf(0.0, _press - delta * 6.0)
+    if _arm_right != null:
+        _arm_right.rotation.y = _press * 0.22
+        _arm_right.position.z = -_press * 0.58
+
     var tangage := clampf(velocity.y * 0.012, -0.1, 0.1)
     _arms.rotation.x = lerpf(_arms.rotation.x, ARMS_ROT_X + tangage,
         clampf(delta * 6.0, 0.0, 1.0))
