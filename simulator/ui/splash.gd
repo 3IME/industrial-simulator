@@ -159,23 +159,42 @@ func _start_async_load() -> void:
         get_tree().change_scene_to_file(MAIN_SCENE)
         return
     _loading = true
+    if "--capture" in OS.get_cmdline_user_args():
+        _capture_loading_screen()
+
+    var panneau := Panel.new()
+    var style := StyleBoxFlat.new()
+    style.bg_color = Color(0.02, 0.02, 0.05)
+    style.set_corner_radius_all(10)
+    style.content_margin_left = 36.0
+    style.content_margin_right = 36.0
+    style.content_margin_top = 20.0
+    style.content_margin_bottom = 24.0
+    panneau.add_theme_stylebox_override("panel", style)
+    add_child(panneau)
+    # Centrage manuel et deterministe (les presets d'ancrage ont laisse
+    # le panneau ancre par son coin au centre de l'ecran).
+    panneau.size = Vector2(460, 116)
+    panneau.position = (get_viewport_rect().size - panneau.size) / 2.0
+
+    var boite := VBoxContainer.new()
+    boite.set_anchors_preset(Control.PRESET_FULL_RECT)
+    boite.alignment = BoxContainer.ALIGNMENT_CENTER
+    boite.add_theme_constant_override("separation", 12)
+    panneau.add_child(boite)
 
     var label := Label.new()
     label.text = "Chargement de l'usine..."
     label.add_theme_font_size_override("font_size", 20)
     label.add_theme_color_override("font_color", Color(0.75, 0.78, 0.85))
-    label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-    label.offset_bottom = -96.0
-    label.offset_top = -124.0
-    add_child(label)
+    label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    boite.add_child(label)
 
     _load_bar = ProgressBar.new()
-    _load_bar.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-    _load_bar.custom_minimum_size = Vector2(320, 12)
+    _load_bar.custom_minimum_size = Vector2(360, 14)
     _load_bar.show_percentage = false
-    _load_bar.offset_bottom = -70.0
-    _load_bar.offset_top = -58.0
-    add_child(_load_bar)
+    _load_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+    boite.add_child(_load_bar)
 
 
 func _process(_delta: float) -> void:
@@ -202,3 +221,12 @@ func _process(_delta: float) -> void:
         tween.tween_property(self, "modulate:a", 0.0, 0.2)
         tween.tween_callback(func() -> void:
             get_tree().change_scene_to_packed(packed))
+
+
+func _capture_loading_screen() -> void:
+    await get_tree().create_timer(0.12).timeout
+    if not is_inside_tree():
+        return
+    var image := get_viewport().get_texture().get_image()
+    image.save_png("res://capture_splash_loading.png")
+    print("Capture ecrite : res://capture_splash_loading.png")
