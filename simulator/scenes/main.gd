@@ -119,7 +119,6 @@ var auto_box := false
 var box_timer := 0.0
 var capture_mode := false
 var _adult_node: Node3D = null
-var _cabin_body: StaticBody3D = null
 var _dans_bureau := false
 var _adult_check := 0.0
 var _extinguisher_model: PackedScene = null
@@ -267,8 +266,6 @@ func _clic_interaction(event: InputEvent) -> void:
 
 
 func _entrer_bureau() -> void:
-    if _cabin_body != null:
-        _cabin_body.get_child(0).set_deferred("disabled", true)
     if player_node != null:
         player_node.position = Vector3(-54.9, 0.2, -34.0)
         player_node.rotation.y = -PI / 2.0    # regarde vers l'usine
@@ -277,8 +274,6 @@ func _entrer_bureau() -> void:
 
 
 func _sortir_bureau() -> void:
-    if _cabin_body != null:
-        _cabin_body.get_child(0).set_deferred("disabled", false)
     if player_node != null:
         player_node.position = Vector3(-51.2, 0.2, -34.0)
         player_node.rotation.y = PI / 2.0     # regarde le bureau
@@ -801,8 +796,11 @@ func _build_office_cabin() -> void:
         Vector3(-54.9, 0.0, -34.0), Vector3.ZERO, 0.65)
     if cabin == null:
         return
-    _cabin_body = _add_static_box(Vector3(-54.9, 1.30, -34.0),
-        Vector3(5.98, 2.59, 2.83), "bureau")
+    # Plaque cliquable a la porte de la cabine (pas de gros bloc : il
+    # ejectait le joueur qui entrait — l'interieur est libre, on marche
+    # sur le sol de l'usine).
+    _add_static_box(Vector3(-54.9, 1.1, -32.5),
+        Vector3(1.2, 2.2, 0.1), "bureau")
     var label := Label3D.new()
     label.text = "Bureau de chantier"
     label.font_size = 48
