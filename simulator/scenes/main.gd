@@ -121,6 +121,9 @@ var box_timer := 0.0
 var capture_mode := false
 var _adult_node: Node3D = null
 var _dans_bureau := false
+var _alarme_active := false
+var _verre_player: AudioStreamPlayer = null
+var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
 var _extinguisher_model: PackedScene = null
 var player_node: Node3D = null
@@ -187,8 +190,14 @@ func _ready() -> void:
     get_tree().root.close_requested.connect(
         func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     )
-    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-7 : annonces | clic porte usine : quitter | clic bureau : entrer")
+    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-7 : annonces | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
     _show_build_badge()
+    _verre_player = AudioStreamPlayer.new()
+    add_child(_verre_player)
+    _alarme_player = AudioStreamPlayer.new()
+    _alarme_player.volume_db = -4.0
+    add_child(_alarme_player)
+
     _annonce_player = AudioStreamPlayer.new()
     _annonce_player.volume_db = -4.0
     add_child(_annonce_player)
@@ -216,6 +225,9 @@ func _show_build_badge() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventKey and event.pressed and not event.echo:
+        if event.keycode == KEY_0 and _alarme_active:
+            _couper_alarme()
+            return
         for annonce in ANNONCES:
             if event.keycode == annonce.touche:
                 _jouer_annonce(annonce.nom, annonce.chemin)
@@ -271,6 +283,8 @@ func _clic_interaction(event: InputEvent) -> void:
         get_tree().quit(0)
     elif collider.get_meta("interaction") == "bureau":
         _entrer_bureau()
+    elif collider.get_meta("interaction") == "alarme_incendie":
+        _declencher_alarme(impact.position)
 
 
 func _entrer_bureau() -> void:
@@ -287,6 +301,60 @@ func _sortir_bureau() -> void:
         player_node.rotation.y = PI / 2.0     # regarde le mur (la cabine)
     _dans_bureau = false
     print("Bureau de chantier : sortie")
+
+
+## Bris de verre sonore + visuel, puis evacuation incendie en boucle.
+func _declencher_alarme(pos: Vector3) -> void:
+    _alarme_active = true
+    print("ALERTE : brise-vitre actionne")
+    var verre = load("res://assets/sounds/annonces/verre.mp3")
+    if verre != null and _verre_player != null:
+        _verre_player.stream = verre
+        _verre_player.play()
+    _eclats_de_verre(pos)
+    await get_tree().create_timer(0.9).timeout
+    if not _alarme_active:
+        return
+    var flux = load("res://assets/sounds/annonces/evacuation_incendie.mp3")
+    if flux != null and _alarme_player != null:
+        flux.loop = true
+        _alarme_player.stream = flux
+        _alarme_player.play()
+        print("Evacuation incendie en boucle — touche 0 pour couper")
+
+
+func _couper_alarme() -> void:
+    _alarme_active = false
+    if _alarme_player != null:
+        _alarme_player.stop()
+    print("Alarme coupee")
+
+
+## Petits eclats de verre physiques qui tombent (effet bonus).
+func _eclats_de_verre(pos: Vector3) -> void:
+    var mat := StandardMaterial3D.new()
+    mat.albedo_color = Color(0.75, 0.9, 1.0, 0.7)
+    mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    mat.metallic = 0.4
+    mat.roughness = 0.1
+    for i in range(12):
+        var eclat := RigidBody3D.new()
+        var mesh := MeshInstance3D.new()
+        var bx := BoxMesh.new()
+        bx.size = Vector3(0.03, 0.03, 0.01)
+        mesh.mesh = bx
+        mesh.material_override = mat
+        eclat.add_child(mesh)
+        var forme := CollisionShape3D.new()
+        var boite := BoxShape3D.new()
+        boite.size = Vector3(0.03, 0.03, 0.01)
+        forme.shape = boite
+        eclat.add_child(forme)
+        eclat.position = pos + Vector3(randf() * 0.08 - 0.04, 0.0, randf() * 0.08 - 0.04)
+        add_child(eclat)
+        eclat.apply_central_impulse(Vector3(
+            randf() * 2.0 - 1.0, randf() * 1.5, randf() * 2.0 - 1.0))
+        get_tree().create_timer(3.0).timeout.connect(eclat.queue_free)
 
 
 func _physics_process(delta: float) -> void:
@@ -562,7 +630,7 @@ func _build_hall(belt_length: float) -> void:
         _build_extinguisher(Vector3(HALL_MAX_X - 0.09, 0, z), PI)
 
     _build_props()
-    _build_urgence()
+    _build_alarmes()
     _build_expo()
     _build_expo2()
     _build_office_cabin()
@@ -690,14 +758,30 @@ func _place_prop(path: String, pos: Vector3, rot: Vector3, prop_scale := 1.0) ->
     return node
 
 
-## Borne "urgence" (brise-vitre) pres de l'extincteur x=10 du mur du
-## fond. Modele aute couche (dos en -y) : redressee par rotation X 90 deg
-## puis demi-tour Y 180 deg (l'avant etait vers le mur) ; hauteur de
-## prehension normalisee (~1,40 m).
-func _build_urgence() -> void:
-    _place_prop(URGENCUE_BOX,
-        Vector3(8.6, 1.46, HALL_MIN_Z + 0.06),
-        Vector3(PI / 2.0, PI, 0.0))
+## Boitiers d'alarme incendie (brise-vitre) pres de CHAQUE extincteur
+## et dans le bureau (mur de gauche). Modele aute couche : redresse par
+## X 90 deg + demi-tour Y 180 (l'avant etait vers le mur). Clic ->
+## bris de verre sonore et visuel puis evacuation en boucle (touche 0
+## pour couper).
+func _build_alarmes() -> void:
+    # mur du fond (face +Z) : a cote des extincteurs x = -20, 10, 40
+    for x in [-20.0, 10.0, 40.0]:
+        _placer_alarme(Vector3(x - 1.4, 1.46, HALL_MIN_Z + 0.06),
+            Vector3(PI / 2.0, PI, 0.0))
+    # mur droit (face -X) : extincteurs z = -15 et +15
+    for z in [-15.0, 15.0]:
+        _placer_alarme(Vector3(HALL_MAX_X - 0.06, 1.46, z - 1.4),
+            Vector3(PI / 2.0, -PI / 2.0, 0.0))
+    # bureau : mur de gauche de la piece interieure (face +X)
+    _placer_alarme(Vector3(-54.9 + 3.74, 1.46, -61.0 + 2.0),
+        Vector3(PI / 2.0, PI / 2.0, 0.0))
+
+
+func _placer_alarme(pos: Vector3, rot: Vector3) -> void:
+    _place_prop(URGENCUE_BOX, pos, rot)
+    # zone cliquable fine devant la facade
+    _add_static_box(pos + Vector3(0.0, 0.0, 0.05).rotated(
+        Vector3.UP, rot.y), Vector3(0.14, 0.14, 0.06), "alarme_incendie")
 
 
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
