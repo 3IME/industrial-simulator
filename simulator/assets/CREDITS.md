@@ -37,6 +37,7 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
     `voxel_machine.glb`, `voxel_machine_2.glb`, `modular_conveyor.glb`,
     `industrial_game.glb`, `steel_dumpster.glb`, `elevator.glb`,
     `office_chair.glb`, `bridge_fragment.glb`
+  * `estop_mushroom.gltf` (arrêt d'urgence « champignon », bureau),
   * deuxième ligne d'exposition (z = -16, cf. `_build_expo2`) :
     `bollard`, `track_fence`, `deck_plate`, `mezzanine_floor`,
     `mezzanine_walkway`, `stair_3m`, `cell_stair`, `ladder_cage`,

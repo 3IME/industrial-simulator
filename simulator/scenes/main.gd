@@ -124,6 +124,7 @@ var capture_mode := false
 var _adult_node: Node3D = null
 var _dans_bureau := false
 var _alarme_active := false
+var _en_confinement := false
 var _verre_player: AudioStreamPlayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -269,6 +270,8 @@ func _clic_interaction(event: InputEvent) -> void:
                     _sortir_bureau()
                 elif hit_in.collider.get_meta("interaction") == "alarme_incendie":
                     _declencher_alarme(hit_in.position)
+                elif hit_in.collider.get_meta("interaction") == "confinement":
+                    _declencher_confinement()
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -290,7 +293,8 @@ func _clic_interaction(event: InputEvent) -> void:
         return
     # Un brise-vitre se casse a bout de bras : portee courte imposee.
     var collider = impact.collider
-    if collider.get_meta("interaction") == "alarme_incendie"             and cam.global_position.distance_to(impact.position) > 2.5:
+    if (collider.get_meta("interaction") == "alarme_incendie"
+            or collider.get_meta("interaction") == "confinement")             and cam.global_position.distance_to(impact.position) > 2.5:
         print("Trop loin : approchez-vous du boitier")
         return
     if collider.get_meta("interaction") == "porte_usine":
@@ -301,6 +305,8 @@ func _clic_interaction(event: InputEvent) -> void:
         _entrer_bureau()
     elif collider.get_meta("interaction") == "alarme_incendie":
         _declencher_alarme(impact.position)
+    elif collider.get_meta("interaction") == "confinement":
+        _declencher_confinement()
 
 
 func _entrer_bureau() -> void:
@@ -341,9 +347,23 @@ func _declencher_alarme(pos: Vector3) -> void:
 
 func _couper_alarme() -> void:
     _alarme_active = false
+    _en_confinement = false
     if _alarme_player != null:
         _alarme_player.stop()
     print("Alarme coupee")
+
+
+## Arret d'urgence : annonce de confinement en boucle (touche 0).
+func _declencher_confinement() -> void:
+    _alarme_active = true
+    _en_confinement = true
+    print("ARRET D'URGENCE : confinement annonce")
+    var flux = load("res://assets/sounds/annonces/confinement.mp3")
+    if flux != null and _alarme_player != null:
+        flux.loop = true
+        _alarme_player.stream = flux
+        _alarme_player.play()
+        print("Confinement en boucle — touche 0 pour couper")
 
 
 ## Petits eclats de verre physiques qui tombent (effet bonus).
@@ -974,6 +994,14 @@ func _build_bureau_interieur() -> void:
     # Tableau au mur de droite, centre (source 4,44 m -> 2,0 m)
     _place_prop(TABLEAU, Vector3(cx + 3.76, 1.5, cz),
         Vector3(0.0, -PI / 2.0, 0.0), 0.45)
+
+    # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
+    # de l'alarme, mur gauche : declenche le confinement (touche 0).
+    var au_pos := Vector3(cx - 3.92, 1.12, cz + 3.3)
+    _place_prop("res://assets/props/estop_mushroom.gltf", au_pos,
+        Vector3(0.0, PI / 2.0, 0.0))
+    _add_static_box(au_pos + Vector3(0.06, 0.0, 0.0),
+        Vector3(0.05, 0.14, 0.14), "confinement")
 
     _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 3.9), Vector3.ZERO)
     _place_prop(PROP_OFFICE_CHAIR, Vector3(cx, 0.0, cz - 2.9), Vector3.ZERO)
