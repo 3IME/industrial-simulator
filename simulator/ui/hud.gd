@@ -53,7 +53,7 @@ func _ready() -> void:
     encoder_label = _make_label(box, "encodeur       = -")
     modbus_label = _make_label(box, "modbus         = -")
     pos_label = _make_label(box, "joueur         = -")
-    hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | B boite | clic : souris | Echap : liberer", false, true)
+    hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | B boite | 1-8 annonces | clic : souris | Echap : liberer", false, true)
     add_child(panel)
 
 

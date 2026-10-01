@@ -67,6 +67,7 @@ const ANNONCES := [
     {"touche": KEY_5, "nom": "presse", "chemin": "res://assets/sounds/annonces/presse.mp3"},
     {"touche": KEY_6, "nom": "camion", "chemin": "res://assets/sounds/annonces/camion.mp3"},
     {"touche": KEY_7, "nom": "zone production", "chemin": "res://assets/sounds/annonces/zone_production.mp3"},
+    {"touche": KEY_8, "nom": "confinement", "chemin": "res://assets/sounds/annonces/confinement.mp3"},
 ]
 var _annonce_player: AudioStreamPlayer = null
 
@@ -191,7 +192,7 @@ func _ready() -> void:
     get_tree().root.close_requested.connect(
         func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     )
-    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-7 : annonces | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
+    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-8 : annonces | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
     _show_build_badge()
     _verre_player = AudioStreamPlayer.new()
     add_child(_verre_player)
