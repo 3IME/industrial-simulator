@@ -501,6 +501,7 @@ func _build_hall(belt_length: float) -> void:
     _build_props()
     _build_expo()
     _build_expo2()
+    _build_office_cabin()
 
 
 func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
@@ -733,6 +734,25 @@ func _build_expo() -> void:
         add_child(label)
 
 
+## Bureau de chantier (site cabin) contre le mur gauche, cote fond
+## (x ~ -54, z = -34) : le grand cote le long du mur.
+func _build_office_cabin() -> void:
+    var cabin := _place_prop(PROP_OFFICE_CABIN,
+        Vector3(-54.9, 0.0, -34.0), Vector3.ZERO, 0.65)
+    if cabin == null:
+        return
+    _add_static_box(Vector3(-54.9, 1.30, -34.0), Vector3(5.98, 2.59, 2.83))
+    var label := Label3D.new()
+    label.text = "Bureau de chantier"
+    label.font_size = 48
+    label.modulate = Color(1.0, 0.95, 0.8)
+    label.outline_size = 12
+    label.outline_modulate = Color(0.05, 0.05, 0.08)
+    label.position = Vector3(-54.9, 0.02, -34.0 + 2.83 / 2.0 + 1.1)
+    label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
+    add_child(label)
+
+
 ## Deuxieme ligne d'exposition (z = -16) : modeles fournis en unitees
 ## arbitraires (pipeline STEP), normalises par dimension cible. Table
 ## generee depuis tests/measure_props.gd (cf. scripts/dequantize_gltf.py
@@ -755,8 +775,6 @@ func _build_expo2() -> void:
          "x": -17.6, "y": 0.0, "s": 0.75, "col": Vector3(0.80, 3.05, 2.84)},
         {"path": PROP_LADDER_CAGE, "nom": "Echelle a cage",
          "x": -11.2, "y": 0.0, "s": 0.75, "col": Vector3(0.69, 3.05, 0.65)},
-        {"path": PROP_OFFICE_CABIN, "nom": "Bureau de chantier",
-         "x": -4.8, "y": 0.0, "s": 0.65, "col": Vector3(5.98, 2.59, 2.83)},
         {"path": PROP_CLINICIAN_DESK, "nom": "Bureau medical",
          "x": 1.6, "y": 0.0, "s": 1.0, "col": Vector3(1.40, 0.75, 0.74)},
         {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
