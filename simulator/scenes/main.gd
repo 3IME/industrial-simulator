@@ -119,6 +119,8 @@ var auto_box := false
 var box_timer := 0.0
 var capture_mode := false
 var _adult_node: Node3D = null
+var _cabin_body: StaticBody3D = null
+var _dans_bureau := false
 var _adult_check := 0.0
 var _extinguisher_model: PackedScene = null
 var player_node: Node3D = null
@@ -185,7 +187,7 @@ func _ready() -> void:
     get_tree().root.close_requested.connect(
         func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     )
-    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-7 : annonces")
+    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-7 : annonces | clic porte usine : quitter | clic bureau : entrer")
     _show_build_badge()
     _annonce_player = AudioStreamPlayer.new()
     _annonce_player.volume_db = -4.0
@@ -218,6 +220,7 @@ func _unhandled_input(event: InputEvent) -> void:
             if event.keycode == annonce.touche:
                 _jouer_annonce(annonce.nom, annonce.chemin)
                 return
+    _clic_interaction(event)
 
 
 func _jouer_annonce(nom: String, chemin: String) -> void:
@@ -228,6 +231,59 @@ func _jouer_annonce(nom: String, chemin: String) -> void:
     _annonce_player.stream = flux
     _annonce_player.play()
     print("Annonce : ", nom)
+
+
+## Clic sur les elements interactifs (raycast depuis la camera) :
+## porte d'usine -> quitter ; bureau de chantier -> entrer/sortir.
+## (les touches 1-7 des annonces sont traitees ci-dessus)
+func _clic_interaction(event: InputEvent) -> void:
+    if not (event is InputEventMouseButton and event.pressed):
+        return
+    if event.button_index != MOUSE_BUTTON_LEFT:
+        return
+    if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+        return
+    if _dans_bureau:
+        _sortir_bureau()
+        return
+    var cam := get_viewport().get_camera_3d()
+    if cam == null:
+        return
+    var depuis := cam.global_position
+    var vers := depuis - cam.global_transform.basis.z * 6.0
+    var query := PhysicsRayQueryParameters3D.create(depuis, vers)
+    var impact: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+    if impact.is_empty():
+        return
+    var collider = impact.collider
+    if not collider is StaticBody3D or not collider.has_meta("interaction"):
+        return
+    if collider.get_meta("interaction") == "porte_usine":
+        print("Porte de l'usine : sortie du simulateur")
+        Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+        get_tree().quit(0)
+    elif collider.get_meta("interaction") == "bureau":
+        _entrer_bureau()
+
+
+func _entrer_bureau() -> void:
+    if _cabin_body != null:
+        _cabin_body.get_child(0).set_deferred("disabled", true)
+    if player_node != null:
+        player_node.position = Vector3(-54.9, 0.2, -34.0)
+        player_node.rotation.y = -PI / 2.0    # regarde vers l'usine
+    _dans_bureau = true
+    print("Bureau de chantier : entree")
+
+
+func _sortir_bureau() -> void:
+    if _cabin_body != null:
+        _cabin_body.get_child(0).set_deferred("disabled", false)
+    if player_node != null:
+        player_node.position = Vector3(-51.2, 0.2, -34.0)
+        player_node.rotation.y = PI / 2.0     # regarde le bureau
+    _dans_bureau = false
+    print("Bureau de chantier : sortie")
 
 
 func _physics_process(delta: float) -> void:
@@ -315,15 +371,18 @@ func _mat_texture(diff_path: String, nor_path: String, world_tile: float, tint :
     return mat
 
 
-func _add_static_box(pos: Vector3, box_size: Vector3) -> void:
+func _add_static_box(pos: Vector3, box_size: Vector3, interaction := "") -> StaticBody3D:
     var body := StaticBody3D.new()
     var shape := CollisionShape3D.new()
     var box := BoxShape3D.new()
     box.size = box_size
     shape.shape = box
     body.position = pos
+    if interaction != "":
+        body.set_meta("interaction", interaction)
     body.add_child(shape)
     add_child(body)
+    return body
 
 
 # ---------------------------------------------------------------------------
@@ -417,7 +476,8 @@ func _build_hall(belt_length: float) -> void:
         Vector3(HALL_MIN_X + 0.28, 0.0, 0.0),
         Vector3(0.0, PI / 2.0, 0.0), 2.2)
     if door_prop != null:
-        _add_static_box(Vector3(HALL_MIN_X + 0.28, 1.1, 0.0), Vector3(0.35, 2.3, 1.5))
+        _add_static_box(Vector3(HALL_MIN_X + 0.28, 1.1, 0.0),
+            Vector3(0.35, 2.3, 1.5), "porte_usine")
     else:
         var door_mat := StandardMaterial3D.new()
         door_mat.albedo_color = Color(0.5, 0.55, 0.6)
@@ -741,7 +801,8 @@ func _build_office_cabin() -> void:
         Vector3(-54.9, 0.0, -34.0), Vector3.ZERO, 0.65)
     if cabin == null:
         return
-    _add_static_box(Vector3(-54.9, 1.30, -34.0), Vector3(5.98, 2.59, 2.83))
+    _cabin_body = _add_static_box(Vector3(-54.9, 1.30, -34.0),
+        Vector3(5.98, 2.59, 2.83), "bureau")
     var label := Label3D.new()
     label.text = "Bureau de chantier"
     label.font_size = 48
