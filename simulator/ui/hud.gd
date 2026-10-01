@@ -4,6 +4,7 @@ extends CanvasLayer
 
 var io = null
 var link = null
+var joueur: Node3D = null    # renseigne par la scene : position affichee
 
 var title_label: Label
 var entry_label: Label
@@ -14,6 +15,7 @@ var speed_label: Label
 var position_label: Label
 var encoder_label: Label
 var modbus_label: Label
+var pos_label: Label
 var hint_label: Label
 
 
@@ -50,7 +52,8 @@ func _ready() -> void:
     position_label = _make_label(box, "position       = -")
     encoder_label = _make_label(box, "encodeur       = -")
     modbus_label = _make_label(box, "modbus         = -")
-    hint_label = _make_label(box, "ZQSD/WASD marcher | Maj courir | Espace saut | B boite | clic : souris | Echap : liberer", false, true)
+    pos_label = _make_label(box, "joueur         = -")
+    hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | B boite | clic : souris | Echap : liberer", false, true)
     add_child(panel)
 
 
@@ -84,6 +87,9 @@ func refresh() -> void:
         ]
     else:
         modbus_label.text = "modbus         : inactif"
+    if joueur != null:
+        pos_label.text = "joueur X %8.2f  Y %6.2f  Z %8.2f" % [
+            joueur.global_position.x, joueur.global_position.y, joueur.global_position.z]
 
 
 func _bool_line(label: Label, point_id: String) -> void:

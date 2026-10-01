@@ -7,7 +7,7 @@ extends Node3D
 ## le serveur Modbus TCP actif. AUCUNE logique d'automatisme ici : le rendu ne
 ## fait que LIRE l'etat des machines (ADR-013). La logique vit dans le PLC.
 ##
-## Controles : ZQSD/WASD marcher, souris regarder, Maj courir, Espace sauter,
+## Controles : fleches pour marcher, souris regarder, Maj courir, Espace sauter,
 ## Echap liberer la souris, B poser une boite.
 
 const FactoryBuilder = preload("res://simulation/factory_builder.gd")
@@ -255,6 +255,8 @@ func _process(delta: float) -> void:
             _clamp_prop_height(_adult_node, 1.60, "adulte")
     _sync_visuals()
     if hud != null:
+        if hud.joueur == null and player_node != null:
+            hud.joueur = player_node
         hud.refresh()
 
 
