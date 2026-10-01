@@ -87,6 +87,15 @@ func _ready() -> void:
         _click_sound.volume_db = -10.0
         add_child(_click_sound)
 
+    # Reticule discret au centre de l'ecran : le point vise par le clic
+    var viseur_couche := CanvasLayer.new()
+    var viseur := ColorRect.new()
+    viseur.color = Color(1.0, 1.0, 1.0, 0.85)
+    viseur.size = Vector2(4.0, 4.0)
+    viseur.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+    viseur_couche.add_child(viseur)
+    add_child(viseur_couche)
+
     _setup_footstepper()
 
 

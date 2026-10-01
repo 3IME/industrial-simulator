@@ -268,15 +268,22 @@ func _clic_interaction(event: InputEvent) -> void:
     var cam := get_viewport().get_camera_3d()
     if cam == null:
         return
-    var depuis := cam.global_position
-    var vers := depuis - cam.global_transform.basis.z * 6.0
-    var query := PhysicsRayQueryParameters3D.create(depuis, vers)
-    var impact: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+    # Cone de precision : rayon central, puis 4 decalages (~1,7 deg) —
+    # le premier objet INTERACTIF touche gagne (portee 12 m).
+    var base := -cam.global_transform.basis.z
+    var impact: Dictionary = {}
+    for decalage in [Vector3.ZERO, Vector3(0.03, 0, 0), Vector3(-0.03, 0, 0),
+            Vector3(0, 0.03, 0), Vector3(0, -0.03, 0)]:
+        var direction: Vector3 = (base + decalage).normalized()
+        var query := PhysicsRayQueryParameters3D.create(
+            cam.global_position, cam.global_position + direction * 12.0)
+        var essai: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
+        if not essai.is_empty() and essai.collider is StaticBody3D                 and essai.collider.has_meta("interaction"):
+            impact = essai
+            break
     if impact.is_empty():
         return
     var collider = impact.collider
-    if not collider is StaticBody3D or not collider.has_meta("interaction"):
-        return
     if collider.get_meta("interaction") == "porte_usine":
         print("Porte de l'usine : sortie du simulateur")
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -781,7 +788,7 @@ func _placer_alarme(pos: Vector3, rot: Vector3, face: Vector3) -> void:
     _place_prop(URGENCUE_BOX, pos, rot)
     # zone cliquable fine DEVANT la facade (face explicite : le panneau
     # etait enterre dans le mur, le rayon touchait toujours le mur)
-    _add_static_box(pos + face * 0.07, Vector3(0.16, 0.16, 0.05),
+    _add_static_box(pos + face * 0.07, Vector3(0.24, 0.24, 0.05),
         "alarme_incendie")
 
 
