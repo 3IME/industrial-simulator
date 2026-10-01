@@ -798,7 +798,13 @@ func _build_bureau_interieur() -> void:
     var cx := -54.9
     var cz := -61.0
     var mur := StandardMaterial3D.new()
-    mur.albedo_color = Color(0.78, 0.76, 0.72)
+    var papier = load("res://assets/textures/mur_bureau_pattern.jpg")
+    if papier != null:
+        mur.albedo_texture = papier
+        mur.uv1_scale = Vector3(4.0, 1.4, 1.0)    # motif ~2 m
+        mur.roughness = 0.9
+    else:
+        mur.albedo_color = Color(0.78, 0.76, 0.72)
     var sol := StandardMaterial3D.new()
     var parquet = load("res://assets/textures/parquet_basecolor.png")
     if parquet != null:

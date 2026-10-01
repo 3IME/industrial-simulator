@@ -85,8 +85,9 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
 
 ## Parquet du bureau (`textures/parquet_basecolor.png`)
 
-* Texture fournie par **3IME** (propriétaire du projet) — sol du
-  bureau de chantier (`_build_bureau_interieur`).
+* Textures fournies par **3IME** (propriétaire du projet) — bureau de
+  chantier (`_build_bureau_interieur`) : `parquet_basecolor.png` (sol),
+  `mur_bureau_pattern.jpg` (murs).
 
 ## Poly Haven — textures (dossier `textures/`)
 
