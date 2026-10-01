@@ -267,8 +267,8 @@ func _clic_interaction(event: InputEvent) -> void:
 
 func _entrer_bureau() -> void:
     if player_node != null:
-        player_node.position = Vector3(-54.9, 0.2, -34.0)
-        player_node.rotation.y = -PI / 2.0    # regarde vers l'usine
+        player_node.position = Vector3(-54.9, 0.2, -59.6)
+        player_node.rotation.y = PI           # regarde le bureau (fond de piece)
     _dans_bureau = true
     print("Bureau de chantier : entree")
 
@@ -557,6 +557,7 @@ func _build_hall(belt_length: float) -> void:
     _build_expo()
     _build_expo2()
     _build_office_cabin()
+    _build_bureau_interieur()
 
 
 func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
@@ -787,6 +788,50 @@ func _build_expo() -> void:
         label.position = Vector3(item.x, 0.02, -10.0 + item.col.z / 2.0 + 1.1)
         label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
         add_child(label)
+
+
+## Piece interieure du bureau : 4 x 5 m construite DERIERE le mur du
+## fond (z = -61, invisible depuis l'usine). La porte de la cabine y
+## teleporte — solution plus simple que d'entrer dans le mesh de la
+## cabine (interieur trop petit, collisions invraisemblables).
+func _build_bureau_interieur() -> void:
+    var cx := -54.9
+    var cz := -61.0
+    var mur := StandardMaterial3D.new()
+    mur.albedo_color = Color(0.78, 0.76, 0.72)
+    var sol := StandardMaterial3D.new()
+    sol.albedo_color = Color(0.42, 0.40, 0.38)
+    var plafond := StandardMaterial3D.new()
+    plafond.albedo_color = Color(0.92, 0.91, 0.88)
+
+    _room_box(Vector3(cx, -0.1, cz), Vector3(4.0, 0.2, 5.0), sol)          # sol
+    _room_box(Vector3(cx, 2.9, cz), Vector3(4.0, 0.2, 5.0), plafond)       # plafond
+    _room_box(Vector3(cx, 1.4, cz - 2.4), Vector3(4.0, 2.8, 0.2), mur)     # fond
+    _room_box(Vector3(cx, 1.4, cz + 2.4), Vector3(4.0, 2.8, 0.2), mur)     # porte (cote usine)
+    _room_box(Vector3(cx - 2.0, 1.4, cz), Vector3(0.2, 2.8, 5.0), mur)     # gauche
+    _room_box(Vector3(cx + 2.0, 1.4, cz), Vector3(0.2, 2.8, 5.0), mur)     # droite
+
+    var lampe := OmniLight3D.new()
+    lampe.position = Vector3(cx, 2.4, cz)
+    lampe.light_color = Color(1.0, 0.93, 0.8)
+    lampe.omni_range = 7.0
+    lampe.light_energy = 1.3
+    add_child(lampe)
+
+    # Mobilier (modeles deja en ressources)
+    _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 1.7), Vector3.ZERO)
+    _place_prop(PROP_OFFICE_CHAIR, Vector3(cx, 0.0, cz - 0.7), Vector3.ZERO)
+
+
+func _room_box(pos: Vector3, box_size: Vector3, mat: StandardMaterial3D) -> void:
+    var mesh := MeshInstance3D.new()
+    var bx := BoxMesh.new()
+    bx.size = box_size
+    mesh.mesh = bx
+    mesh.position = pos
+    mesh.material_override = mat
+    add_child(mesh)
+    _add_static_box(pos, box_size)
 
 
 ## Bureau de chantier (site cabin) contre le mur gauche, cote fond
