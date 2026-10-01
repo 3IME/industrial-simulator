@@ -22,6 +22,7 @@ const SENSOR_ON := Color(0.95, 0.15, 0.15)
 const EXTINGUISHER_MODEL := "res://assets/safety/extinguisher.glb"
 const EXTINGUISHER_SIGN := "res://assets/safety/sign_extinguisher_si31.png"
 const URGENCUE_BOX := "res://assets/safety/urgence4.glb"
+const TABLEAU := "res://assets/props/tableau.glb"
 # Modele source : bbox 0.565 x 1.088 x 0.34 m, base a y=0.
 # Cible : extincteur de 0.62 m pose sur support mural (base a 0.70 m).
 const EXTINGUISHER_SCALE := 0.62 / 1.088
@@ -948,6 +949,10 @@ func _build_bureau_interieur() -> void:
     lampe.omni_range = 9.0
     lampe.light_energy = 1.3
     add_child(lampe)
+
+    # Tableau au mur de droite, centre (source 4,44 m -> 2,0 m)
+    _place_prop(TABLEAU, Vector3(cx + 3.95, 1.5, cz),
+        Vector3(0.0, -PI / 2.0, 0.0), 0.45)
 
     _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 3.9), Vector3.ZERO)
     _place_prop(PROP_OFFICE_CHAIR, Vector3(cx, 0.0, cz - 2.9), Vector3.ZERO)
