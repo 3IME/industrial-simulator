@@ -1005,6 +1005,29 @@ func _build_bureau_interieur() -> void:
     _place_prop(TABLEAU, Vector3(cx + 3.76, 1.5, cz),
         Vector3(0.0, -PI / 2.0, 0.0), 0.45)
 
+    # Ecran TV 65" (16:9 : 1,45 x 0,82 m) derriere la table, au mur du fond
+    var bezel := MeshInstance3D.new()
+    var bezel_box := BoxMesh.new()
+    bezel_box.size = Vector3(1.55, 0.92, 0.06)
+    bezel.mesh = bezel_box
+    bezel.position = Vector3(cx, 1.65, cz - 4.66)
+    var noir := StandardMaterial3D.new()
+    noir.albedo_color = Color(0.05, 0.05, 0.06)
+    noir.roughness = 0.4
+    bezel.material_override = noir
+    add_child(bezel)
+    var ecran := MeshInstance3D.new()
+    var ecran_box := BoxMesh.new()
+    ecran_box.size = Vector3(1.45, 0.82, 0.015)
+    ecran.mesh = ecran_box
+    ecran.position = Vector3(cx, 1.65, cz - 4.62)
+    var verre := StandardMaterial3D.new()
+    verre.albedo_color = Color(0.02, 0.02, 0.03)
+    verre.metallic = 0.6
+    verre.roughness = 0.15
+    ecran.material_override = verre
+    add_child(ecran)
+
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
     # de l'alarme, mur gauche : declenche le confinement (touche 0).
     var au_pos := Vector3(cx - 3.92, 1.12, cz + 3.3)
