@@ -243,7 +243,14 @@ func _clic_interaction(event: InputEvent) -> void:
     if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
         return
     if _dans_bureau:
-        _sortir_bureau()
+        var cam_in := get_viewport().get_camera_3d()
+        if cam_in != null:
+            var q_in := PhysicsRayQueryParameters3D.create(
+                cam_in.global_position,
+                cam_in.global_position - cam_in.global_transform.basis.z * 6.0)
+            var hit_in: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_in)
+            if not hit_in.is_empty() and hit_in.collider is StaticBody3D                     and hit_in.collider.has_meta("interaction")                     and hit_in.collider.get_meta("interaction") == "porte_bureau_interieur":
+                _sortir_bureau()
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -267,16 +274,16 @@ func _clic_interaction(event: InputEvent) -> void:
 
 func _entrer_bureau() -> void:
     if player_node != null:
-        player_node.position = Vector3(-54.9, 0.2, -59.6)
-        player_node.rotation.y = PI           # regarde le bureau (fond de piece)
+        player_node.position = Vector3(-54.9, 0.2, -57.5)
+        player_node.rotation.y = 0.0          # regarde le fond de la piece (bureau)
     _dans_bureau = true
     print("Bureau de chantier : entree")
 
 
 func _sortir_bureau() -> void:
     if player_node != null:
-        player_node.position = Vector3(-51.2, 0.2, -34.0)
-        player_node.rotation.y = PI / 2.0     # regarde le bureau
+        player_node.position = Vector3(-54.5, 0.2, -30.0)
+        player_node.rotation.y = PI / 2.0     # regarde le mur (la cabine)
     _dans_bureau = false
     print("Bureau de chantier : sortie")
 
@@ -736,13 +743,6 @@ func _build_props() -> void:
                 anim.loop_mode = Animation.LOOP_LINEAR
                 anim_player.play(anim_name)
 
-    # Chaise de bureau tout a droite de la porte (mur gauche).
-    # Modele pose a y=0 (base du pied au sol, bbox mesuree min.y = 0).
-    var chair := _place_prop(PROP_OFFICE_CHAIR,
-        Vector3(HALL_MIN_X + 0.45, 0.0, -3.6), Vector3.ZERO)
-    if chair != null:
-        _add_static_box(Vector3(HALL_MIN_X + 0.45, 0.51, -3.6), Vector3(0.6, 1.02, 0.6))
-
     # Gondole (rayonnage) contre le mur gauche
     var gondola := _place_prop(PROP_GONDOLA,
         Vector3(HALL_MIN_X + 0.42, 0.95, 4.2), Vector3(0.0, PI / 2.0, 0.0))
@@ -790,10 +790,10 @@ func _build_expo() -> void:
         add_child(label)
 
 
-## Piece interieure du bureau : 4 x 5 m construite DERIERE le mur du
-## fond (z = -61, invisible depuis l'usine). La porte de la cabine y
-## teleporte — solution plus simple que d'entrer dans le mesh de la
-## cabine (interieur trop petit, collisions invraisemblables).
+## Piece interieure du bureau : 8 x 10 m derriere le mur du fond
+## (invisible depuis l'usine). Vraie porte dans le mur avant : c'est
+## ELLE qu'on clique pour sortir. La porte de la cabine (dans l'usine)
+## teleporte vers l'interieur.
 func _build_bureau_interieur() -> void:
     var cx := -54.9
     var cz := -61.0
@@ -803,24 +803,38 @@ func _build_bureau_interieur() -> void:
     sol.albedo_color = Color(0.42, 0.40, 0.38)
     var plafond := StandardMaterial3D.new()
     plafond.albedo_color = Color(0.92, 0.91, 0.88)
+    var bois := StandardMaterial3D.new()
+    bois.albedo_color = Color(0.45, 0.32, 0.2)
 
-    _room_box(Vector3(cx, -0.1, cz), Vector3(4.0, 0.2, 5.0), sol)          # sol
-    _room_box(Vector3(cx, 2.9, cz), Vector3(4.0, 0.2, 5.0), plafond)       # plafond
-    _room_box(Vector3(cx, 1.4, cz - 2.4), Vector3(4.0, 2.8, 0.2), mur)     # fond
-    _room_box(Vector3(cx, 1.4, cz + 2.4), Vector3(4.0, 2.8, 0.2), mur)     # porte (cote usine)
-    _room_box(Vector3(cx - 2.0, 1.4, cz), Vector3(0.2, 2.8, 5.0), mur)     # gauche
-    _room_box(Vector3(cx + 2.0, 1.4, cz), Vector3(0.2, 2.8, 5.0), mur)     # droite
+    _room_box(Vector3(cx, -0.1, cz), Vector3(8.0, 0.2, 10.0), sol)
+    _room_box(Vector3(cx, 2.9, cz), Vector3(8.0, 0.2, 10.0), plafond)
+    _room_box(Vector3(cx, 1.4, cz - 4.9), Vector3(8.0, 2.8, 0.2), mur)      # fond
+    _room_box(Vector3(cx - 2.3, 1.4, cz + 4.9), Vector3(3.4, 2.8, 0.2), mur)  # avant gauche
+    _room_box(Vector3(cx + 2.3, 1.4, cz + 4.9), Vector3(3.4, 2.8, 0.2), mur)  # avant droite
+    _room_box(Vector3(cx, 2.4, cz + 4.9), Vector3(1.2, 0.8, 0.2), mur)      # linteau au-dessus de la porte
+    _room_box(Vector3(cx - 3.9, 1.4, cz), Vector3(0.2, 2.8, 10.0), mur)     # gauche
+    _room_box(Vector3(cx + 3.9, 1.4, cz), Vector3(0.2, 2.8, 10.0), mur)     # droite
+
+    # Porte visible + zone cliquable (sortie)
+    var porte := MeshInstance3D.new()
+    var porte_box := BoxMesh.new()
+    porte_box.size = Vector3(1.1, 1.95, 0.08)
+    porte.mesh = porte_box
+    porte.position = Vector3(cx, 0.975, cz + 4.9)
+    porte.material_override = bois
+    add_child(porte)
+    _add_static_box(Vector3(cx, 1.0, cz + 4.9), Vector3(1.2, 2.0, 0.15),
+        "porte_bureau_interieur")
 
     var lampe := OmniLight3D.new()
     lampe.position = Vector3(cx, 2.4, cz)
     lampe.light_color = Color(1.0, 0.93, 0.8)
-    lampe.omni_range = 7.0
+    lampe.omni_range = 9.0
     lampe.light_energy = 1.3
     add_child(lampe)
 
-    # Mobilier (modeles deja en ressources)
-    _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 1.7), Vector3.ZERO)
-    _place_prop(PROP_OFFICE_CHAIR, Vector3(cx, 0.0, cz - 0.7), Vector3.ZERO)
+    _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 3.9), Vector3.ZERO)
+    _place_prop(PROP_OFFICE_CHAIR, Vector3(cx, 0.0, cz - 2.9), Vector3.ZERO)
 
 
 func _room_box(pos: Vector3, box_size: Vector3, mat: StandardMaterial3D) -> void:
@@ -879,8 +893,6 @@ func _build_expo2() -> void:
          "x": -17.6, "y": 0.0, "s": 0.75, "col": Vector3(0.80, 3.05, 2.84)},
         {"path": PROP_LADDER_CAGE, "nom": "Echelle a cage",
          "x": -11.2, "y": 0.0, "s": 0.75, "col": Vector3(0.69, 3.05, 0.65)},
-        {"path": PROP_CLINICIAN_DESK, "nom": "Bureau medical",
-         "x": 1.6, "y": 0.0, "s": 1.0, "col": Vector3(1.40, 0.75, 0.74)},
         {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
          "x": 8.0, "y": 0.0, "s": 1.0, "col": Vector3(1.14, 0.93, 0.86)},
         {"path": PROP_ENGINE_LATHE, "nom": "Tour d'atelier",
