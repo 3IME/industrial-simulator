@@ -83,6 +83,11 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
   qui redistribue les kits officiels kenney.nl sous la même licence CC0.
 * Fichiers concernés : `*.glb`, `Textures/colormap.png`, `LICENSE-kenney.txt`.
 
+## Parquet du bureau (`textures/parquet_basecolor.png`)
+
+* Texture fournie par **3IME** (propriétaire du projet) — sol du
+  bureau de chantier (`_build_bureau_interieur`).
+
 ## Poly Haven — textures (dossier `textures/`)
 
 * Source : polyhaven.com — licence **CC0 1.0** (domaine public).
