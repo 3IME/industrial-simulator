@@ -288,7 +288,11 @@ func _clic_interaction(event: InputEvent) -> void:
             break
     if impact.is_empty():
         return
+    # Un brise-vitre se casse a bout de bras : portee courte imposee.
     var collider = impact.collider
+    if collider.get_meta("interaction") == "alarme_incendie"             and cam.global_position.distance_to(impact.position) > 2.5:
+        print("Trop loin : approchez-vous du boitier")
+        return
     if collider.get_meta("interaction") == "porte_usine":
         print("Porte de l'usine : sortie du simulateur")
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
