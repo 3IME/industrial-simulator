@@ -767,21 +767,22 @@ func _build_alarmes() -> void:
     # mur du fond (face +Z) : a cote des extincteurs x = -20, 10, 40
     for x in [-20.0, 10.0, 40.0]:
         _placer_alarme(Vector3(x - 1.4, 1.46, HALL_MIN_Z + 0.06),
-            Vector3(PI / 2.0, PI, 0.0))
+            Vector3(PI / 2.0, PI, 0.0), Vector3(0.0, 0.0, 1.0))
     # mur droit (face -X) : extincteurs z = -15 et +15
     for z in [-15.0, 15.0]:
         _placer_alarme(Vector3(HALL_MAX_X - 0.06, 1.46, z - 1.4),
-            Vector3(PI / 2.0, -PI / 2.0, 0.0))
-    # bureau : mur de gauche de la piece interieure (face +X)
-    _placer_alarme(Vector3(-54.9 + 3.74, 1.46, -61.0 + 2.0),
-        Vector3(PI / 2.0, PI / 2.0, 0.0))
+            Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(-1.0, 0.0, 0.0))
+    # bureau : mur de GAUCHE de la piece interieure (face interieure +X)
+    _placer_alarme(Vector3(-58.66, 1.46, -59.0),
+        Vector3(PI / 2.0, PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
 
 
-func _placer_alarme(pos: Vector3, rot: Vector3) -> void:
+func _placer_alarme(pos: Vector3, rot: Vector3, face: Vector3) -> void:
     _place_prop(URGENCUE_BOX, pos, rot)
-    # zone cliquable fine devant la facade
-    _add_static_box(pos + Vector3(0.0, 0.0, 0.05).rotated(
-        Vector3.UP, rot.y), Vector3(0.14, 0.14, 0.06), "alarme_incendie")
+    # zone cliquable fine DEVANT la facade (face explicite : le panneau
+    # etait enterre dans le mur, le rayon touchait toujours le mur)
+    _add_static_box(pos + face * 0.07, Vector3(0.16, 0.16, 0.05),
+        "alarme_incendie")
 
 
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
@@ -1205,6 +1206,25 @@ func _capture_and_quit() -> void:
         var closeup := get_viewport().get_texture().get_image()
         closeup.save_png("res://capture_3d_extinguisher.png")
         print("Capture ecrite : res://capture_3d_extinguisher.png")
+        # AUTOTEST : rayon direct vers le panneau de l'alarme x=8.6
+        await get_tree().create_timer(0.3).timeout
+        var q_a := PhysicsRayQueryParameters3D.create(
+            Vector3(8.6, 1.46, -40.6), Vector3(8.6, 1.46, -44.90))
+        var h_a: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_a)
+        if not h_a.is_empty() and h_a.collider.has_meta("interaction")                 and h_a.collider.get_meta("interaction") == "alarme_incendie":
+            print("AUTOTEST ALARME: panneau touche -> declenchement")
+            _declencher_alarme(h_a.position)
+            await get_tree().create_timer(1.2).timeout
+            if _alarme_active:
+                _couper_alarme()
+                print("AUTOTEST ALARME: OK")
+            else:
+                print("AUTOTEST ALARME: ECHEC (pas de boucle)")
+        elif h_a.is_empty():
+            print("AUTOTEST ALARME: ECHEC (rien touche)")
+        else:
+            print("AUTOTEST ALARME: ECHEC (meta=",
+                h_a.collider.get_meta("interaction") if h_a.collider.has_meta("interaction") else "-", ")")
     # Gros plan sur le bras robot : preuve de l'articulation corrigee
     if player_node != null:
         player_node.position = Vector3(1.2, 0.0, 0.6)
@@ -1257,3 +1277,4 @@ func _capture_and_quit() -> void:
     # Liberer la souris avant de quitter (sinon curseur confine sous Windows)
     Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     get_tree().quit(0)
+
