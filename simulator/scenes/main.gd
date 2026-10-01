@@ -358,6 +358,16 @@ func _declencher_confinement() -> void:
     _alarme_active = true
     _en_confinement = true
     print("ARRET D'URGENCE : confinement annonce")
+    # Clic du bouton d'abord, puis boucle de confinement
+    var clic = load("res://assets/sounds/annonces/bouton_au.mp3")
+    var attente := 0.6
+    if clic != null and _verre_player != null:
+        _verre_player.stream = clic
+        _verre_player.play()
+        attente = clic.get_length() + 0.2
+    await get_tree().create_timer(attente).timeout
+    if not _alarme_active:
+        return
     var flux = load("res://assets/sounds/annonces/confinement.mp3")
     if flux != null and _alarme_player != null:
         flux.loop = true
