@@ -264,8 +264,11 @@ func _clic_interaction(event: InputEvent) -> void:
                 cam_in.global_position,
                 cam_in.global_position - cam_in.global_transform.basis.z * 6.0)
             var hit_in: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_in)
-            if not hit_in.is_empty() and hit_in.collider is StaticBody3D                     and hit_in.collider.has_meta("interaction")                     and hit_in.collider.get_meta("interaction") == "porte_bureau_interieur":
-                _sortir_bureau()
+            if not hit_in.is_empty() and hit_in.collider is StaticBody3D                     and hit_in.collider.has_meta("interaction"):
+                if hit_in.collider.get_meta("interaction") == "porte_bureau_interieur":
+                    _sortir_bureau()
+                elif hit_in.collider.get_meta("interaction") == "alarme_incendie":
+                    _declencher_alarme(hit_in.position)
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -637,6 +640,11 @@ func _build_hall(belt_length: float) -> void:
         _build_extinguisher(Vector3(x, 0, HALL_MIN_Z + 0.09), -PI / 2.0)
     for z in [-15.0, 15.0]:
         _build_extinguisher(Vector3(HALL_MAX_X - 0.09, 0, z), PI)
+    # Mur avant (z max) : deux kits
+    for x in [-13.6, 21.4]:
+        _build_extinguisher(Vector3(x, 0, HALL_MAX_Z - 0.09), PI / 2.0)
+    # Mur gauche : kit a droite de la porte de sortie
+    _build_extinguisher(Vector3(HALL_MIN_X + 0.09, 0, -1.2), 0.0)
 
     _build_props()
     _build_alarmes()
@@ -780,7 +788,15 @@ func _build_alarmes() -> void:
     # mur droit (face -X) : extincteurs z = -15 et +15
     for z in [-15.0, 15.0]:
         _placer_alarme(Vector3(HALL_MAX_X - 0.06, 1.46, z - 1.4),
-            Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(-1.0, 0.0, 0.0))
+            Vector3(PI / 2.0, PI / 2.0, 0.0), Vector3(-1.0, 0.0, 0.0))
+    # mur avant (z max, face -Z) : deux kits
+    for x in [-15.0, 20.0]:
+        _placer_alarme(Vector3(x - 1.4, 1.46, HALL_MAX_Z - 0.06),
+            Vector3(PI / 2.0, 0.0, 0.0), Vector3(0.0, 0.0, -1.0))
+    # mur gauche : kit a droite de la porte de sortie (face +X)
+    _placer_alarme(Vector3(HALL_MIN_X + 0.06, 1.46, -2.6),
+        Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
+
     # bureau : mur de GAUCHE de la piece interieure (face interieure +X)
     _placer_alarme(Vector3(-58.66, 1.46, -59.0),
         Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
