@@ -67,9 +67,15 @@ def traiter_glb(chemin):
             lignes.append(np.frombuffer(vb, dtype=dt, count=n,
                                         offset=base + i * stride))
         vals = np.array(lignes, dtype=np.float64)
-        mn = np.array(acc.get("min", [0.0] * n), dtype=np.float64)
-        mx = np.array(acc.get("max", [1.0] * n), dtype=np.float64)
-        dec = vals / vmax * (mx - mn) + mn
+        if acc.get("normalized", False):
+            # Attribut NORMALISE : min/max du fichier sont dans le domaine
+            # BRUT (piege observe : +-32767) — la vraie echelle vit dans le
+            # transform du noeud. Decodage normalise standard :
+            dec = np.maximum(vals / vmax, -1.0)
+        else:
+            mn = np.array(acc.get("min", [0.0] * n), dtype=np.float64)
+            mx = np.array(acc.get("max", [1.0] * n), dtype=np.float64)
+            dec = vals / vmax * (mx - mn) + mn
         dec32 = dec.astype('<f4')
         while len(nouveau_blob) % 4:
             nouveau_blob.extend(b'\x00')
