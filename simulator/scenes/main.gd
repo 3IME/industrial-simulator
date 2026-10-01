@@ -783,7 +783,7 @@ func _build_alarmes() -> void:
             Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(-1.0, 0.0, 0.0))
     # bureau : mur de GAUCHE de la piece interieure (face interieure +X)
     _placer_alarme(Vector3(-58.66, 1.46, -59.0),
-        Vector3(PI / 2.0, PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
+        Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
 
 
 func _placer_alarme(pos: Vector3, rot: Vector3, face: Vector3) -> void:
@@ -952,7 +952,7 @@ func _build_bureau_interieur() -> void:
     add_child(lampe)
 
     # Tableau au mur de droite, centre (source 4,44 m -> 2,0 m)
-    _place_prop(TABLEAU, Vector3(cx + 3.95, 1.5, cz),
+    _place_prop(TABLEAU, Vector3(cx + 3.76, 1.5, cz),
         Vector3(0.0, -PI / 2.0, 0.0), 0.45)
 
     _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 3.9), Vector3.ZERO)
