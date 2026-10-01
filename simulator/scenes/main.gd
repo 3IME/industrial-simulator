@@ -1030,11 +1030,22 @@ func _build_bureau_interieur() -> void:
 
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
     # de l'alarme, mur gauche : declenche le confinement (touche 0).
-    var au_pos := Vector3(cx - 3.92, 1.12, cz + 3.3)
+    # cx - 3.7 = 8 cm devant la cloison (face interieure a cx - 3.8) :
+    # ancre plus profond enterre le modele dans le mur.
+    var au_pos := Vector3(cx - 3.70, 1.12, cz + 3.3)
     _place_prop("res://assets/props/estop_mushroom.gltf", au_pos,
         Vector3(0.0, PI / 2.0, 0.0))
-    _add_static_box(au_pos + Vector3(0.06, 0.0, 0.0),
+    _add_static_box(au_pos + Vector3(0.05, 0.0, 0.0),
         Vector3(0.05, 0.14, 0.14), "confinement")
+    var etiquette_au := Label3D.new()
+    etiquette_au.text = "Confinement"
+    etiquette_au.font_size = 40
+    etiquette_au.modulate = Color(1.0, 0.95, 0.8)
+    etiquette_au.outline_size = 10
+    etiquette_au.outline_modulate = Color(0.05, 0.05, 0.08)
+    etiquette_au.position = Vector3(cx - 3.72, 0.96, cz + 3.3)
+    etiquette_au.rotation = Vector3(0.0, PI / 2.0, 0.0)
+    add_child(etiquette_au)
 
     _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 3.9), Vector3.ZERO)
     _place_prop(PROP_OFFICE_CHAIR, Vector3(cx, 0.0, cz - 2.9), Vector3.ZERO)
