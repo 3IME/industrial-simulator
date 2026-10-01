@@ -273,6 +273,8 @@ func _clic_interaction(event: InputEvent) -> void:
                     _declencher_alarme(hit_in.position)
                 elif hit_in.collider.get_meta("interaction") == "confinement":
                     _declencher_confinement()
+                elif hit_in.collider.get_meta("interaction") == "evacuation":
+                    _declencher_evacuation_bouton()
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -308,6 +310,8 @@ func _clic_interaction(event: InputEvent) -> void:
         _declencher_alarme(impact.position)
     elif collider.get_meta("interaction") == "confinement":
         _declencher_confinement()
+    elif collider.get_meta("interaction") == "evacuation":
+        _declencher_evacuation_bouton()
 
 
 func _entrer_bureau() -> void:
@@ -354,6 +358,29 @@ func _couper_alarme() -> void:
     if _alarme_player != null:
         _alarme_player.stop()
     print("Alarme coupee")
+
+
+## Bouton d'evacuation (meme principe que le confinement) : boucle
+## d'evacuation.mp3, coupure par la touche 0.
+func _declencher_evacuation_bouton() -> void:
+    _alarme_active = true
+    _en_confinement = false
+    print("BOUTON EVACUATION")
+    var clic = load("res://assets/sounds/annonces/bouton_au.mp3")
+    var attente := 0.6
+    if clic != null and _verre_player != null:
+        _verre_player.stream = clic
+        _verre_player.play()
+        attente = clic.get_length() + 0.2
+    await get_tree().create_timer(attente).timeout
+    if not _alarme_active or _en_confinement:
+        return
+    var flux = load("res://assets/sounds/annonces/evacuation.mp3")
+    if flux != null and _alarme_player != null:
+        flux.loop = true
+        _alarme_player.stream = flux
+        _alarme_player.play()
+        print("Evacuation en boucle — touche 0 pour couper")
 
 
 ## Arret d'urgence : annonce de confinement en boucle (touche 0).
@@ -1064,12 +1091,27 @@ func _build_bureau_interieur() -> void:
     # ancre plus profond enterre le modele dans le mur.
     var au_pos := Vector3(cx - 3.70, 1.12, cz + 3.3)
     _place_prop("res://assets/props/estop_mushroom.gltf", au_pos,
-        Vector3(0.0, PI / 2.0, 0.0))
+        Vector3(0.0, PI / 2.0, PI))
     _add_static_box(au_pos + Vector3(0.05, 0.0, 0.0),
         Vector3(0.05, 0.14, 0.14), "confinement")
+    # Second bouton AU au-dessus : evacuation
+    var ev_pos := Vector3(cx - 3.70, 1.52, cz + 3.3)
+    _place_prop("res://assets/props/estop_mushroom.gltf", ev_pos,
+        Vector3(0.0, PI / 2.0, PI))
+    _add_static_box(ev_pos + Vector3(0.05, 0.0, 0.0),
+        Vector3(0.05, 0.14, 0.14), "evacuation")
+    var etiquette_ev := Label3D.new()
+    etiquette_ev.text = "Evacuation"
+    etiquette_ev.font_size = 22
+    etiquette_ev.modulate = Color(1.0, 0.95, 0.8)
+    etiquette_ev.outline_size = 8
+    etiquette_ev.outline_modulate = Color(0.05, 0.05, 0.08)
+    etiquette_ev.position = Vector3(cx - 3.72, 1.36, cz + 3.3)
+    etiquette_ev.rotation = Vector3(0.0, PI / 2.0, 0.0)
+    add_child(etiquette_ev)
     var etiquette_au := Label3D.new()
     etiquette_au.text = "Confinement"
-    etiquette_au.font_size = 40
+    etiquette_au.font_size = 22
     etiquette_au.modulate = Color(1.0, 0.95, 0.8)
     etiquette_au.outline_size = 10
     etiquette_au.outline_modulate = Color(0.05, 0.05, 0.08)
