@@ -125,6 +125,7 @@ var _adult_node: Node3D = null
 var _dans_bureau := false
 var _alarme_active := false
 var _en_confinement := false
+var _cctv = null
 var _verre_player: AudioStreamPlayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -348,6 +349,8 @@ func _declencher_alarme(pos: Vector3) -> void:
 func _couper_alarme() -> void:
     _alarme_active = false
     _en_confinement = false
+    if _cctv != null:
+        _cctv.set_alarme(3, false)
     if _alarme_player != null:
         _alarme_player.stop()
     print("Alarme coupee")
@@ -357,6 +360,8 @@ func _couper_alarme() -> void:
 func _declencher_confinement() -> void:
     _alarme_active = true
     _en_confinement = true
+    if _cctv != null:
+        _cctv.set_alarme(3, true)
     print("ARRET D'URGENCE : confinement annonce")
     # Clic du bouton d'abord, puis boucle de confinement
     var clic = load("res://assets/sounds/annonces/bouton_au.mp3")
@@ -1021,12 +1026,37 @@ func _build_bureau_interieur() -> void:
     ecran_box.size = Vector3(1.45, 0.82, 0.015)
     ecran.mesh = ecran_box
     ecran.position = Vector3(cx, 1.65, cz - 4.62)
+    add_child(ecran)
+    # Videosurveillance : 4 camera reelles de l'usine, composite 2x2
+    var cctv = preload("res://ui/cctv.gd").new()
+    cctv.setup([
+        {"pos": Vector3(0.0, 6.0, 38.0), "visee": Vector3(0.0, 1.0, 18.0),
+         "nom": "CAM 01 — ENTREE", "intensite": 0.15,
+         "teinte": Color(0.92, 1.0, 0.96)},
+        {"pos": Vector3(1.5, 5.0, 5.0), "visee": Vector3(2.0, 1.0, -1.0),
+         "nom": "CAM 02 — PRODUCTION", "intensite": 0.35,
+         "teinte": Color(0.85, 0.95, 1.0)},
+        {"pos": Vector3(-20.0, 5.5, -5.0), "visee": Vector3(-20.0, 0.5, -14.0),
+         "nom": "CAM 03 — EXPOSITION", "intensite": 0.25,
+         "teinte": Color(0.95, 0.98, 0.9)},
+        {"pos": Vector3(10.0, 5.0, -40.0), "visee": Vector3(10.0, 1.2, -44.5),
+         "nom": "CAM 04 — FOND SALLE", "intensite": 0.45,
+         "teinte": Color(0.8, 1.0, 0.85)},
+    ])
+    add_child(cctv)
+    _cctv = cctv
     var verre := StandardMaterial3D.new()
-    verre.albedo_color = Color(0.02, 0.02, 0.03)
+    if cctv.texture != null:
+        verre.albedo_texture = cctv.texture
+        verre.emission_enabled = true
+        verre.emission_texture = cctv.texture
+        verre.emission_energy_multiplier = 0.75
+    else:
+        verre.albedo_color = Color(0.02, 0.02, 0.03)
     verre.metallic = 0.6
     verre.roughness = 0.15
     ecran.material_override = verre
-    add_child(ecran)
+    print("CCTV : 4 flux actifs sur l'ecran du bureau")
 
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
     # de l'alarme, mur gauche : declenche le confinement (touche 0).
