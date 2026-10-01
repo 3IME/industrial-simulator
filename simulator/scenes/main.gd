@@ -691,13 +691,13 @@ func _place_prop(path: String, pos: Vector3, rot: Vector3, prop_scale := 1.0) ->
 
 
 ## Borne "urgence" (brise-vitre) pres de l'extincteur x=10 du mur du
-## fond. Modele aute couche (dos en -y) : redressee par rotation X de
-## 90 deg pour poser son dos au mur et regarder la salle ; hauteur de
+## fond. Modele aute couche (dos en -y) : redressee par rotation X 90 deg
+## puis demi-tour Y 180 deg (l'avant etait vers le mur) ; hauteur de
 ## prehension normalisee (~1,40 m).
 func _build_urgence() -> void:
     _place_prop(URGENCUE_BOX,
-        Vector3(8.6, 1.46, HALL_MIN_Z + 0.09),
-        Vector3(PI / 2.0, 0.0, 0.0))
+        Vector3(8.6, 1.46, HALL_MIN_Z + 0.06),
+        Vector3(PI / 2.0, PI, 0.0))
 
 
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
