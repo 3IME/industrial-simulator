@@ -21,6 +21,7 @@ const SENSOR_OFF := Color(0.35, 0.08, 0.08)
 const SENSOR_ON := Color(0.95, 0.15, 0.15)
 const EXTINGUISHER_MODEL := "res://assets/safety/extinguisher.glb"
 const EXTINGUISHER_SIGN := "res://assets/safety/sign_extinguisher_si31.png"
+const URGENCUE_BOX := "res://assets/safety/urgence4.glb"
 # Modele source : bbox 0.565 x 1.088 x 0.34 m, base a y=0.
 # Cible : extincteur de 0.62 m pose sur support mural (base a 0.70 m).
 const EXTINGUISHER_SCALE := 0.62 / 1.088
@@ -561,6 +562,7 @@ func _build_hall(belt_length: float) -> void:
         _build_extinguisher(Vector3(HALL_MAX_X - 0.09, 0, z), PI)
 
     _build_props()
+    _build_urgence()
     _build_expo()
     _build_expo2()
     _build_office_cabin()
@@ -686,6 +688,16 @@ func _place_prop(path: String, pos: Vector3, rot: Vector3, prop_scale := 1.0) ->
     node.scale = Vector3.ONE * prop_scale
     add_child(node)
     return node
+
+
+## Borne "urgence" (brise-vitre) pres de l'extincteur x=10 du mur du
+## fond. Modele aute couche (dos en -y) : redressee par rotation X de
+## 90 deg pour poser son dos au mur et regarder la salle ; hauteur de
+## prehension normalisee (~1,40 m).
+func _build_urgence() -> void:
+    _place_prop(URGENCUE_BOX,
+        Vector3(8.6, 1.46, HALL_MIN_Z + 0.09),
+        Vector3(PI / 2.0, 0.0, 0.0))
 
 
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.

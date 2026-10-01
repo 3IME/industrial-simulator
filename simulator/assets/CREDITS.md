@@ -62,8 +62,10 @@ de produit commercial — voir la règle 9 de CONTRIBUTING.md).
 
 ## Équipements de sécurité (dossier `safety/`)
 
-* `extinguisher.glb` et `sign_extinguisher_si31.png` (converti depuis un GIF —
-  Godot n'importe pas le GIF) fournis par **3IME** (propriétaire du projet).
+* `extinguisher.glb`, `sign_extinguisher_si31.png` (converti depuis un
+  GIF — Godot n'importe pas le GIF) et `urgence4.glb` (brise-vitre,
+  matériau vitré `KHR_materials_transmission`) fournis par **3IME**
+  (propriétaire du projet).
 * Échelle ramenée à 0,62 m de haut, fixation murale à 0,70 m (poignée ~1,2 m,
   hauteur normalisée de préhension), panneau à 2,05 m.
 
