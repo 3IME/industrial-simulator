@@ -27,7 +27,7 @@ var _materiaux: Array = []     # etiquettes PERTE DE SIGNAL
 
 func setup(flux: Array) -> void:
 	var composite := SubViewport.new()
-	composite.size = Vector2(LARGEUR_FLUX * 4, HAUTEUR_FLUX * 2 + 2)
+	composite.size = Vector2(LARGEUR_FLUX * 4, HAUTEUR_FLUX * 4 + 2)
 	composite.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(composite)
 	_composite = composite
