@@ -1309,6 +1309,18 @@ func _build_bureau_interieur() -> void:
             boite_pos + Vector3(-0.06, -0.088 + 0.048 * btn, 0.0),
             Vector3(0.04, 0.04, 0.04),
             "bouton_boite_" + str(btn))
+    # Noms des boutons, ecriture petite, a cote de la boite
+    var noms_boutons := ["Camion", "Fumer", "Maintenance", "Presse", "Zone prod."]
+    for btn in range(5):
+        var lbl := Label3D.new()
+        lbl.text = noms_boutons[btn]
+        lbl.font_size = 13
+        lbl.modulate = Color(0.9, 0.92, 0.95)
+        lbl.outline_size = 5
+        lbl.outline_modulate = Color(0.05, 0.05, 0.08)
+        lbl.position = boite_pos + Vector3(-0.02, -0.088 + 0.048 * btn, 0.12)
+        lbl.rotation = Vector3(0.0, PI / 2.0, 0.0)
+        add_child(lbl)
 
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
     # de l'alarme, mur gauche : declenche le confinement (touche 0).
