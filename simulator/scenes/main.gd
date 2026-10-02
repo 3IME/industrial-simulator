@@ -944,7 +944,7 @@ func _build_securite_signs() -> void:
         Vector3(HALL_MIN_X + 0.14, 1.25, -1.8), Vector3(0.0, PI / 2.0, 0.0))
 
     # Point de rassemblement : sur la cabine du bureau (face +Z vers l'usine)
-    _place_sign(SIGN_RASSEMBLEMENT, Vector3(-56.4, 1.50, -31.85),
+    _place_sign(SIGN_RASSEMBLEMENT, Vector3(-57.9, 1.50, -30.95),
         Vector2(0.22, 0.33), 0.0)
 
 
