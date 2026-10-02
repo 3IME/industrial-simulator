@@ -1242,7 +1242,7 @@ func _build_bureau_interieur() -> void:
 
     # Boite a 5 boutons (Boite5BP) sur le mur, sous les champignons AU
     _place_prop("res://assets/props/boite_5bp.glb",
-        Vector3(cx - 3.72, 0.95, cz + 1.8), Vector3(0.0, -PI / 2.0, 0.0))
+        Vector3(cx - 3.72, 0.95, cz + 1.8), Vector3(PI / 2.0, -PI / 2.0, 0.0))
 
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
     # de l'alarme, mur gauche : declenche le confinement (touche 0).
