@@ -1312,6 +1312,7 @@ func _build_bureau_interieur() -> void:
         _humm_player.stream = humm_flux
         _humm_player.position = Vector3(-54.2, 1.5, HALL_MIN_Z + 0.3)
         _humm_player.unit_size = HUMM_PORTEE
+        _humm_player.attenuation_model = AudioStreamPlayer3D.ATTENUATION_LINEAR
         _humm_player.max_db = HUMM_VOLUME_MAX
         _humm_player.volume_db = HUMM_VOLUME_MAX
         add_child(_humm_player)
