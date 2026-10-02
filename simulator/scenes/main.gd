@@ -1079,6 +1079,12 @@ func _build_securite_signs() -> void:
     # DAE (defibrillateur) : a droite de la porte (z negatif, face +X)
     _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 2.05, -1.8),
         Vector2(0.24, 0.36), PI / 2.0)
+    # Distributeur de cafe a droite du DAE (mur gauche, face a la salle)
+    # offset interne du modele compense : centre du corps a x = -57.0, z = -3.0
+    _place_prop("res://assets/props/distributeur_cafe.glb",
+        Vector3(-57.0 + 11.455, 0.0, -3.0 - 7.925), Vector3(0.0, PI / 2.0, 0.0))
+    _add_static_box(Vector3(-57.0, 0.90, -3.0), Vector3(0.93, 1.80, 0.81))
+
     # Defibrillateur sous le panneau DAE
     _place_prop("res://assets/safety/defibrillator.glb",
         Vector3(HALL_MIN_X + 0.14, 1.25, -1.8), Vector3(0.0, PI / 2.0, 0.0))
