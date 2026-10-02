@@ -63,7 +63,7 @@ const PROP_PILLAR_DRILL := "res://assets/props/pillar_drill.glb"
 const PROP_PRESS_BRAKE := "res://assets/props/press_brake.glb"
 const PROP_HYDRAULIC_PRESS := "res://assets/props/hydraulic_press.glb"
 const PROP_VERTICAL_MILL := "res://assets/props/vertical_mill.glb"
-const PROP_AUTO_ROTATE := "res://assets/props/auto_rotate.glb"
+const PROP_TRANSPALLET := "res://assets/props/transpallet.glb"
 # Annonces sonores d'usine fournies par 3IME — touches 1 a 7
 const ANNONCES := [
     {"touche": KEY_1, "nom": "evacuation", "chemin": "res://assets/sounds/annonces/evacuation.mp3"},
@@ -1414,6 +1414,11 @@ func _build_bureau_interieur() -> void:
             boite_pos + Vector3(-0.06, -0.088 + 0.048 * btn, 0.0),
             Vector3(0.04, 0.04, 0.04),
             "bouton_boite_" + str(btn))
+    # Poubelle (steel_bin) a gauche de la table
+    # offset interne du modele compense : centre a (1.90, 0.22, 0.075)
+    _place_prop("res://assets/props/steel_bin.glb",
+        Vector3(cx - 1.0 - 1.90, 0.0, cz - 2.2 - 0.075), Vector3.ZERO)
+
     # Clavier a code (keypad_lock) sous la boite 5BP
     var keypad_pos := Vector3(cx - 3.70, 0.60, cz + 2.0)
     _place_prop("res://assets/props/keypad_lock.glb", keypad_pos,
@@ -1541,8 +1546,8 @@ func _build_expo2() -> void:
          "x": 33.6, "y": 0.0, "s": 1.0, "col": Vector3(1.54, 2.26, 0.82)},
         {"path": PROP_VERTICAL_MILL, "nom": "Fraiseuse verticale",
          "x": 40.0, "y": 0.0, "s": 1.0, "col": Vector3(1.39, 2.59, 1.39)},
-        {"path": PROP_AUTO_ROTATE, "nom": "Plateau tournant",
-         "x": 46.4, "y": 0.0, "s": 1.0, "col": Vector3(0.64, 1.21, 1.85)},
+        {"path": PROP_TRANSPALLET, "nom": "Transpallet",
+         "x": 46.4, "y": 0.01, "s": 1.0, "col": Vector3(0.62, 1.26, 1.71)},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -16.0),
