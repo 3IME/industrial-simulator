@@ -148,6 +148,8 @@ var _code_saisi := ""
 var _mode_code := false
 var _video_jouee := false
 var _video_vp: SubViewport = null
+var _keypad_led_rouge: OmniLight3D = null
+var _keypad_led_verte: OmniLight3D = null
 var _verre_player: AudioStreamPlayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -406,12 +408,20 @@ const CODE_SECRET := "2027"
 func _activer_keypad() -> void:
     _mode_code = true
     _code_saisi = ""
+    _maj_leds()
     print("KEYPAD : saisissez 4 chiffres (Echap pour annuler)")
+
+func _maj_leds() -> void:
+    if _keypad_led_rouge != null:
+        _keypad_led_rouge.light_energy = 0.0 if _mode_code else 1.5
+    if _keypad_led_verte != null:
+        _keypad_led_verte.light_energy = 1.5 if _mode_code else 0.0
 
 func _saisir_code(event: InputEventKey) -> void:
     if event.keycode == KEY_ESCAPE:
         _mode_code = false
         _code_saisi = ""
+        _maj_leds()
         print("KEYPAD : annule")
         return
     var chiffre = event.unicode - 48  # code ASCII '0' = 48
@@ -421,6 +431,7 @@ func _saisir_code(event: InputEventKey) -> void:
     print("KEYPAD : ", _code_saisi)
     if _code_saisi.length() >= 4:
         _mode_code = false
+        _maj_leds()
         if _code_saisi == CODE_SECRET:
             print("KEYPAD : code accepte — lecture video")
             _jouer_video_nostromo()
@@ -442,10 +453,22 @@ func _jouer_video_nostromo() -> void:
     vp_vid.size = Vector2i(640, 360)
     vp_vid.render_target_update_mode = SubViewport.UPDATE_ALWAYS
     add_child(vp_vid)
+    # fond noir pour couvrir tout le viewport
+    var fond_noir := ColorRect.new()
+    fond_noir.color = Color(0, 0, 0)
+    fond_noir.size = Vector2(640, 360)
+    vp_vid.add_child(fond_noir)
     var lecteur := VideoStreamPlayer.new()
     lecteur.stream = flux
     lecteur.autoplay = true
-    lecteur.size = Vector2(640, 360)
+    # centrer la video dans le viewport 640x360
+    var taille_vid: Vector2 = flux.get_size()
+    if taille_vid.x > 0 and taille_vid.y > 0:
+        var echelle: float = min(640.0 / taille_vid.x, 360.0 / taille_vid.y)
+        lecteur.size = taille_vid * echelle
+        lecteur.position = (Vector2(640, 360) - lecteur.size) / 2.0
+    else:
+        lecteur.size = Vector2(640, 360)
     vp_vid.add_child(lecteur)
     _video_vp = vp_vid
     # declencher la re-assignation du materiau de l'ecran
@@ -1418,7 +1441,7 @@ func _build_bureau_interieur() -> void:
     # a cote des interrupteurs (AU, keypad, boite 5BP)
     # modele deja a hauteur murale (min.y = 1,71) — abaissé de 30 cm
     _place_prop("res://assets/props/whiteboard.glb",
-        Vector3(cx - 3.66, -0.30, cz + 3.5), Vector3(0.0, PI / 2.0, 0.0))
+        Vector3(cx - 3.66, -0.60, cz + 4.2), Vector3(0.0, PI / 2.0, 0.0))
 
     # Poubelle (steel_bin) a gauche de la table
     # offset interne du modele compense : centre a (1.90, 0.22, 0.075)
@@ -1426,11 +1449,24 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 1.0 - 1.90, 0.0, cz - 2.2 - 0.075), Vector3.ZERO)
 
     # Clavier a code (keypad_lock) sous la boite 5BP
-    var keypad_pos := Vector3(cx - 3.70, 0.60, cz + 2.0)
+    var keypad_pos := Vector3(cx + 2.0, 0.60, cz + 4.72)
     _place_prop("res://assets/props/keypad_lock.glb", keypad_pos,
-        Vector3(0.0, PI / 2.0, 0.0), 2.0)
-    _add_static_box(keypad_pos + Vector3(0.05, 0.0, 0.0),
-        Vector3(0.08, 0.28, 0.18), "keypad_code")
+        Vector3(0.0, PI, 0.0), 2.0)
+    _add_static_box(keypad_pos + Vector3(0.0, 0.0, -0.06),
+        Vector3(0.18, 0.28, 0.08), "keypad_code")
+    # LEDs du clavier : rouge (veille) / verte (saisie active)
+    _keypad_led_rouge = OmniLight3D.new()
+    _keypad_led_rouge.position = keypad_pos + Vector3(0.0, 0.12, -0.06)
+    _keypad_led_rouge.light_color = Color(1.0, 0.1, 0.05)
+    _keypad_led_rouge.omni_range = 0.8
+    _keypad_led_rouge.light_energy = 1.5
+    add_child(_keypad_led_rouge)
+    _keypad_led_verte = OmniLight3D.new()
+    _keypad_led_verte.position = keypad_pos + Vector3(0.0, 0.12, -0.06)
+    _keypad_led_verte.light_color = Color(0.1, 1.0, 0.15)
+    _keypad_led_verte.omni_range = 0.8
+    _keypad_led_verte.light_energy = 0.0
+    add_child(_keypad_led_verte)
 
     # Noms des boutons, ecriture petite, a cote de la boite
     var noms_boutons := ["Camion", "Fumer", "Maintenance", "Presse", "Zone prod."]
