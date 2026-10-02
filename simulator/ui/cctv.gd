@@ -61,10 +61,10 @@ func setup(flux: Array) -> void:
 		# Camera 3D
 		var cam := Camera3D.new()
 		cam.fov = 72.0
-		cam.position = conf.get("pos", Vector3.ZERO)
-		cam.look_at_from_position(conf.get("pos", Vector3.ZERO),
-				conf.get("visee", Vector3.ZERO), Vector3.UP)
 		vp.add_child(cam)
+		cam.position = conf.get("pos", Vector3.ZERO)
+		cam.look_at(conf.get("visee", Vector3.ZERO), Vector3.UP)
+		cam.current = true
 		_cams.append(cam)
 		_originales.append(cam.rotation)
 		_alarmes.append(false)
