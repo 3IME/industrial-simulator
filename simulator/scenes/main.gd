@@ -1240,6 +1240,12 @@ func _build_bureau_interieur() -> void:
 
 
 
+    # 3 coffrets electriques (control_box) l'un a cote de l'autre,
+    # contre le mur du fond du bureau (derriere la table, sous la TV)
+    for dx in [-0.65, 0.0, 0.65]:
+        _place_prop("res://assets/props/control_box.glb",
+            Vector3(cx + dx, 0.53, cz - 4.62), Vector3.ZERO)
+
     # Boite a 5 boutons (Boite5BP) sur le mur, sous les champignons AU
     _place_prop("res://assets/props/boite_5bp.glb",
         Vector3(cx - 3.72, 0.95, cz + 1.8), Vector3(PI / 2.0, -PI / 2.0, 0.0))
