@@ -288,6 +288,8 @@ func _clic_interaction(event: InputEvent) -> void:
                     _declencher_confinement()
                 elif hit_in.collider.get_meta("interaction") == "evacuation":
                     _declencher_evacuation_bouton()
+                elif String(hit_in.collider.get_meta("interaction")).begins_with("bouton_boite_"):
+                    _bouton_boite(int(str(hit_in.collider.get_meta("interaction")).split("_")[-1]))
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -325,6 +327,8 @@ func _clic_interaction(event: InputEvent) -> void:
         _declencher_confinement()
     elif collider.get_meta("interaction") == "evacuation":
         _declencher_evacuation_bouton()
+    elif String(collider.get_meta("interaction")).begins_with("bouton_boite_"):
+        _bouton_boite(int(str(collider.get_meta("interaction")).split("_")[-1]))
 
 
 func _entrer_bureau() -> void:
@@ -373,6 +377,25 @@ func _couper_alarme() -> void:
     if _alarme_player != null:
         _alarme_player.stop()
     print("Alarme coupee")
+
+
+const ANNONCES_BOITE := [
+    "res://assets/sounds/annonces/camion.mp3",
+    "res://assets/sounds/annonces/fumer.mp3",
+    "res://assets/sounds/annonces/maintenance.mp3",
+    "res://assets/sounds/annonces/presse.mp3",
+    "res://assets/sounds/annonces/zone_production.mp3",
+]
+
+
+func _bouton_boite(index: int) -> void:
+    if index < 0 or index >= ANNONCES_BOITE.size():
+        return
+    print("Boite 5BP : bouton ", index + 1)
+    var flux = load(ANNONCES_BOITE[index])
+    if flux != null and _annonce_player != null:
+        _annonce_player.stream = flux
+        _annonce_player.play()
 
 
 ## Bouton d'evacuation (meme principe que le confinement) : boucle
@@ -1261,8 +1284,14 @@ func _build_bureau_interieur() -> void:
             Vector3(cx + dx, 0.53, cz - 4.62), Vector3.ZERO)
 
     # Boite a 5 boutons (Boite5BP) sur le mur, sous les champignons AU
-    _place_prop("res://assets/props/boite_5bp.glb",
-        Vector3(cx - 3.72, 0.95, cz + 1.8), Vector3(PI / 2.0, -PI / 2.0, 0.0))
+    var boite_pos := Vector3(cx - 3.72, 0.95, cz + 1.8)
+    _place_prop("res://assets/props/boite_5bp.glb", boite_pos,
+        Vector3(PI / 2.0, -PI / 2.0, 0.0))
+    for btn in range(5):
+        _add_static_box(
+            boite_pos + Vector3(0.05, -0.07 + 0.038 * btn, 0.0),
+            Vector3(0.03, 0.032, 0.03),
+            "bouton_boite_" + str(btn))
 
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
     # de l'alarme, mur gauche : declenche le confinement (touche 0).
