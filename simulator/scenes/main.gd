@@ -144,6 +144,9 @@ var _cctv_ecran: MeshInstance3D = null
 var _cctv_composite_a_assigner: SubViewport = null
 var _cctv_frames_attente := 0
 var _humm_player: AudioStreamPlayer3D = null
+var _code_saisi := ""
+var _mode_code := false
+var _video_jouee := false
 var _verre_player: AudioStreamPlayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -247,6 +250,9 @@ func _show_build_badge() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventKey and event.pressed and not event.echo:
+        if _mode_code:
+            _saisir_code(event)
+            return
         if event.keycode == KEY_0 and _alarme_active:
             _couper_alarme()
             return
@@ -295,6 +301,8 @@ func _clic_interaction(event: InputEvent) -> void:
                     _declencher_evacuation_bouton()
                 elif String(hit_in.collider.get_meta("interaction")).begins_with("bouton_boite_"):
                     _bouton_boite(int(str(hit_in.collider.get_meta("interaction")).split("_")[-1]))
+                elif hit_in.collider.get_meta("interaction") == "keypad_code":
+                    _activer_keypad()
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -334,6 +342,8 @@ func _clic_interaction(event: InputEvent) -> void:
         _declencher_evacuation_bouton()
     elif String(collider.get_meta("interaction")).begins_with("bouton_boite_"):
         _bouton_boite(int(str(collider.get_meta("interaction")).split("_")[-1]))
+    elif collider.get_meta("interaction") == "keypad_code":
+        _activer_keypad()
 
 
 func _entrer_bureau() -> void:
@@ -382,6 +392,52 @@ func _couper_alarme() -> void:
     if _alarme_player != null:
         _alarme_player.stop()
     print("Alarme coupee")
+
+
+## Clavier a code : clic pour activer, chiffres au clavier, code 2027.
+## La video Nostromo est chargee A LA DEMANDE (peu utilisee).
+const CODE_SECRET := "2027"
+
+func _activer_keypad() -> void:
+    _mode_code = true
+    _code_saisi = ""
+    print("KEYPAD : saisissez 4 chiffres (Echap pour annuler)")
+
+func _saisir_code(event: InputEventKey) -> void:
+    if event.keycode == KEY_ESCAPE:
+        _mode_code = false
+        _code_saisi = ""
+        print("KEYPAD : annule")
+        return
+    var chiffre = event.unicode - 48  # code ASCII '0' = 48
+    if chiffre < 0 or chiffre > 9:
+        return
+    _code_saisi += str(chiffre)
+    print("KEYPAD : ", _code_saisi)
+    if _code_saisi.length() >= 4:
+        _mode_code = false
+        if _code_saisi == CODE_SECRET:
+            print("KEYPAD : code accepte — lecture video")
+            _jouer_video_nostromo()
+        else:
+            print("KEYPAD : code refuse")
+        _code_saisi = ""
+
+func _jouer_video_nostromo() -> void:
+    if _video_jouee:
+        return
+    _video_jouee = true
+    # Charger la video A LA DEMANDE (peu utilisee, pas de preload)
+    var chemin := "res://assets/videos/nostromo_destruct.mp4"
+    if not ResourceLoader.exists(chemin):
+        push_warning("video introuvable : " + chemin)
+        _video_jouee = false
+        return
+    # TODO : lecture video sur l'ecran a la place des cameras
+    # (Godot ne supporte que .ogv en natif — conversion necessaire)
+    print("VIDEO : format MP4 non supporte nativement par Godot.")
+    print("VIDEO : convertir en .ogv (Theora) pour lecture sur l'ecran.")
+    _video_jouee = false
 
 
 const ANNONCES_BOITE := [
@@ -1327,16 +1383,24 @@ func _build_bureau_interieur() -> void:
             boite_pos + Vector3(-0.06, -0.088 + 0.048 * btn, 0.0),
             Vector3(0.04, 0.04, 0.04),
             "bouton_boite_" + str(btn))
+    # Clavier a code (keypad_lock) sous la boite 5BP
+    var keypad_pos := Vector3(cx - 3.70, 0.45, cz + 1.2)
+    _place_prop("res://assets/props/keypad_lock.glb", keypad_pos,
+        Vector3(0.0, PI / 2.0, 0.0))
+    _add_static_box(keypad_pos + Vector3(0.03, 0.0, 0.0),
+        Vector3(0.05, 0.14, 0.10), "keypad_code")
+
     # Noms des boutons, ecriture petite, a cote de la boite
     var noms_boutons := ["Camion", "Fumer", "Maintenance", "Presse", "Zone prod."]
     for btn in range(5):
         var lbl := Label3D.new()
         lbl.text = noms_boutons[btn]
-        lbl.font_size = 13
-        lbl.modulate = Color(0.9, 0.92, 0.95)
-        lbl.outline_size = 5
+        lbl.font_size = 11
+        lbl.modulate = Color(0.85, 0.87, 0.9)
+        lbl.outline_size = 4
         lbl.outline_modulate = Color(0.05, 0.05, 0.08)
-        lbl.position = boite_pos + Vector3(-0.02, -0.088 + 0.048 * btn, 0.12)
+        # a droite de la boite (z+), aligne avec chaque bouton
+        lbl.position = boite_pos + Vector3(-0.01, -0.088 + 0.048 * btn, 0.18)
         lbl.rotation = Vector3(0.0, PI / 2.0, 0.0)
         add_child(lbl)
 
