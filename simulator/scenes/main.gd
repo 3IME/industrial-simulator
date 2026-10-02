@@ -1277,20 +1277,20 @@ func _build_bureau_interieur() -> void:
 
 
 
-    # 3 coffrets electriques dans l'ATELIER : mur droit pres de la
-    # zone production, face a la salle
-    for dz in [6.0, 7.2, 8.4]:
+    # 3 coffrets electriques dans l'atelier, contre le mur du fond
+    # (z = HALL_MIN_Z), x ~ -54, face a la salle (+Z)
+    for dx in [-54.8, -54.0, -53.2]:
         _place_prop("res://assets/props/control_box.glb",
-            Vector3(HALL_MAX_X - 0.20, 0.53, dz), Vector3(0.0, -PI / 2.0, 0.0))
+            Vector3(dx, 0.53, HALL_MIN_Z + 0.20), Vector3.ZERO)
 
     # Boite a 5 boutons (Boite5BP) sur le mur, sous les champignons AU
-    var boite_pos := Vector3(cx - 3.72, 1.10, cz + 1.8)
+    var boite_pos := Vector3(cx - 3.72, 1.60, cz + 1.2)
     _place_prop("res://assets/props/boite_5bp.glb", boite_pos,
-        Vector3(PI / 2.0, PI / 2.0, 0.0))
+        Vector3(PI / 2.0, PI / 2.0, 0.0), 1.25)
     for btn in range(5):
         _add_static_box(
-            boite_pos + Vector3(-0.05, -0.07 + 0.038 * btn, 0.0),
-            Vector3(0.03, 0.032, 0.03),
+            boite_pos + Vector3(-0.06, -0.088 + 0.048 * btn, 0.0),
+            Vector3(0.04, 0.04, 0.04),
             "bouton_boite_" + str(btn))
 
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
