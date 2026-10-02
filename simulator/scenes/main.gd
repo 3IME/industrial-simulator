@@ -22,6 +22,9 @@ const SENSOR_ON := Color(0.95, 0.15, 0.15)
 const EXTINGUISHER_MODEL := "res://assets/safety/extinguisher.glb"
 const EXTINGUISHER_SIGN := "res://assets/safety/sign_extinguisher_si31.png"
 const URGENCUE_BOX := "res://assets/safety/urgence4.glb"
+const SIGN_SORTIE := "res://assets/safety/sign_sortie_secours.png"
+const SIGN_DAE := "res://assets/safety/sign_dae.png"
+const SIGN_RASSEMBLEMENT := "res://assets/safety/sign_rassemblement.png"
 const TABLEAU := "res://assets/props/tableau.glb"
 # Modele source : bbox 0.565 x 1.088 x 0.34 m, base a y=0.
 # Cible : extincteur de 0.62 m pose sur support mural (base a 0.70 m).
@@ -737,6 +740,7 @@ func _build_hall(belt_length: float) -> void:
         _build_extinguisher(Vector3(x, 0, HALL_MAX_Z - 0.09), PI / 2.0)
     # Mur gauche : kit a droite de la porte de sortie
     _build_extinguisher(Vector3(HALL_MIN_X + 0.09, 0, -1.2), 0.0)
+    _build_securite_signs()
 
     _build_props()
     _build_alarmes()
@@ -900,6 +904,44 @@ func _placer_alarme(pos: Vector3, rot: Vector3, face: Vector3) -> void:
     # etait enterre dans le mur, le rayon touchait toujours le mur)
     _add_static_box(pos + face * 0.07, Vector3(0.24, 0.24, 0.05),
         "alarme_incendie")
+
+
+## Panneau de securite mural (image plate sur quad, face a la salle).
+func _place_sign(texture_path: String, pos: Vector3, size_m: Vector2, yaw: float) -> void:
+    var tex = load(texture_path)
+    if tex == null or not tex is Texture2D:
+        push_warning("panneau introuvable : " + texture_path)
+        return
+    var quad := MeshInstance3D.new()
+    var qm := QuadMesh.new()
+    qm.size = size_m
+    quad.mesh = qm
+    var mat := StandardMaterial3D.new()
+    mat.albedo_texture = tex
+    mat.roughness = 0.75
+    mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+    mat.emission_enabled = true
+    mat.emission = Color(0.35, 0.35, 0.35)
+    quad.material_override = mat
+    quad.position = pos
+    quad.rotation.y = yaw
+    add_child(quad)
+
+
+## Panneaux de securite muraux :
+## sortie de secours au-dessus de la porte, DAE a droite,
+## point de rassemblement sur la cabine du bureau.
+func _build_securite_signs() -> void:
+    # Sortie de secours : au-dessus de la porte usine (mur gauche, face +X)
+    # porte a z=0, cadre jusqu'a ~2,3 m -> panneau a 2,65 m
+    _place_sign(SIGN_SORTIE, Vector3(HALL_MIN_X + 0.10, 2.65, 0.0),
+        Vector2(0.50, 0.26), PI / 2.0)
+    # DAE (defibrillateur) : a droite de la porte (z negatif, face +X)
+    _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 1.40, -1.8),
+        Vector2(0.24, 0.36), PI / 2.0)
+    # Point de rassemblement : sur la cabine du bureau (face +Z vers l'usine)
+    _place_sign(SIGN_RASSEMBLEMENT, Vector3(-54.9, 1.60, -31.85),
+        Vector2(0.30, 0.45), 0.0)
 
 
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
