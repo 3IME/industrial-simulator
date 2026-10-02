@@ -1060,7 +1060,7 @@ func _build_bureau_interieur() -> void:
         {"pos": Vector3(0.0, 6.0, 38.0), "visee": Vector3(0.0, 1.0, 18.0),
          "nom": "CAM 01 — ENTREE", "intensite": 0.15,
          "teinte": Color(0.92, 1.0, 0.96)},
-        {"pos": Vector3(1.5, 5.0, 5.0), "visee": Vector3(2.0, 1.0, -1.0),
+        {"pos": Vector3(1.5, 6.0, 6.0), "visee": Vector3(1.0, 0.5, 0.0),
          "nom": "CAM 02 — PRODUCTION", "intensite": 0.35,
          "teinte": Color(0.85, 0.95, 1.0)},
         {"pos": Vector3(-20.0, 5.5, -5.0), "visee": Vector3(-20.0, 0.5, -14.0),
@@ -1431,6 +1431,16 @@ func _capture_and_quit() -> void:
         var lamps_shot := get_viewport().get_texture().get_image()
         lamps_shot.save_png("res://capture_3d_lamps.png")
         print("Capture ecrite : res://capture_3d_lamps.png")
+        # Ecran TV du bureau (videosurveillance)
+        player_node.position = Vector3(-54.9, 0.0, -62.3)
+        player_node.rotation.y = 0.0
+        for cam in player_node.find_children("*", "Camera3D"):
+            cam.rotation.x = 0.06
+        await get_tree().create_timer(0.5).timeout
+        var tv_shot := get_viewport().get_texture().get_image()
+        tv_shot.save_png("res://capture_3d_tv.png")
+        print("Capture ecrite : res://capture_3d_tv.png")
+
         # Ligne d'exposition des modeles fournis
         player_node.position = Vector3(-38.5, 0.0, -6.5)
         player_node.rotation.y = -PI / 2.0

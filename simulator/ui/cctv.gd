@@ -30,6 +30,8 @@ var _materiaux: Array[ShaderMaterial] = []
 var _no_signal: Array[Label] = []
 
 var _temps := 0.0
+var _textures_a_poser: Array = []
+var _posees := false
 
 
 func setup(flux: Array) -> void:
@@ -62,7 +64,6 @@ func setup(flux: Array) -> void:
 		cam.position = conf.get("pos", Vector3.ZERO)
 		cam.look_at_from_position(conf.get("pos", Vector3.ZERO),
 				conf.get("visee", Vector3.ZERO), Vector3.UP)
-		cam.current = true
 		vp.add_child(cam)
 		_cams.append(cam)
 		_originales.append(cam.rotation)
@@ -73,11 +74,11 @@ func setup(flux: Array) -> void:
 		var ligne := i / 2
 		var coin := Vector2(colonne * LARGEUR_FLUX, ligne * HAUTEUR_FLUX)
 
-		# Texture du flux
+		# Texture du flux (assignation differree : cf fin de setup)
 		var tx := TextureRect.new()
 		tx.position = coin
 		tx.size = Vector2(LARGEUR_FLUX, HAUTEUR_FLUX)
-		tx.texture = vp.get_texture()
+		_textures_a_poser.append([tx, vp])
 		tx.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		tx.stretch_mode = TextureRect.STRETCH_SCALE
 		tx.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -141,18 +142,15 @@ func setup(flux: Array) -> void:
 	texture = _composite.get_texture()
 
 
-## Active/desactive le mode alarme d'une camera.
-func set_alarme(index: int, actif: bool) -> void:
-	if index < 0 or index >= _cams.size():
-		return
-	_alarmes[index] = actif
-	if index < _materiaux.size():
-		_materiaux[index].set_shader_parameter("alarme", 1.0 if actif else 0.0)
-	if index < _no_signal.size():
-		_no_signal[index].visible = actif
-
-
 func _process(delta: float) -> void:
+	if not _posees:
+		_posees = true
+		# Une frame apres la creation : les viewports ont rendu une image,
+		# leurs textures sont alors fiables (le viewport #2 restait noir
+		# quand la texture etait liee trop tot).
+		for paire in _textures_a_poser:
+			paire[0].texture = paire[1].get_texture()
+		_textures_a_poser = []
 	_temps += delta
 
 	# Balayage lent des cameras
@@ -173,3 +171,16 @@ func _process(delta: float) -> void:
 	for enfant in _composite.get_children():
 		if enfant is Label and enfant.name.begins_with("Horloge_"):
 			enfant.text = heure
+
+
+## Active/desactive le mode alarme d'une camera.
+func set_alarme(index: int, actif: bool) -> void:
+	if index < 0 or index >= _cams.size():
+		return
+	_alarmes[index] = actif
+	if index < _materiaux.size():
+		_materiaux[index].set_shader_parameter("alarme", 1.0 if actif else 0.0)
+	if index < _no_signal.size():
+		_no_signal[index].visible = actif
+
+
