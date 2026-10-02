@@ -1176,9 +1176,9 @@ func _build_bureau_interieur() -> void:
     bezel.material_override = noir
     add_child(bezel)
     var ecran := MeshInstance3D.new()
-    var ecran_box := BoxMesh.new()
-    ecran_box.size = Vector3(1.45, 0.82, 0.015)
-    ecran.mesh = ecran_box
+    var ecran_quad := QuadMesh.new()
+    ecran_quad.size = Vector2(1.45, 0.82)
+    ecran.mesh = ecran_quad
     ecran.position = Vector3(cx, 1.65, cz - 4.62)
     add_child(ecran)
     # Videosurveillance : 4 camera reelles, grille 2x2 sur la TV
@@ -1296,7 +1296,7 @@ func _build_bureau_interieur() -> void:
 
     # 3 coffrets electriques dans l'atelier, contre le mur du fond
     # (z = HALL_MIN_Z), x ~ -54, face a la salle (+Z)
-    for dx in [-54.8, -54.0, -53.2]:
+    for dx in [-55.5, -54.2, -52.9]:
         _place_prop("res://assets/props/control_box.glb",
             Vector3(dx, 1.06, HALL_MIN_Z + 0.20), Vector3.ZERO, 2.0)
 
