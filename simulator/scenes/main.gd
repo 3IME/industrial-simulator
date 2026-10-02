@@ -1414,6 +1414,12 @@ func _build_bureau_interieur() -> void:
             boite_pos + Vector3(-0.06, -0.088 + 0.048 * btn, 0.0),
             Vector3(0.04, 0.04, 0.04),
             "bouton_boite_" + str(btn))
+    # Tableau blanc (whiteboard 2,63x1,33 m) sur le mur gauche,
+    # a cote des interrupteurs (AU, keypad, boite 5BP)
+    # modele deja a hauteur murale (min.y = 1,71) — abaissé de 30 cm
+    _place_prop("res://assets/props/whiteboard.glb",
+        Vector3(cx - 3.66, -0.30, cz + 3.5), Vector3(0.0, PI / 2.0, 0.0))
+
     # Poubelle (steel_bin) a gauche de la table
     # offset interne du modele compense : centre a (1.90, 0.22, 0.075)
     _place_prop("res://assets/props/steel_bin.glb",
