@@ -139,6 +139,7 @@ var _cctv_perte: Array[Label] = []
 var _cctv_temps := 0.0
 var _cctv_ecran: MeshInstance3D = null
 var _cctv_composite_a_assigner: SubViewport = null
+var _cctv_frames_attente := 0
 var _verre_player: AudioStreamPlayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -498,21 +499,34 @@ func _process(delta: float) -> void:
         if _adult_check >= 2.0:
             _adult_check = 0.0
             _clamp_prop_height(_adult_node, 1.60, "adulte")
-    # Texture CCTV : assigner une fois que le composite a rendu
+    # Dump debug du composite (une seule fois, frame 5)
+    if _cctv_composite != null and _cctv_frames_attente < 5:
+        _cctv_frames_attente += 1
+        if _cctv_frames_attente == 5:
+            var img_dbg = _cctv_composite.get_texture().get_image()
+            img_dbg.save_png("res://debug_composite.png")
+            print("DBG composite dump : ", img_dbg.get_size())
+
+    # Texture CCTV : attendre 3 frames puis assigner + dump debug
     if _cctv_composite_a_assigner != null:
-        var tex_cctv = _cctv_composite_a_assigner.get_texture()
-        if tex_cctv != null and tex_cctv.get_size() != Vector2.ZERO:
-            var verre := StandardMaterial3D.new()
-            verre.albedo_texture = tex_cctv
-            verre.emission_enabled = true
-            verre.emission_texture = tex_cctv
-            verre.emission_energy_multiplier = 0.8
-            verre.metallic = 0.6
-            verre.roughness = 0.15
-            if _cctv_ecran != null:
-                _cctv_ecran.material_override = verre
-            _cctv_composite_a_assigner = null
-            print("CCTV : texture ", tex_cctv.get_size(), " assignee a l'ecran")
+        _cctv_frames_attente += 1
+
+        if _cctv_frames_attente >= 3:
+            var tex_cctv = _cctv_composite_a_assigner.get_texture()
+            if tex_cctv != null:
+                var verre := StandardMaterial3D.new()
+                verre.albedo_texture = tex_cctv
+                verre.emission_enabled = true
+                verre.emission_texture = tex_cctv
+                verre.emission_energy_multiplier = 0.8
+                verre.metallic = 0.6
+                verre.roughness = 0.15
+                verre.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR
+                if _cctv_ecran != null:
+                    _cctv_ecran.material_override = verre
+                _cctv_composite_a_assigner = null
+                print("CCTV : texture ", tex_cctv.get_size(), " assignee (frame ",
+                    _cctv_frames_attente, ")")
 
     # Animation CCTV : balayage, REC, horloges
     if _cctv_composite != null:
@@ -1172,6 +1186,8 @@ func _build_bureau_interieur() -> void:
     comp.size = Vector2i(640, 360)
     comp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
     comp.transparent_bg = false
+    comp.disable_3d = true
+    comp.render_target_clear_mode = SubViewport.CLEAR_MODE_ALWAYS
     add_child(comp)
     var fond_cctv := ColorRect.new()
     fond_cctv.color = Color(0.005, 0.008, 0.008)
@@ -1199,6 +1215,7 @@ func _build_bureau_interieur() -> void:
         vpk.size = Vector2i(320, 180)
         vpk.render_target_update_mode = SubViewport.UPDATE_ALWAYS
         vpk.transparent_bg = false
+        vpk.disable_3d = false
         add_child(vpk)
         var camk := Camera3D.new()
         camk.fov = 72.0
