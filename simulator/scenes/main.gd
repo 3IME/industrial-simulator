@@ -137,6 +137,8 @@ var _cctv_mats: Array[ShaderMaterial] = []
 var _cctv_labels: Array[Label] = []
 var _cctv_perte: Array[Label] = []
 var _cctv_temps := 0.0
+var _cctv_ecran: MeshInstance3D = null
+var _cctv_composite_a_assigner: SubViewport = null
 var _verre_player: AudioStreamPlayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -473,6 +475,22 @@ func _process(delta: float) -> void:
         if _adult_check >= 2.0:
             _adult_check = 0.0
             _clamp_prop_height(_adult_node, 1.60, "adulte")
+    # Texture CCTV : assigner une fois que le composite a rendu
+    if _cctv_composite_a_assigner != null:
+        var tex_cctv = _cctv_composite_a_assigner.get_texture()
+        if tex_cctv != null and tex_cctv.get_size() != Vector2.ZERO:
+            var verre := StandardMaterial3D.new()
+            verre.albedo_texture = tex_cctv
+            verre.emission_enabled = true
+            verre.emission_texture = tex_cctv
+            verre.emission_energy_multiplier = 0.8
+            verre.metallic = 0.6
+            verre.roughness = 0.15
+            if _cctv_ecran != null:
+                _cctv_ecran.material_override = verre
+            _cctv_composite_a_assigner = null
+            print("CCTV : texture ", tex_cctv.get_size(), " assignee a l'ecran")
+
     # Animation CCTV : balayage, REC, horloges
     if _cctv_composite != null:
         _cctv_temps += delta
@@ -1227,15 +1245,11 @@ func _build_bureau_interieur() -> void:
     _cctv_labels = hrs_cctv
     _cctv_perte = pertes_cctv
 
-    var verre_cctv := StandardMaterial3D.new()
-    verre_cctv.albedo_texture = comp.get_texture()
-    verre_cctv.emission_enabled = true
-    verre_cctv.emission_texture = comp.get_texture()
-    verre_cctv.emission_energy_multiplier = 0.8
-    verre_cctv.metallic = 0.6
-    verre_cctv.roughness = 0.15
-    ecran.material_override = verre_cctv
-    print("CCTV : 4 flux actifs sur l'ecran du bureau")
+    # La texture du composite n'est valide qu'apres le premier rendu :
+    # attendre une frame avant de l'assigner a l'ecran.
+    _cctv_ecran = ecran
+    _cctv_composite_a_assigner = comp
+    print("CCTV : 4 flux actifs (texture differee d'une frame)")
 
 
 
