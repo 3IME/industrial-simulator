@@ -19,6 +19,8 @@ const PROPS := [
     "res://assets/props/elevator.glb",
     "res://assets/safety/urgence4.glb",
     "res://assets/props/tableau.glb",
+    "res://assets/safety/defibrillator.glb",
+    "res://assets/props/boite_5bp.glb",
     "res://assets/props/estop_mushroom.gltf",
     "res://assets/props/auto_rotate.glb",
     "res://assets/props/clinician_desk.glb",

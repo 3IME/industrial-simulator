@@ -937,11 +937,15 @@ func _build_securite_signs() -> void:
     _place_sign(SIGN_SORTIE, Vector3(HALL_MIN_X + 0.10, 2.65, 0.0),
         Vector2(0.50, 0.26), PI / 2.0)
     # DAE (defibrillateur) : a droite de la porte (z negatif, face +X)
-    _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 1.40, -1.8),
+    _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 2.05, -1.8),
         Vector2(0.24, 0.36), PI / 2.0)
+    # Defibrillateur sous le panneau DAE
+    _place_prop("res://assets/safety/defibrillator.glb",
+        Vector3(HALL_MIN_X + 0.14, 1.25, -1.8), Vector3(0.0, PI / 2.0, 0.0))
+
     # Point de rassemblement : sur la cabine du bureau (face +Z vers l'usine)
-    _place_sign(SIGN_RASSEMBLEMENT, Vector3(-54.9, 1.60, -31.85),
-        Vector2(0.30, 0.45), 0.0)
+    _place_sign(SIGN_RASSEMBLEMENT, Vector3(-56.4, 1.50, -31.85),
+        Vector2(0.22, 0.33), 0.0)
 
 
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
@@ -1270,7 +1274,7 @@ func _build_bureau_interieur() -> void:
     etiquette_au.rotation = Vector3(0.0, PI / 2.0, 0.0)
     add_child(etiquette_au)
 
-    _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 3.9), Vector3.ZERO)
+    _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 2.2), Vector3(0.0, PI, 0.0))
     _place_prop(PROP_OFFICE_CHAIR, Vector3(cx, 0.0, cz - 2.9), Vector3.ZERO)
 
 
