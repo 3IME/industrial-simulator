@@ -147,6 +147,7 @@ var _humm_player: AudioStreamPlayer3D = null
 var _code_saisi := ""
 var _mode_code := false
 var _video_jouee := false
+var _video_vp: SubViewport = null
 var _verre_player: AudioStreamPlayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -253,9 +254,13 @@ func _unhandled_input(event: InputEvent) -> void:
         if _mode_code:
             _saisir_code(event)
             return
-        if event.keycode == KEY_0 and _alarme_active:
-            _couper_alarme()
-            return
+        if event.keycode == KEY_0:
+            if _video_jouee:
+                _arreter_video()
+                return
+            if _alarme_active:
+                _couper_alarme()
+                return
         for annonce in ANNONCES:
             if event.keycode == annonce.touche:
                 _jouer_annonce(annonce.nom, annonce.chemin)
@@ -426,18 +431,38 @@ func _saisir_code(event: InputEventKey) -> void:
 func _jouer_video_nostromo() -> void:
     if _video_jouee:
         return
-    _video_jouee = true
-    # Charger la video A LA DEMANDE (peu utilisee, pas de preload)
-    var chemin := "res://assets/videos/nostromo_destruct.mp4"
-    if not ResourceLoader.exists(chemin):
-        push_warning("video introuvable : " + chemin)
-        _video_jouee = false
+    var flux = load("res://assets/videos/nostromo_destruct.ogv")
+    if flux == null:
+        push_warning("video introuvable")
         return
-    # TODO : lecture video sur l'ecran a la place des cameras
-    # (Godot ne supporte que .ogv en natif — conversion necessaire)
-    print("VIDEO : format MP4 non supporte nativement par Godot.")
-    print("VIDEO : convertir en .ogv (Theora) pour lecture sur l'ecran.")
+    _video_jouee = true
+    print("VIDEO : Nostromo — touche 0 pour revenir aux cameras")
+    # SubViewport pour la video, assigne a l'ecran via le mechanisme differe
+    var vp_vid := SubViewport.new()
+    vp_vid.size = Vector2i(640, 360)
+    vp_vid.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+    add_child(vp_vid)
+    var lecteur := VideoStreamPlayer.new()
+    lecteur.stream = flux
+    lecteur.autoplay = true
+    lecteur.size = Vector2(640, 360)
+    vp_vid.add_child(lecteur)
+    _video_vp = vp_vid
+    # declencher la re-assignation du materiau de l'ecran
+    _cctv_composite_a_assigner = vp_vid
+    _cctv_frames_attente = 0
+
+
+func _arreter_video() -> void:
     _video_jouee = false
+    if _video_vp != null:
+        _video_vp.queue_free()
+        _video_vp = null
+    # retablir le composite CCTV sur l'ecran
+    if _cctv_composite != null:
+        _cctv_composite_a_assigner = _cctv_composite
+        _cctv_frames_attente = 0
+    print("VIDEO : arretee — retour aux cameras")
 
 
 const ANNONCES_BOITE := [
@@ -1384,11 +1409,11 @@ func _build_bureau_interieur() -> void:
             Vector3(0.04, 0.04, 0.04),
             "bouton_boite_" + str(btn))
     # Clavier a code (keypad_lock) sous la boite 5BP
-    var keypad_pos := Vector3(cx - 3.70, 0.45, cz + 1.2)
+    var keypad_pos := Vector3(cx - 3.70, 0.60, cz + 2.0)
     _place_prop("res://assets/props/keypad_lock.glb", keypad_pos,
-        Vector3(0.0, PI / 2.0, 0.0))
-    _add_static_box(keypad_pos + Vector3(0.03, 0.0, 0.0),
-        Vector3(0.05, 0.14, 0.10), "keypad_code")
+        Vector3(0.0, PI / 2.0, 0.0), 2.0)
+    _add_static_box(keypad_pos + Vector3(0.05, 0.0, 0.0),
+        Vector3(0.08, 0.28, 0.18), "keypad_code")
 
     # Noms des boutons, ecriture petite, a cote de la boite
     var noms_boutons := ["Camion", "Fumer", "Maintenance", "Presse", "Zone prod."]
@@ -1399,8 +1424,8 @@ func _build_bureau_interieur() -> void:
         lbl.modulate = Color(0.85, 0.87, 0.9)
         lbl.outline_size = 4
         lbl.outline_modulate = Color(0.05, 0.05, 0.08)
-        # a droite de la boite (z+), aligne avec chaque bouton
-        lbl.position = boite_pos + Vector3(-0.01, -0.088 + 0.048 * btn, 0.18)
+        # a droite de la boite : 10 cm vers la porte, texte part du bord
+        lbl.position = boite_pos + Vector3(-0.01, -0.088 + 0.048 * btn, -0.10)
         lbl.rotation = Vector3(0.0, PI / 2.0, 0.0)
         add_child(lbl)
 
