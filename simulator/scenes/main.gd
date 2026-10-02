@@ -1091,13 +1091,13 @@ func _build_bureau_interieur() -> void:
     # ancre plus profond enterre le modele dans le mur.
     var au_pos := Vector3(cx - 3.70, 1.12, cz + 3.3)
     _place_prop("res://assets/props/estop_mushroom.gltf", au_pos,
-        Vector3(0.0, PI / 2.0, PI))
+        Vector3(0.0, -PI / 2.0, PI))
     _add_static_box(au_pos + Vector3(0.05, 0.0, 0.0),
         Vector3(0.05, 0.14, 0.14), "confinement")
     # Second bouton AU au-dessus : evacuation
     var ev_pos := Vector3(cx - 3.70, 1.52, cz + 3.3)
     _place_prop("res://assets/props/estop_mushroom.gltf", ev_pos,
-        Vector3(0.0, PI / 2.0, PI))
+        Vector3(0.0, -PI / 2.0, PI))
     _add_static_box(ev_pos + Vector3(0.05, 0.0, 0.0),
         Vector3(0.05, 0.14, 0.14), "evacuation")
     var etiquette_ev := Label3D.new()
