@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cty42l8dwomhg"
-path.s3tc="res://.godot/imported/extinguisher_texture_20250901.png-37d309ed8f2e72f8557787194034ee13.s3tc.ctex"
+uid="uid://coo6pdwkpyv8c"
+path.s3tc="res://.godot/imported/tableau_Manga.jpg-1f96411b20b656969e1b118844e2c96e.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "bfd517003d044e59e6d9e2abaedde814"
+"md5": "17dc7257d8c7a1d39adb04c1b97aa3d9"
 }
 
 [deps]
 
-source_file="res://assets/safety/extinguisher_texture_20250901.png"
-dest_files=["res://.godot/imported/extinguisher_texture_20250901.png-37d309ed8f2e72f8557787194034ee13.s3tc.ctex"]
+source_file="res://assets/props/tableau_Manga.jpg"
+dest_files=["res://.godot/imported/tableau_Manga.jpg-1f96411b20b656969e1b118844e2c96e.s3tc.ctex"]
 
 [params]
 
