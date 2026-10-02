@@ -893,6 +893,12 @@ func _build_hall(belt_length: float) -> void:
             light.light_color = Color(1.0, 0.97, 0.9)
             add_child(light)
 
+    # Lettres geantes N/S/E/O peintes sur les murs (5 m, style usine ancienne)
+    _lettre_mur("N", Vector3(center_x, 10.0, HALL_MIN_Z + 0.10), 0.0)       # Nord = z min
+    _lettre_mur("S", Vector3(center_x, 10.0, HALL_MAX_Z - 0.10), PI)        # Sud = z max
+    _lettre_mur("E", Vector3(HALL_MAX_X - 0.10, 10.0, center_z), PI / 2.0)  # Est = x max
+    _lettre_mur("O", Vector3(HALL_MIN_X + 0.10, 10.0, center_z), -PI / 2.0) # Ouest = x min
+
     # Extincteurs muraux : mur du fond (z min) et mur droit (x max)
     for x in [-20.0, 10.0, 40.0]:
         _build_extinguisher(Vector3(x, 0, HALL_MIN_Z + 0.09), -PI / 2.0)
@@ -1069,6 +1075,22 @@ func _placer_alarme(pos: Vector3, rot: Vector3, face: Vector3) -> void:
         "alarme_incendie")
 
 
+## Lettre geante peinte sur un mur (5 m, style vieille usine).
+func _lettre_mur(lettre: String, pos: Vector3, yaw: float) -> void:
+    var lbl := Label3D.new()
+    lbl.text = lettre
+    lbl.font_size = 560     # ~5 m de haut sur un mur de 20 m
+    lbl.modulate = Color(0.72, 0.68, 0.60, 0.85)  # blanc use, semi-transparent
+    lbl.outline_size = 16
+    lbl.outline_modulate = Color(0.4, 0.36, 0.3, 0.4)  # contour terre
+    lbl.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+    lbl.no_depth_test = false
+    lbl.shaded = true       # recoit l'eclairage (pas un panneau lumineux)
+    lbl.position = pos
+    lbl.rotation.y = yaw
+    add_child(lbl)
+
+
 ## Panneau de securite mural (image plate sur quad, face a la salle).
 func _place_sign(texture_path: String, pos: Vector3, size_m: Vector2, yaw: float) -> void:
     var tex = load(texture_path)
@@ -1108,9 +1130,9 @@ func _build_securite_signs() -> void:
     # R_y(90) : (x,y,z)->(z,y,-x) donc le centre devient (7.925, 0.90, 11.455)
     var cafe_offset := Vector3(7.925, 0.90, 11.455)
     _place_prop("res://assets/props/distributeur_cafe.glb",
-        Vector3(-57.0 - cafe_offset.x, -cafe_offset.y, -3.0 - cafe_offset.z),
+        Vector3(-57.0 - cafe_offset.x, -cafe_offset.y, -4.0 - cafe_offset.z),
         Vector3(0.0, PI / 2.0, 0.0))
-    _add_static_box(Vector3(-57.0, 0.90, -3.0), Vector3(0.93, 1.80, 0.81))
+    _add_static_box(Vector3(-57.0, 0.90, -4.0), Vector3(0.93, 1.80, 0.81))
 
     # Defibrillateur sous le panneau DAE
     _place_prop("res://assets/safety/defibrillator.glb",
@@ -1445,7 +1467,7 @@ func _build_bureau_interieur() -> void:
     # a cote des interrupteurs (AU, keypad, boite 5BP)
     # modele deja a hauteur murale (min.y = 1,71) — abaissé de 30 cm
     _place_prop("res://assets/props/whiteboard.glb",
-        Vector3(cx - 3.66, -0.60, -59.0), Vector3(0.0, PI / 2.0, 0.0))
+        Vector3(cx - 3.66, -0.60, -62.0), Vector3(0.0, PI / 2.0, 0.0))
 
     # Poubelle (steel_bin) a gauche de la table
     # offset interne du modele compense : centre a (1.90, 0.22, 0.075)
@@ -1453,7 +1475,7 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 1.0 - 1.90, 0.0, cz - 2.2 - 0.075), Vector3.ZERO)
 
     # Clavier a code (keypad_lock) sous la boite 5BP
-    var keypad_pos := Vector3(cx + 2.0, 1.20, cz + 4.72)
+    var keypad_pos := Vector3(cx + 2.0, 1.30, cz + 4.72)
     _place_prop("res://assets/props/keypad_lock.glb", keypad_pos,
         Vector3(0.0, PI, 0.0), 2.0)
     _add_static_box(keypad_pos + Vector3(0.0, 0.0, -0.06),
