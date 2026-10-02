@@ -1103,9 +1103,13 @@ func _build_securite_signs() -> void:
     _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 2.05, -1.8),
         Vector2(0.24, 0.36), PI / 2.0)
     # Distributeur de cafe a droite du DAE (mur gauche, face a la salle)
-    # offset interne du modele compense : centre du corps a x = -57.0, z = -3.0
+    # offset interne : centre du modele a (-11.455, 0.90, 7.925)
+    # position = cible - offset_apres_rotation_y_90 (x<->z inverses)
+    # R_y(90) : (x,y,z)->(z,y,-x) donc le centre devient (7.925, 0.90, 11.455)
+    var cafe_offset := Vector3(7.925, 0.90, 11.455)
     _place_prop("res://assets/props/distributeur_cafe.glb",
-        Vector3(-57.0 + 11.455, 0.0, -3.0 - 7.925), Vector3(0.0, PI / 2.0, 0.0))
+        Vector3(-57.0 - cafe_offset.x, -cafe_offset.y, -3.0 - cafe_offset.z),
+        Vector3(0.0, PI / 2.0, 0.0))
     _add_static_box(Vector3(-57.0, 0.90, -3.0), Vector3(0.93, 1.80, 0.81))
 
     # Defibrillateur sous le panneau DAE
@@ -1441,7 +1445,7 @@ func _build_bureau_interieur() -> void:
     # a cote des interrupteurs (AU, keypad, boite 5BP)
     # modele deja a hauteur murale (min.y = 1,71) — abaissé de 30 cm
     _place_prop("res://assets/props/whiteboard.glb",
-        Vector3(cx - 3.66, -0.60, cz + 4.2), Vector3(0.0, PI / 2.0, 0.0))
+        Vector3(cx - 3.66, -0.60, -59.0), Vector3(0.0, PI / 2.0, 0.0))
 
     # Poubelle (steel_bin) a gauche de la table
     # offset interne du modele compense : centre a (1.90, 0.22, 0.075)
@@ -1449,7 +1453,7 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 1.0 - 1.90, 0.0, cz - 2.2 - 0.075), Vector3.ZERO)
 
     # Clavier a code (keypad_lock) sous la boite 5BP
-    var keypad_pos := Vector3(cx + 2.0, 0.60, cz + 4.72)
+    var keypad_pos := Vector3(cx + 2.0, 1.20, cz + 4.72)
     _place_prop("res://assets/props/keypad_lock.glb", keypad_pos,
         Vector3(0.0, PI, 0.0), 2.0)
     _add_static_box(keypad_pos + Vector3(0.0, 0.0, -0.06),
