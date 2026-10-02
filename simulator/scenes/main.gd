@@ -1281,10 +1281,10 @@ func _build_bureau_interieur() -> void:
     # (z = HALL_MIN_Z), x ~ -54, face a la salle (+Z)
     for dx in [-54.8, -54.0, -53.2]:
         _place_prop("res://assets/props/control_box.glb",
-            Vector3(dx, 0.53, HALL_MIN_Z + 0.20), Vector3.ZERO)
+            Vector3(dx, 1.06, HALL_MIN_Z + 0.20), Vector3.ZERO, 2.0)
 
     # Boite a 5 boutons (Boite5BP) sur le mur, sous les champignons AU
-    var boite_pos := Vector3(cx - 3.72, 1.60, cz + 1.2)
+    var boite_pos := Vector3(cx - 3.72, 1.50, cz + 1.2)
     _place_prop("res://assets/props/boite_5bp.glb", boite_pos,
         Vector3(PI / 2.0, PI / 2.0, 0.0), 1.25)
     for btn in range(5):
