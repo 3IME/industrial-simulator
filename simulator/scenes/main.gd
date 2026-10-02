@@ -25,6 +25,9 @@ const URGENCUE_BOX := "res://assets/safety/urgence4.glb"
 const SIGN_SORTIE := "res://assets/safety/sign_sortie_secours.png"
 const SIGN_DAE := "res://assets/safety/sign_dae.png"
 const SIGN_RASSEMBLEMENT := "res://assets/safety/sign_rassemblement.png"
+const HUMM_SOUND := "res://assets/sounds/annonces/humm.mp3"
+const HUMM_PORTEE := 5.0        # audible a 5 m
+const HUMM_VOLUME_MAX := -2.0   # dB a bout portant
 const TABLEAU := "res://assets/props/tableau.glb"
 # Modele source : bbox 0.565 x 1.088 x 0.34 m, base a y=0.
 # Cible : extincteur de 0.62 m pose sur support mural (base a 0.70 m).
@@ -140,6 +143,7 @@ var _cctv_temps := 0.0
 var _cctv_ecran: MeshInstance3D = null
 var _cctv_composite_a_assigner: SubViewport = null
 var _cctv_frames_attente := 0
+var _humm_player: AudioStreamPlayer3D = null
 var _verre_player: AudioStreamPlayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -1299,6 +1303,19 @@ func _build_bureau_interieur() -> void:
     for dx in [-55.5, -54.2, -52.9]:
         _place_prop("res://assets/props/control_box.glb",
             Vector3(dx, 1.06, HALL_MIN_Z + 0.20), Vector3.ZERO, 2.0)
+    # Bourdonnement electrique des armoires : volume proportionnel
+    # a la proximite (AudioStreamPlayer3D avec attenuation)
+    _humm_player = AudioStreamPlayer3D.new()
+    var humm_flux = load(HUMM_SOUND)
+    if humm_flux != null:
+        humm_flux.loop = true
+        _humm_player.stream = humm_flux
+        _humm_player.position = Vector3(-54.2, 1.5, HALL_MIN_Z + 0.3)
+        _humm_player.unit_size = HUMM_PORTEE
+        _humm_player.max_db = HUMM_VOLUME_MAX
+        _humm_player.volume_db = HUMM_VOLUME_MAX
+        add_child(_humm_player)
+        _humm_player.play()
 
     # Boite a 5 boutons (Boite5BP) sur le mur, sous les champignons AU
     var boite_pos := Vector3(cx - 3.72, 1.50, cz + 1.2)
