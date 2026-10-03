@@ -444,7 +444,7 @@ func _jouer_video_nostromo() -> void:
         return
     var flux = load("res://assets/videos/nostromo_destruct.ogv")
     if flux == null:
-        push_warning("video introuvable")
+        push_warning("video .ogv introuvable")
         return
     _video_jouee = true
     print("VIDEO : Nostromo — touche 0 pour revenir aux cameras")
@@ -1130,7 +1130,7 @@ func _build_securite_signs() -> void:
     # R_y(90) : (x,y,z)->(z,y,-x) donc le centre devient (7.925, 0.90, 11.455)
     var cafe_offset := Vector3(7.925, 0.90, 11.455)
     _place_prop("res://assets/props/distributeur_cafe.glb",
-        Vector3(-57.0 - cafe_offset.x, -cafe_offset.y, -4.0 - cafe_offset.z),
+        Vector3(-64.925, 0.0, -15.455),
         Vector3(0.0, PI / 2.0, 0.0))
     _add_static_box(Vector3(-57.0, 0.90, -4.0), Vector3(0.93, 1.80, 0.81))
 
