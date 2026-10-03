@@ -930,9 +930,9 @@ func _build_hall(belt_length: float) -> void:
         var grad := Gradient.new()
         grad.set_color(0, Color(0.15, 0.15, 0.18, 0.0))
         grad.set_color(1, Color(0.25, 0.25, 0.28, 0.55))
-        mat_fumee.color_ramp = grad
-        var tex_fumee := GradientTexture1D.new()
-        tex_fumee.gradient = grad
+        var grad_tex := GradientTexture1D.new()
+        grad_tex.gradient = grad
+        mat_fumee.color_ramp = grad_tex
         fumee.process_material = mat_fumee
         var quad_fumee := QuadMesh.new()
         quad_fumee.size = Vector2(4, 4)
