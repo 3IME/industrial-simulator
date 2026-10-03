@@ -1122,7 +1122,7 @@ func _build_securite_signs() -> void:
         Vector2(0.24, 0.36), PI / 2.0)
     # Chaudiere murale sur le mur est (face a la salle)
     _place_prop("res://assets/props/chaudiere.glb",
-        Vector3(HALL_MAX_X - 0.18, 1.8, 25.0), Vector3(0.0, PI, 0.0))
+        Vector3(HALL_MAX_X - 0.35, 0.0, 25.0), Vector3(0.0, PI, 0.0), 4.0)
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
@@ -1204,7 +1204,7 @@ func _build_props() -> void:
 
     # Gondole (rayonnage) contre le mur gauche
     for z_gondole in range(10):
-        var gz := -40.0 + z_gondole * 2.0
+        var gz := 8.0 + z_gondole * 2.0
         _place_prop(PROP_GONDOLA,
             Vector3(HALL_MIN_X + 0.42, 0.95, gz), Vector3(0.0, PI / 2.0, 0.0))
         _add_static_box(Vector3(HALL_MIN_X + 0.42, 0.95, gz), Vector3(0.62, 1.9, 1.0))
@@ -1492,15 +1492,15 @@ func _build_bureau_interieur() -> void:
 
     # Golden Play Button a droite de la TV, au 2/3 de la hauteur
     _place_prop("res://assets/props/golden_play_button.glb",
-        Vector3(cx + 1.0, 1.87, cz - 4.70), Vector3(0.0, PI, 0.0), 15.0)
+        Vector3(cx + 1.0, 1.87, cz - 4.55), Vector3(0.0, PI, 0.0), 30.0)
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
-        Vector3(cx, 0.76, cz - 2.5), Vector3(0.0, PI, 0.0), 0.35)
+        Vector3(cx, 0.78, cz - 2.5), Vector3(0.0, PI, 0.0), 0.35)
     # 2 tabourets medievaux devant le bureau (cote porte)
     for dx_stool in [-0.9, 0.9]:
         _place_prop("res://assets/props/medieval_stool.glb",
-            Vector3(cx + dx_stool, 0.0, cz - 1.4), Vector3.ZERO, 0.35)
+            Vector3(cx + dx_stool, 0.35, cz - 1.4), Vector3.ZERO, 0.35)
 
     # 2 armoires vertes (filing cabinet) a droite de la porte
     var fc_offset := Vector3(0.57, 0.965, 1.24)
