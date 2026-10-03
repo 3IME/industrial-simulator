@@ -1055,8 +1055,8 @@ func _build_alarmes() -> void:
         _placer_alarme(Vector3(x - 1.4, 1.46, HALL_MAX_Z - 0.06),
             Vector3(PI / 2.0, 0.0, 0.0), Vector3(0.0, 0.0, -1.0))
     # mur gauche : kit a droite de la porte de sortie (face +X)
-    _placer_alarme(Vector3(HALL_MIN_X + 0.06, 1.46, -2.6),
-        Vector3(PI / 2.0, PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
+    _placer_alarme(Vector3(HALL_MIN_X + 0.13, 1.46, -2.6),
+        Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
 
     # bureau : mur de GAUCHE de la piece interieure (face interieure +X)
     _placer_alarme(Vector3(-58.66, 1.46, -59.0),
@@ -1120,15 +1120,19 @@ func _build_securite_signs() -> void:
     # DAE (defibrillateur) : a droite de la porte (z negatif, face +X)
     _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 2.05, -1.8),
         Vector2(0.24, 0.36), PI / 2.0)
+    # Panneau "caution wet floor" entre le cafe et le bureau de chantier
+    _place_prop("res://assets/props/caution_wet_floor.glb",
+        Vector3(-57.0, 0.0, -20.0), Vector3.ZERO)
+
     # Distributeur de cafe a droite du DAE (mur gauche, face a la salle)
     # offset interne : centre du modele a (-11.455, 0.90, 7.925)
     # position = cible - offset_apres_rotation_y_90 (x<->z inverses)
     # R_y(90) : (x,y,z)->(z,y,-x) donc le centre devient (7.925, 0.90, 11.455)
     var cafe_offset := Vector3(7.925, 0.90, 11.455)
     _place_prop("res://assets/props/distributeur_cafe.glb",
-        Vector3(-64.925, 0.0, -15.455),
+        Vector3(-65.325, 0.0, -17.455),
         Vector3(0.0, PI / 2.0, 0.0))
-    _add_static_box(Vector3(-57.0, 0.90, -4.0), Vector3(0.93, 1.80, 0.81))
+    _add_static_box(Vector3(-57.40, 0.90, -6.0), Vector3(0.93, 1.80, 0.81))
 
     # Defibrillateur sous le panneau DAE
     _place_prop("res://assets/safety/defibrillator.glb",
@@ -1305,7 +1309,7 @@ func _build_bureau_interieur() -> void:
     if manga_tex != null:
         var manga := MeshInstance3D.new()
         var manga_quad := QuadMesh.new()
-        manga_quad.size = Vector2(1.18, 0.60)
+        manga_quad.size = Vector2(1.90, 1.90)
         var manga_mat := StandardMaterial3D.new()
         manga_mat.albedo_texture = manga_tex
         manga_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
@@ -1515,8 +1519,11 @@ func _build_bureau_interieur() -> void:
         lbl.modulate = Color(0.85, 0.87, 0.9)
         lbl.outline_size = 4
         lbl.outline_modulate = Color(0.05, 0.05, 0.08)
-        # a droite de la boite : 10 cm vers la porte, texte part du bord
-        lbl.position = boite_pos + Vector3(0.01, -0.088 + 0.048 * btn, -0.25)
+        # Alignement a gauche : largeur fixe + alignement
+        lbl.width = 300.0
+        lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+        # Ancrage : le label s'etend depuis son origine vers la droite
+        lbl.position = boite_pos + Vector3(0.01, -0.088 + 0.048 * btn, -0.15)
         lbl.rotation = Vector3(0.0, PI / 2.0, 0.0)
         add_child(lbl)
 
