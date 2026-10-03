@@ -150,6 +150,8 @@ var _chaudiere_player: AudioStreamPlayer3D = null
 var _fumee_parts: Array[GPUParticles3D] = []
 var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
 var _fumee_active := false
+var _flammes: GPUParticles3D = null
+var _flammes_light: OmniLight3D = null
 var _code_saisi := ""
 var _mode_code := false
 var _video_jouee := false
@@ -385,6 +387,11 @@ func _declencher_alarme(pos: Vector3) -> void:
         _verre_player.play()
     _eclats_de_verre(pos)
     _fumee_active = true
+    if _flammes != null:
+        _flammes.amount = 120
+        _flammes.emitting = true
+    if _flammes_light != null:
+        _flammes_light.light_energy = 2.0
     await get_tree().create_timer(0.9).timeout
     if not _alarme_active:
         return
@@ -400,6 +407,11 @@ func _couper_alarme() -> void:
     _alarme_active = false
     _en_confinement = false
     _fumee_active = false
+    if _flammes != null:
+        _flammes.emitting = false
+        _flammes.amount = 0
+    if _flammes_light != null:
+        _flammes_light.light_energy = 0.0
     if _cctv_mats.size() > 3:
         _cctv_mats[3].set_shader_parameter("alarme", 0.0)
     if _cctv_perte.size() > 3:
@@ -639,6 +651,10 @@ func _process(delta: float) -> void:
                 _cctv_composite_a_assigner = null
                 print("CCTV : texture ", tex_cctv.get_size(), " assignee (frame ",
                     _cctv_frames_attente, ")")
+
+    # Flicker de la lumiere des flammes
+    if _flammes_light != null and _flammes_light.light_energy > 0.0:
+        _flammes_light.light_energy = 1.5 + sin(_cctv_temps * 15.0) * 0.5 + randf() * 0.3
 
     # Fumee : monter progressivement pendant l'alerte, dissiper apres
     if _fumee_active and _fumee_niveau < 1.0:
@@ -908,6 +924,46 @@ func _build_hall(belt_length: float) -> void:
             light.light_energy = 1.4
             light.light_color = Color(1.0, 0.97, 0.9)
             add_child(light)
+
+    # Flammes de la chaudiere (activees pendant l'alerte incendie)
+    _flammes = GPUParticles3D.new()
+    var mat_fl := ParticleProcessMaterial.new()
+    mat_fl.direction = Vector3(0, 1, 0)
+    mat_fl.spread = 25.0
+    mat_fl.initial_velocity_min = 2.0
+    mat_fl.initial_velocity_max = 5.0
+    mat_fl.gravity = Vector3(0, 2.0, 0)
+    mat_fl.scale_min = 1.5
+    mat_fl.scale_max = 4.0
+    mat_fl.lifetime_randomness = 0.4
+    var grad_fl := Gradient.new()
+    grad_fl.set_color(0, Color(1.0, 0.9, 0.3, 0.9))
+    grad_fl.set_color(1, Color(0.9, 0.2, 0.0, 0.0))
+    var grad_fl_tex := GradientTexture1D.new()
+    grad_fl_tex.gradient = grad_fl
+    mat_fl.color_ramp = grad_fl_tex
+    _flammes.process_material = mat_fl
+    var quad_fl := QuadMesh.new()
+    quad_fl.size = Vector2(2, 2)
+    var surf_fl := StandardMaterial3D.new()
+    surf_fl.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+    surf_fl.albedo_color = Color(1.0, 0.6, 0.1, 0.8)
+    surf_fl.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+    surf_fl.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+    quad_fl.material = surf_fl
+    _flammes.draw_pass_1 = quad_fl
+    _flammes.amount = 0
+    _flammes.lifetime = 2.5
+    _flammes.position = Vector3(HALL_MAX_X - 0.90, 4.0, 25.0)
+    _flammes.emitting = false
+    add_child(_flammes)
+    # Lumiere orange qui flicker avec les flammes
+    _flammes_light = OmniLight3D.new()
+    _flammes_light.position = Vector3(HALL_MAX_X - 1.5, 5.0, 25.0)
+    _flammes_light.light_color = Color(1.0, 0.5, 0.1)
+    _flammes_light.omni_range = 15.0
+    _flammes_light.light_energy = 0.0
+    add_child(_flammes_light)
 
     # Emitters de fumee (actives pendant l'alerte incendie)
     for pos_fumee in [
