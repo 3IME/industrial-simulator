@@ -30,6 +30,8 @@ const PROPS := [
     "res://assets/props/chaudiere.glb",
     "res://assets/props/filing_cabinet.glb",
     "res://assets/props/golden_play_button.glb",
+    "res://assets/props/medieval_stool.glb",
+    "res://assets/props/laptop.glb",
     "res://assets/props/transpallet.glb",
     "res://assets/props/estop_mushroom.gltf",
     "res://assets/props/auto_rotate.glb",
