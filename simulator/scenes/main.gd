@@ -1515,8 +1515,8 @@ func _build_bureau_interieur() -> void:
     play_label.text = "►"
     play_label.font_size = 140
     play_label.modulate = Color(1.0, 0.84, 0.0)
-    play_label.emission_enabled = true
-    play_label.emission = Color(0.6, 0.4, 0.0)
+    play_label.outline_size = 10
+    play_label.outline_modulate = Color(0.5, 0.35, 0.0)
     play_label.position = Vector3(cx + 1.0, 1.87, cz - 4.68)
     play_label.rotation.y = PI
     add_child(play_label)
