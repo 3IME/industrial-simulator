@@ -27,6 +27,7 @@ const PROPS := [
     "res://assets/props/steel_bin.glb",
     "res://assets/props/whiteboard.glb",
     "res://assets/props/caution_wet_floor.glb",
+    "res://assets/props/chaudiere.glb",
     "res://assets/props/transpallet.glb",
     "res://assets/props/estop_mushroom.gltf",
     "res://assets/props/auto_rotate.glb",

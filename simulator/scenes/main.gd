@@ -1120,6 +1120,10 @@ func _build_securite_signs() -> void:
     # DAE (defibrillateur) : a droite de la porte (z negatif, face +X)
     _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 2.05, -1.8),
         Vector2(0.24, 0.36), PI / 2.0)
+    # Chaudiere murale sur le mur est (face a la salle)
+    _place_prop("res://assets/props/chaudiere.glb",
+        Vector3(HALL_MAX_X - 0.18, 1.8, 25.0), Vector3(0.0, PI, 0.0))
+
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
         Vector3(-57.0, 0.0, -20.0), Vector3.ZERO)
