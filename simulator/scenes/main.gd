@@ -1136,7 +1136,7 @@ func _build_securite_signs() -> void:
 
     # Chaudiere murale sur le mur est (face a la salle)
     _place_prop("res://assets/props/chaudiere.glb",
-        Vector3(HALL_MAX_X - 0.90, 0.10, 25.0), Vector3(0.0, PI, 0.0), 12.0)
+        Vector3(HALL_MAX_X - 0.90, 8.01, 25.0), Vector3(0.0, PI, 0.0), 12.0)
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
@@ -1504,13 +1504,26 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 3.66, -0.60, -62.0), Vector3(0.0, PI / 2.0, 0.0))
 
 
+    _add_static_box(Vector3(HALL_MAX_X - 0.90, 8.01, 25.0),
+        Vector3(3.66, 16.0, 24.0))
+
     # Golden Play Button a droite de la TV, au 2/3 de la hauteur
-    _place_prop("res://assets/props/golden_play_button.glb",
-        Vector3(cx + 1.0 + 3.3, 1.87 - 2.1, cz - 4.55 - 0.6), Vector3(0.0, PI, 0.0), 30.0)
+    # Golden Play Button : symbole "play" dore accroche au mur
+    # (le GLB fait 1 cm et son offset le rend invisible — remplace
+    # par un rendu fiable en attendant un meilleur modele)
+    var play_label := Label3D.new()
+    play_label.text = "►"
+    play_label.font_size = 140
+    play_label.modulate = Color(1.0, 0.84, 0.0)
+    play_label.emission_enabled = true
+    play_label.emission = Color(0.6, 0.4, 0.0)
+    play_label.position = Vector3(cx + 1.0, 1.87, cz - 4.68)
+    play_label.rotation.y = PI
+    add_child(play_label)
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
-        Vector3(cx, 0.83, cz - 2.5), Vector3(0.0, PI + PI / 2.0, 0.0), 0.35)
+        Vector3(cx, 0.88, cz - 2.5), Vector3(0.0, PI / 2.0, 0.0), 0.35)
     # 2 tabourets medievaux devant le bureau (cote porte)
     for dx_stool in [-0.9, 0.9]:
         _place_prop("res://assets/props/medieval_stool.glb",
