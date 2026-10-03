@@ -28,8 +28,8 @@ const SIGN_RASSEMBLEMENT := "res://assets/safety/sign_rassemblement.png"
 const HUMM_SOUND := "res://assets/sounds/annonces/humm.mp3"
 const HUMM_PORTEE := 5.0        # audible a 5 m
 const HUMM_VOLUME_MAX := -2.0   # dB a bout portant
-const FUMEE_MAX_PARTICLES := 500
-const FUMEE_VITESSE := 0.02     # taux de remplissage par seconde
+const FUMEE_MAX_PARTICLES := 3000
+const FUMEE_VITESSE := 0.06     # taux de remplissage par seconde
 const TABLEAU := "res://assets/props/tableau.glb"
 # Modele source : bbox 0.565 x 1.088 x 0.34 m, base a y=0.
 # Cible : extincteur de 0.62 m pose sur support mural (base a 0.70 m).
@@ -112,6 +112,7 @@ static func heavy_resources() -> Array:
         CONVEYOR_PIECE, BOX_MODEL,
         TEX_FLOOR_D, TEX_FLOOR_N, TEX_FLOOR_R, TEX_WALL_D, TEX_WALL_N,
         TEX_ROOF_D, TEX_ROOF_N,
+        "res://assets/textures/fire_01.png",
         EXTINGUISHER_MODEL, EXTINGUISHER_SIGN,
         PROP_PENDANT_LAMP, PROP_FLUO_FIXTURE, PROP_SECURITY_DOOR,
         PROP_ADULT, PROP_GONDOLA, PROP_IRON_MINER, PROP_BRIDGE,
@@ -654,7 +655,8 @@ func _process(delta: float) -> void:
 
     # Flicker de la lumiere des flammes
     if _flammes_light != null and _flammes_light.light_energy > 0.0:
-        _flammes_light.light_energy = 1.5 + sin(_cctv_temps * 15.0) * 0.5 + randf() * 0.3
+        var ft := fmod(_cctv_temps * 3.0, 1.0)
+        _flammes_light.light_energy = 2.0 + sin(ft * 31.4) * 0.5 + sin(ft * 7.3) * 0.8 + randf() * 0.4
 
     # Fumee : monter progressivement pendant l'alerte, dissiper apres
     if _fumee_active and _fumee_niveau < 1.0:
@@ -927,42 +929,75 @@ func _build_hall(belt_length: float) -> void:
 
     # Table de travail bleue a gauche de la chaudiere
     _place_prop("res://assets/props/work_table.glb",
-        Vector3(HALL_MAX_X - 0.55, 0.0, 22.0), Vector3(0.0, -PI / 2.0, 0.0))
-    _add_static_box(Vector3(HALL_MAX_X - 0.55, 0.88, 22.0), Vector3(0.87, 1.76, 1.90))
+        Vector3(HALL_MAX_X - 0.75, 0.0, 34.0),
+        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(HALL_MAX_X - 0.75, 0.88, 34.0),
+        Vector3(0.87, 1.76, 1.90))
 
     # Flammes de la chaudiere (activees pendant l'alerte incendie)
     _flammes = GPUParticles3D.new()
+    _flammes.amount = 60
+    _flammes.lifetime = 1.2
+    _flammes.position = Vector3(HALL_MAX_X - 0.90, 0.2, 25.0)
+
     var mat_fl := ParticleProcessMaterial.new()
     mat_fl.direction = Vector3(0, 1, 0)
-    mat_fl.spread = 25.0
-    mat_fl.initial_velocity_min = 2.0
-    mat_fl.initial_velocity_max = 5.0
-    mat_fl.gravity = Vector3(0, 2.0, 0)
-    mat_fl.scale_min = 1.5
-    mat_fl.scale_max = 4.0
-    mat_fl.lifetime_randomness = 0.4
+    mat_fl.spread = 20.0
+    mat_fl.initial_velocity_min = 1.0
+    mat_fl.initial_velocity_max = 2.0
+    mat_fl.gravity = Vector3(0, 1.0, 0)
+    mat_fl.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+    mat_fl.emission_sphere_radius = 0.2
+    mat_fl.radial_velocity_min = 0.0
+    mat_fl.radial_velocity_max = 0.5
+    mat_fl.scale_min = 0.9
+    mat_fl.scale_max = 1.4
+    mat_fl.angle_min = -180.0
+    mat_fl.angle_max = 180.0
+    # Taille : petit -> grand
+    var size_c := Curve.new()
+    size_c.add_point(Vector2(0.0, 0.2))
+    size_c.add_point(Vector2(0.5, 0.8))
+    size_c.add_point(Vector2(1.0, 1.4))
+    var size_t := CurveTexture.new()
+    size_t.curve = size_c
+    mat_fl.scale_curve = size_t
+    # Alpha : apparition rapide -> fondu long (point cle du tutoriel)
+    var alpha_c := Curve.new()
+    alpha_c.add_point(Vector2(0.0, 0.0))
+    alpha_c.add_point(Vector2(0.15, 1.0))
+    alpha_c.add_point(Vector2(0.8, 0.8))
+    alpha_c.add_point(Vector2(1.0, 0.0))
+    var alpha_t := CurveTexture.new()
+    alpha_t.curve = alpha_c
+    mat_fl.alpha_curve = alpha_t
+    # Couleur : jaune -> orange -> rouge sombre
     var grad_fl := Gradient.new()
-    grad_fl.set_color(0, Color(1.0, 0.9, 0.3, 0.9))
-    grad_fl.set_color(1, Color(0.9, 0.2, 0.0, 0.0))
-    var grad_fl_tex := GradientTexture1D.new()
-    grad_fl_tex.gradient = grad_fl
-    mat_fl.color_ramp = grad_fl_tex
+    grad_fl.set_color(0, Color(1.0, 0.95, 0.6))
+    grad_fl.set_color(1, Color(0.4, 0.05, 0.0))
+    grad_fl.add_point(0.3, Color(1.0, 0.6, 0.1))
+    grad_fl.add_point(0.6, Color(0.9, 0.2, 0.0))
+    var grad_fl_t := GradientTexture1D.new()
+    grad_fl_t.gradient = grad_fl
+    mat_fl.color_ramp = grad_fl_t
     _flammes.process_material = mat_fl
+
     var quad_fl := QuadMesh.new()
-    quad_fl.size = Vector2(2, 2)
+    quad_fl.size = Vector2(1.5, 1.5)
     var surf_fl := StandardMaterial3D.new()
+    surf_fl.albedo_texture = load("res://assets/textures/fire_01.png")
     surf_fl.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-    surf_fl.albedo_color = Color(1.0, 0.6, 0.1, 0.8)
     surf_fl.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
     surf_fl.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+    surf_fl.vertex_color_use_as_albedo = true
+    surf_fl.vertex_color_is_srgb = true
+    surf_fl.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
     quad_fl.material = surf_fl
     _flammes.draw_pass_1 = quad_fl
-    _flammes.amount = 0
-    _flammes.lifetime = 2.5
-    _flammes.position = Vector3(HALL_MAX_X - 0.90, 4.0, 25.0)
     _flammes.emitting = false
     add_child(_flammes)
-    # Lumiere orange qui flicker avec les flammes
+
+    # Lumiere orange avec flicker organique (courbe, pas sin())
     _flammes_light = OmniLight3D.new()
     _flammes_light.position = Vector3(HALL_MAX_X - 1.5, 5.0, 25.0)
     _flammes_light.light_color = Color(1.0, 0.5, 0.1)
@@ -981,34 +1016,57 @@ func _build_hall(belt_length: float) -> void:
         var fumee := GPUParticles3D.new()
         var mat_fumee := ParticleProcessMaterial.new()
         mat_fumee.direction = Vector3(0, 1, 0)
-        mat_fumee.spread = 35.0
+        mat_fumee.spread = 40.0
         mat_fumee.initial_velocity_min = 0.5
         mat_fumee.initial_velocity_max = 1.5
-        mat_fumee.gravity = Vector3(0, 0.3, 0)
-        mat_fumee.scale_min = 3.0
-        mat_fumee.scale_max = 8.0
-        mat_fumee.lifetime_randomness = 0.5
-        var grad := Gradient.new()
-        grad.set_color(0, Color(0.15, 0.15, 0.18, 0.0))
-        grad.set_color(1, Color(0.25, 0.25, 0.28, 0.55))
-        var grad_tex := GradientTexture1D.new()
-        grad_tex.gradient = grad
-        mat_fumee.color_ramp = grad_tex
+        mat_fumee.gravity = Vector3(0, 1.0, 0)
+        mat_fumee.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+        mat_fumee.emission_sphere_radius = 0.5
+        mat_fumee.scale_min = 5.0
+        mat_fumee.scale_max = 14.0
+        mat_fumee.angle_min = -180.0
+        mat_fumee.angle_max = 180.0
+        # Taille : petit -> tres grand
+        var sz_c := Curve.new()
+        sz_c.add_point(Vector2(0.0, 0.3))
+        sz_c.add_point(Vector2(0.5, 0.9))
+        sz_c.add_point(Vector2(1.0, 1.6))
+        var sz_t := CurveTexture.new()
+        sz_t.curve = sz_c
+        mat_fumee.scale_curve = sz_t
+        # Alpha : apparition douce -> fondu tres long
+        var al_c := Curve.new()
+        al_c.add_point(Vector2(0.0, 0.0))
+        al_c.add_point(Vector2(0.2, 0.6))
+        al_c.add_point(Vector2(0.7, 0.5))
+        al_c.add_point(Vector2(1.0, 0.0))
+        var al_t := CurveTexture.new()
+        al_t.curve = al_c
+        mat_fumee.alpha_curve = al_t
+        # Couleur : gris fonce -> gris clair
+        var grad_f := Gradient.new()
+        grad_f.set_color(0, Color(0.12, 0.12, 0.14))
+        grad_f.set_color(1, Color(0.35, 0.35, 0.38))
+        var grad_ft := GradientTexture1D.new()
+        grad_ft.gradient = grad_f
+        mat_fumee.color_ramp = grad_ft
         fumee.process_material = mat_fumee
-        var quad_fumee := QuadMesh.new()
-        quad_fumee.size = Vector2(4, 4)
-        var surf := StandardMaterial3D.new()
-        surf.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-        surf.albedo_color = Color(0.22, 0.22, 0.25, 0.4)
-        surf.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-        surf.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-        quad_fumee.material = surf
-        fumee.draw_pass_1 = quad_fumee
+        var quad_f := QuadMesh.new()
+        quad_f.size = Vector2(6, 6)
+        var surf_f := StandardMaterial3D.new()
+        surf_f.albedo_texture = load("res://assets/textures/fire_01.png")
+        surf_f.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+        surf_f.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+        surf_f.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+        surf_f.vertex_color_use_as_albedo = true
+        surf_f.vertex_color_is_srgb = true
+        surf_f.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
+        quad_f.material = surf_f
+        fumee.draw_pass_1 = quad_f
         fumee.amount = 0
-        fumee.lifetime = 6.0
+        fumee.lifetime = 8.0
         fumee.position = pos_fumee
         fumee.emitting = false
-        add_child(fumee)
         _fumee_parts.append(fumee)
 
     # Lettres geantes N/S/E/O peintes sur les murs (5 m, style usine ancienne)
@@ -1257,7 +1315,9 @@ func _build_securite_signs() -> void:
 
     # Chaudiere murale sur le mur est (face a la salle)
     _place_prop("res://assets/props/chaudiere.glb",
-        Vector3(HALL_MAX_X - 0.90, 8.01, 25.0), Vector3(0.0, PI, 0.0), 12.0)
+        Vector3(HALL_MAX_X - 0.90, 2.0, 25.0), Vector3(0.0, PI, 0.0), 6.0)
+    _add_static_box(Vector3(HALL_MAX_X - 0.90, 2.00, 25.0),
+        Vector3(1.83, 8.01, 6.00))
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
@@ -1279,15 +1339,15 @@ func _build_securite_signs() -> void:
 
     # Trousse de secours sous le defibrillateur
     _place_prop("res://assets/props/first_aid_kit.glb",
-        Vector3(HALL_MIN_X + 0.12, 1.0, -1.8), Vector3(0.0, PI / 2.0, 0.0), 0.04)
+        Vector3(HALL_MIN_X + 0.6, 1.0, -1.8), Vector3(0.0, 0.0, 0.0), 0.04)
 
     # Defibrillateur sous le panneau DAE
     _place_prop("res://assets/safety/defibrillator.glb",
         Vector3(HALL_MIN_X + 0.14, 1.25, -1.8), Vector3(0.0, PI / 2.0, 0.0))
 
     # Point de rassemblement : sur la cabine du bureau (face +Z vers l'usine)
-    _place_sign(SIGN_RASSEMBLEMENT, Vector3(-57.4, 1.50, -31.15),
-        Vector2(0.22, 0.33), 0.0)
+    _place_sign(SIGN_RASSEMBLEMENT, Vector3(HALL_MIN_X + 0.08, 1.50, -31.15),
+        Vector2(0.22, 0.33), PI / 2.0)
 
 
 ## Props 3D : lampes au plafond, adulte anime pres de la porte, gondole au mur.
@@ -1633,9 +1693,6 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 3.66, -0.60, -62.0), Vector3(0.0, PI / 2.0, 0.0))
 
 
-    _add_static_box(Vector3(HALL_MAX_X - 0.90, 8.01, 25.0),
-        Vector3(3.66, 16.0, 24.0))
-
     # Golden Play Button a droite de la TV, au 2/3 de la hauteur
     # Golden Play Button : symbole "play" dore accroche au mur
     # (le GLB fait 1 cm et son offset le rend invisible — remplace
@@ -1652,7 +1709,7 @@ func _build_bureau_interieur() -> void:
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
-        Vector3(cx, 0.88, cz - 2.5), Vector3(0.0, PI / 2.0, 0.0), 0.35)
+        Vector3(cx, 0.88, cz - 2.3), Vector3(0.0, PI / 2.0, 0.0), 0.35)
     # 2 tabourets medievaux devant le bureau (cote porte)
     for dx_stool in [-0.9, 0.9]:
         _place_prop("res://assets/props/medieval_stool.glb",
