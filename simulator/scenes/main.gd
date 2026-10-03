@@ -1067,6 +1067,7 @@ func _build_hall(belt_length: float) -> void:
         fumee.lifetime = 8.0
         fumee.position = pos_fumee
         fumee.emitting = false
+        add_child(fumee)
         _fumee_parts.append(fumee)
 
     # Lettres geantes N/S/E/O peintes sur les murs (5 m, style usine ancienne)
