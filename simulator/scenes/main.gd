@@ -1136,7 +1136,7 @@ func _build_securite_signs() -> void:
 
     # Chaudiere murale sur le mur est (face a la salle)
     _place_prop("res://assets/props/chaudiere.glb",
-        Vector3(HALL_MAX_X - 0.35, 0.10, 25.0), Vector3(0.0, PI, 0.0), 4.0)
+        Vector3(HALL_MAX_X - 0.90, 0.10, 25.0), Vector3(0.0, PI, 0.0), 12.0)
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
