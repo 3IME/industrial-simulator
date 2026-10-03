@@ -1496,7 +1496,7 @@ func _build_bureau_interieur() -> void:
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
-        Vector3(cx, 0.78, cz - 2.5), Vector3(0.0, PI, 0.0), 0.35)
+        Vector3(cx, 0.83, cz - 2.5), Vector3(0.0, PI + PI / 2.0, 0.0), 0.35)
     # 2 tabourets medievaux devant le bureau (cote porte)
     for dx_stool in [-0.9, 0.9]:
         _place_prop("res://assets/props/medieval_stool.glb",
