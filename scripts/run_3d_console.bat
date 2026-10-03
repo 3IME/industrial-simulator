@@ -10,5 +10,5 @@ if not defined GODOT_BIN (
         set "GODOT_BIN=godot"
     )
 )
-"%GODOT_BIN%" --path "%~dp0..\simulator" -- %*
+"%GODOT_BIN%" --path "%~dp0..\simulator" --verbose -- %*
 pause
