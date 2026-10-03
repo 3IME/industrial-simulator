@@ -1771,6 +1771,7 @@ func _build_bureau_interieur() -> void:
     for dx_stool in [-0.9, 0.9]:
         _place_prop("res://assets/props/medieval_stool.glb",
             Vector3(cx + dx_stool, 0.35, cz - 1.4), Vector3.ZERO, 0.35)
+        _add_static_box(Vector3(cx + dx_stool, 0.35, cz - 1.4), Vector3(0.28, 0.70, 0.30))
 
     # 2 armoires vertes (filing cabinet) a droite de la porte
     var fc_offset := Vector3(0.57, 0.965, 1.24)
@@ -1778,11 +1779,13 @@ func _build_bureau_interieur() -> void:
         _place_prop("res://assets/props/filing_cabinet.glb",
             Vector3(cx + dx - fc_offset.x, -fc_offset.y, cz + 4.3 - fc_offset.z),
             Vector3(0.0, PI, 0.0))
+        _add_static_box(Vector3(cx + dx, 0.925, cz + 4.3), Vector3(0.55, 1.85, 0.95))
 
     # Poubelle (steel_bin) a gauche de la table
     # offset interne du modele compense : centre a (1.90, 0.22, 0.075)
     _place_prop("res://assets/props/steel_bin.glb",
         Vector3(cx - 1.0 - 1.90, 0.0, cz - 2.2 - 0.075), Vector3.ZERO)
+    _add_static_box(Vector3(cx - 1.0, 0.19, cz - 2.2), Vector3(0.35, 0.38, 0.35))
 
     # Clavier a code (keypad_lock) sous la boite 5BP
     var keypad_pos := Vector3(cx + 2.0, 1.30, cz + 4.72)
@@ -1856,7 +1859,9 @@ func _build_bureau_interieur() -> void:
     add_child(etiquette_au)
 
     _place_prop(PROP_CLINICIAN_DESK, Vector3(cx, 0.0, cz - 2.2), Vector3(0.0, PI, 0.0))
+    _add_static_box(Vector3(cx, 0.375, cz - 2.2), Vector3(1.40, 0.75, 0.75))
     _place_prop(PROP_OFFICE_CHAIR, Vector3(cx, 0.0, cz - 2.9), Vector3.ZERO)
+    _add_static_box(Vector3(cx, 0.51, cz - 2.9), Vector3(0.60, 1.02, 0.60))
 
 
 func _room_box(pos: Vector3, box_size: Vector3, mat: StandardMaterial3D) -> void:
