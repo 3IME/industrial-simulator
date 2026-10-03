@@ -924,8 +924,8 @@ func _build_hall(belt_length: float) -> void:
         mat_fumee.initial_velocity_min = 0.5
         mat_fumee.initial_velocity_max = 1.5
         mat_fumee.gravity = Vector3(0, 0.3, 0)
-        mat_fumee.scale_amount_min = 3.0
-        mat_fumee.scale_amount_max = 8.0
+        mat_fumee.scale_min = 3.0
+        mat_fumee.scale_max = 8.0
         mat_fumee.lifetime_randomness = 0.5
         var grad := Gradient.new()
         grad.set_color(0, Color(0.15, 0.15, 0.18, 0.0))
