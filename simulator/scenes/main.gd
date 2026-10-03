@@ -1311,7 +1311,7 @@ func _build_bureau_interieur() -> void:
         manga_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
         manga_quad.material = manga_mat
         manga.mesh = manga_quad
-        manga.position = Vector3(cx + 3.60, 1.5, cz)
+        manga.position = Vector3(cx + 3.68, 1.5, cz)
         manga.rotation.y = -PI / 2.0
         add_child(manga)
 
@@ -1516,7 +1516,7 @@ func _build_bureau_interieur() -> void:
         lbl.outline_size = 4
         lbl.outline_modulate = Color(0.05, 0.05, 0.08)
         # a droite de la boite : 10 cm vers la porte, texte part du bord
-        lbl.position = boite_pos + Vector3(0.01, -0.088 + 0.048 * btn, 0.25)
+        lbl.position = boite_pos + Vector3(0.01, -0.088 + 0.048 * btn, -0.25)
         lbl.rotation = Vector3(0.0, PI / 2.0, 0.0)
         add_child(lbl)
 
