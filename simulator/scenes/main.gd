@@ -925,6 +925,11 @@ func _build_hall(belt_length: float) -> void:
             light.light_color = Color(1.0, 0.97, 0.9)
             add_child(light)
 
+    # Table de travail bleue a gauche de la chaudiere
+    _place_prop("res://assets/props/work_table.glb",
+        Vector3(HALL_MAX_X - 0.55, 0.0, 22.0), Vector3(0.0, -PI / 2.0, 0.0))
+    _add_static_box(Vector3(HALL_MAX_X - 0.55, 0.88, 22.0), Vector3(0.87, 1.76, 1.90))
+
     # Flammes de la chaudiere (activees pendant l'alerte incendie)
     _flammes = GPUParticles3D.new()
     var mat_fl := ParticleProcessMaterial.new()
