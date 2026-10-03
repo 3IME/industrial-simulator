@@ -28,6 +28,8 @@ const SIGN_RASSEMBLEMENT := "res://assets/safety/sign_rassemblement.png"
 const HUMM_SOUND := "res://assets/sounds/annonces/humm.mp3"
 const HUMM_PORTEE := 5.0        # audible a 5 m
 const HUMM_VOLUME_MAX := -2.0   # dB a bout portant
+const FUMEE_MAX_PARTICLES := 500
+const FUMEE_VITESSE := 0.02     # taux de remplissage par seconde
 const TABLEAU := "res://assets/props/tableau.glb"
 # Modele source : bbox 0.565 x 1.088 x 0.34 m, base a y=0.
 # Cible : extincteur de 0.62 m pose sur support mural (base a 0.70 m).
@@ -145,6 +147,9 @@ var _cctv_composite_a_assigner: SubViewport = null
 var _cctv_frames_attente := 0
 var _humm_player: AudioStreamPlayer3D = null
 var _chaudiere_player: AudioStreamPlayer3D = null
+var _fumee_parts: Array[GPUParticles3D] = []
+var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
+var _fumee_active := false
 var _code_saisi := ""
 var _mode_code := false
 var _video_jouee := false
@@ -379,6 +384,7 @@ func _declencher_alarme(pos: Vector3) -> void:
         _verre_player.stream = verre
         _verre_player.play()
     _eclats_de_verre(pos)
+    _fumee_active = true
     await get_tree().create_timer(0.9).timeout
     if not _alarme_active:
         return
@@ -393,6 +399,7 @@ func _declencher_alarme(pos: Vector3) -> void:
 func _couper_alarme() -> void:
     _alarme_active = false
     _en_confinement = false
+    _fumee_active = false
     if _cctv_mats.size() > 3:
         _cctv_mats[3].set_shader_parameter("alarme", 0.0)
     if _cctv_perte.size() > 3:
@@ -632,6 +639,18 @@ func _process(delta: float) -> void:
                 _cctv_composite_a_assigner = null
                 print("CCTV : texture ", tex_cctv.get_size(), " assignee (frame ",
                     _cctv_frames_attente, ")")
+
+    # Fumee : monter progressivement pendant l'alerte, dissiper apres
+    if _fumee_active and _fumee_niveau < 1.0:
+        _fumee_niveau = minf(_fumee_niveau + delta * FUMEE_VITESSE, 1.0)
+    elif not _fumee_active and _fumee_niveau > 0.0:
+        _fumee_niveau = maxf(_fumee_niveau - delta * FUMEE_VITESSE * 2.0, 0.0)
+    if _fumee_parts.size() > 0:
+        var nb: int = int(_fumee_niveau * FUMEE_MAX_PARTICLES / _fumee_parts.size())
+        var vis: bool = _fumee_niveau > 0.01
+        for fumee in _fumee_parts:
+            fumee.amount = nb
+            fumee.emitting = vis
 
     # Animation CCTV : balayage, REC, horloges
     if _cctv_composite != null:
@@ -889,6 +908,47 @@ func _build_hall(belt_length: float) -> void:
             light.light_energy = 1.4
             light.light_color = Color(1.0, 0.97, 0.9)
             add_child(light)
+
+    # Emitters de fumee (actives pendant l'alerte incendie)
+    for pos_fumee in [
+        Vector3(-20.0, 0.5, -44.0), Vector3(10.0, 0.5, -44.0),
+        Vector3(40.0, 0.5, -44.0), Vector3(61.0, 0.5, -15.0),
+        Vector3(61.0, 0.5, 15.0), Vector3(-15.0, 0.5, 44.0),
+        Vector3(20.0, 0.5, 44.0), Vector3(-57.0, 0.5, 8.0),
+        Vector3(-57.0, 0.5, -20.0),
+    ]:
+        var fumee := GPUParticles3D.new()
+        var mat_fumee := ParticleProcessMaterial.new()
+        mat_fumee.direction = Vector3(0, 1, 0)
+        mat_fumee.spread = 35.0
+        mat_fumee.initial_velocity_min = 0.5
+        mat_fumee.initial_velocity_max = 1.5
+        mat_fumee.gravity = Vector3(0, 0.3, 0)
+        mat_fumee.scale_amount_min = 3.0
+        mat_fumee.scale_amount_max = 8.0
+        mat_fumee.lifetime_randomness = 0.5
+        var grad := Gradient.new()
+        grad.set_color(0, Color(0.15, 0.15, 0.18, 0.0))
+        grad.set_color(1, Color(0.25, 0.25, 0.28, 0.55))
+        mat_fumee.color_ramp = grad
+        var tex_fumee := GradientTexture1D.new()
+        tex_fumee.gradient = grad
+        fumee.process_material = mat_fumee
+        var quad_fumee := QuadMesh.new()
+        quad_fumee.size = Vector2(4, 4)
+        var surf := StandardMaterial3D.new()
+        surf.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+        surf.albedo_color = Color(0.22, 0.22, 0.25, 0.4)
+        surf.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+        surf.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+        quad_fumee.material = surf
+        fumee.draw_pass_1 = quad_fumee
+        fumee.amount = 0
+        fumee.lifetime = 6.0
+        fumee.position = pos_fumee
+        fumee.emitting = false
+        add_child(fumee)
+        _fumee_parts.append(fumee)
 
     # Lettres geantes N/S/E/O peintes sur les murs (5 m, style usine ancienne)
     _lettre_mur("N", Vector3(center_x, 10.0, HALL_MIN_Z + 0.10), 0.0)       # Nord = z min
