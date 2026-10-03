@@ -1060,7 +1060,7 @@ func _build_alarmes() -> void:
 
     # bureau : mur de GAUCHE de la piece interieure (face interieure +X)
     _placer_alarme(Vector3(-58.66, 1.46, -59.0),
-        Vector3(PI / 2.0, PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
+        Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
 
 
 func _placer_alarme(pos: Vector3, rot: Vector3, face: Vector3) -> void:
@@ -1305,7 +1305,7 @@ func _build_bureau_interieur() -> void:
     if manga_tex != null:
         var manga := MeshInstance3D.new()
         var manga_quad := QuadMesh.new()
-        manga_quad.size = Vector2(1.6, 0.8)
+        manga_quad.size = Vector2(1.18, 0.60)
         var manga_mat := StandardMaterial3D.new()
         manga_mat.albedo_texture = manga_tex
         manga_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
@@ -1517,7 +1517,7 @@ func _build_bureau_interieur() -> void:
         lbl.outline_modulate = Color(0.05, 0.05, 0.08)
         # a droite de la boite : 10 cm vers la porte, texte part du bord
         lbl.position = boite_pos + Vector3(0.01, -0.088 + 0.048 * btn, 0.15)
-        lbl.rotation = Vector3(0.0, -PI / 2.0, 0.0)
+        lbl.rotation = Vector3(0.0, PI / 2.0, 0.0)
         add_child(lbl)
 
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
