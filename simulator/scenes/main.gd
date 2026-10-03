@@ -1203,10 +1203,11 @@ func _build_props() -> void:
                 anim_player.play(anim_name)
 
     # Gondole (rayonnage) contre le mur gauche
-    var gondola := _place_prop(PROP_GONDOLA,
-        Vector3(HALL_MIN_X + 0.42, 0.95, 4.2), Vector3(0.0, PI / 2.0, 0.0))
-    if gondola != null:
-        _add_static_box(Vector3(HALL_MIN_X + 0.42, 0.95, 4.2), Vector3(0.62, 1.9, 1.0))
+    for z_gondole in range(10):
+        var gz := -40.0 + z_gondole * 2.0
+        _place_prop(PROP_GONDOLA,
+            Vector3(HALL_MIN_X + 0.42, 0.95, gz), Vector3(0.0, PI / 2.0, 0.0))
+        _add_static_box(Vector3(HALL_MIN_X + 0.42, 0.95, gz), Vector3(0.62, 1.9, 1.0))
 
 
 ## Ligne d'exposition : les modeles GLB fournis, espaces de 7 m a z = -10,
