@@ -1433,11 +1433,11 @@ func _clamp_prop_height(node: Node3D, target_h: float, label: String) -> void:
 
 func _build_props() -> void:
     # Deux luminaires au plafond, au-dessus de la zone convoyeur / robot
-    _place_prop(PROP_PENDANT_LAMP, Vector3(1.0, HALL_HEIGHT - 3.0, 0.0), Vector3.ZERO)
+    _place_prop(PROP_PENDANT_LAMP, Vector3(1.0, HALL_HEIGHT - 8.0, 0.0), Vector3.ZERO)
     _place_prop(PROP_FLUO_FIXTURE, Vector3(2.6, HALL_HEIGHT - 0.01, -1.6), Vector3(0.0, 0.6, 0.0))
     var lamp_light := OmniLight3D.new()
-    lamp_light.position = Vector3(1.0, HALL_HEIGHT - 4.3, 0.0)
-    lamp_light.light_color = Color(1.0, 0.85, 0.7)
+    lamp_light.position = Vector3(1.0, HALL_HEIGHT - 9.3, 0.0)
+    lamp_light.light_color = Color(1.0, 0.5, 0.1)
     lamp_light.omni_range = 12.0
     lamp_light.light_energy = 1.2
     add_child(lamp_light)
