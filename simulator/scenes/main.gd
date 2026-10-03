@@ -1158,7 +1158,7 @@ func _build_securite_signs() -> void:
 
     # Trousse de secours sous le defibrillateur
     _place_prop("res://assets/props/first_aid_kit.glb",
-        Vector3(HALL_MIN_X + 0.12, 0.55, -1.8), Vector3(0.0, PI / 2.0, 0.0))
+        Vector3(HALL_MIN_X + 0.12, 1.0, -1.8), Vector3(0.0, PI / 2.0, 0.0), 0.04)
 
     # Defibrillateur sous le panneau DAE
     _place_prop("res://assets/safety/defibrillator.glb",
