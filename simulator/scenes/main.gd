@@ -1060,7 +1060,7 @@ func _build_alarmes() -> void:
 
     # bureau : mur de GAUCHE de la piece interieure (face interieure +X)
     _placer_alarme(Vector3(-58.66, 1.46, -59.0),
-        Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
+        Vector3(-PI / 2.0, PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
 
 
 func _placer_alarme(pos: Vector3, rot: Vector3, face: Vector3) -> void:
