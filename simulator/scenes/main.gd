@@ -443,7 +443,6 @@ func _jouer_video_nostromo() -> void:
     if _video_jouee:
         return
     var flux = load("res://assets/videos/nostromo_destruct.ogv")
-    print("DBGVIDEO : load -> ", flux, " classe=", flux.get_class() if flux else "null")
     if flux == null:
         push_warning("video .ogv introuvable")
         return
@@ -462,14 +461,10 @@ func _jouer_video_nostromo() -> void:
     var lecteur := VideoStreamPlayer.new()
     lecteur.stream = flux
     lecteur.autoplay = true
-    # centrer la video dans le viewport 640x360
-    var taille_vid: Vector2 = flux.get_size()
-    if taille_vid.x > 0 and taille_vid.y > 0:
-        var echelle: float = min(640.0 / taille_vid.x, 360.0 / taille_vid.y)
-        lecteur.size = taille_vid * echelle
-        lecteur.position = (Vector2(640, 360) - lecteur.size) / 2.0
-    else:
-        lecteur.size = Vector2(640, 360)
+    # VideoStreamTheora n'a pas get_size() — remplir le viewport,
+    # le lecteur preserve le ratio avec expand_mode par defaut
+    lecteur.expand = true
+    lecteur.size = Vector2(640, 360)
     vp_vid.add_child(lecteur)
     _video_vp = vp_vid
     # declencher la re-assignation du materiau de l'ecran
@@ -1061,11 +1056,11 @@ func _build_alarmes() -> void:
             Vector3(PI / 2.0, 0.0, 0.0), Vector3(0.0, 0.0, -1.0))
     # mur gauche : kit a droite de la porte de sortie (face +X)
     _placer_alarme(Vector3(HALL_MIN_X + 0.06, 1.46, -2.6),
-        Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
+        Vector3(PI / 2.0, PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
 
     # bureau : mur de GAUCHE de la piece interieure (face interieure +X)
     _placer_alarme(Vector3(-58.66, 1.46, -59.0),
-        Vector3(PI / 2.0, -PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
+        Vector3(PI / 2.0, PI / 2.0, 0.0), Vector3(1.0, 0.0, 0.0))
 
 
 func _placer_alarme(pos: Vector3, rot: Vector3, face: Vector3) -> void:
@@ -1303,7 +1298,7 @@ func _build_bureau_interieur() -> void:
 
     # Tableau au mur de droite, centre (source 4,44 m -> 2,0 m)
     _place_prop(TABLEAU, Vector3(cx + 3.76, 1.5, cz),
-        Vector3(0.0, -PI / 2.0, 0.0), 0.45)
+        Vector3(0.0, PI / 2.0, 0.0), 0.45)
 
     # Ecran TV 65" (16:9 : 1,45 x 0,82 m) derriere la table, au mur du fond
     var bezel := MeshInstance3D.new()
