@@ -144,6 +144,7 @@ var _cctv_ecran: MeshInstance3D = null
 var _cctv_composite_a_assigner: SubViewport = null
 var _cctv_frames_attente := 0
 var _humm_player: AudioStreamPlayer3D = null
+var _chaudiere_player: AudioStreamPlayer3D = null
 var _code_saisi := ""
 var _mode_code := false
 var _video_jouee := false
@@ -1120,9 +1121,22 @@ func _build_securite_signs() -> void:
     # DAE (defibrillateur) : a droite de la porte (z negatif, face +X)
     _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 2.05, -1.8),
         Vector2(0.24, 0.36), PI / 2.0)
+    _chaudiere_player = AudioStreamPlayer3D.new()
+    var chau_flux = load("res://assets/sounds/annonces/chaudiere.mp3")
+    if chau_flux != null:
+        chau_flux.loop = true
+        _chaudiere_player.stream = chau_flux
+        _chaudiere_player.position = Vector3(HALL_MAX_X - 1.0, 1.0, 25.0)
+        _chaudiere_player.unit_size = 4.0
+        _chaudiere_player.max_distance = 4.0
+        _chaudiere_player.max_db = -2.0
+        _chaudiere_player.volume_db = -2.0
+        add_child(_chaudiere_player)
+        _chaudiere_player.play()
+
     # Chaudiere murale sur le mur est (face a la salle)
     _place_prop("res://assets/props/chaudiere.glb",
-        Vector3(HALL_MAX_X - 0.35, 0.0, 25.0), Vector3(0.0, PI, 0.0), 4.0)
+        Vector3(HALL_MAX_X - 0.35, 0.10, 25.0), Vector3(0.0, PI, 0.0), 4.0)
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
@@ -1492,7 +1506,7 @@ func _build_bureau_interieur() -> void:
 
     # Golden Play Button a droite de la TV, au 2/3 de la hauteur
     _place_prop("res://assets/props/golden_play_button.glb",
-        Vector3(cx + 1.0, 1.87, cz - 4.55), Vector3(0.0, PI, 0.0), 30.0)
+        Vector3(cx + 1.0 + 3.3, 1.87 - 2.1, cz - 4.55 - 0.6), Vector3(0.0, PI, 0.0), 30.0)
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
