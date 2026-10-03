@@ -1489,6 +1489,13 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 3.66, -0.60, -62.0), Vector3(0.0, PI / 2.0, 0.0))
 
 
+    # 2 armoires vertes (filing cabinet) a droite de la porte
+    var fc_offset := Vector3(0.57, 0.965, 1.24)
+    for dx in [2.2, 3.2]:
+        _place_prop("res://assets/props/filing_cabinet.glb",
+            Vector3(cx + dx - fc_offset.x, -fc_offset.y, cz + 4.3 - fc_offset.z),
+            Vector3(0.0, PI, 0.0))
+
     # Poubelle (steel_bin) a gauche de la table
     # offset interne du modele compense : centre a (1.90, 0.22, 0.075)
     _place_prop("res://assets/props/steel_bin.glb",
