@@ -893,7 +893,7 @@ func _build_hall(belt_length: float) -> void:
     # Lettres geantes N/S/E/O peintes sur les murs (5 m, style usine ancienne)
     _lettre_mur("N", Vector3(center_x, 10.0, HALL_MIN_Z + 0.10), 0.0)       # Nord = z min
     _lettre_mur("S", Vector3(center_x, 10.0, HALL_MAX_Z - 0.10), PI)        # Sud = z max
-    _lettre_mur("E", Vector3(HALL_MAX_X - 0.10, 10.0, center_z), PI / 2.0)  # Est = x max
+    _lettre_mur("E", Vector3(HALL_MAX_X - 0.10, 10.0, center_z), -PI / 2.0)  # Est = x max
     _lettre_mur("O", Vector3(HALL_MIN_X + 0.10, 10.0, center_z), -PI / 2.0) # Ouest = x min
 
     # Extincteurs muraux : mur du fond (z min) et mur droit (x max)
