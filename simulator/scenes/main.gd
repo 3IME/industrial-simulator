@@ -1300,6 +1300,21 @@ func _build_bureau_interieur() -> void:
     _place_prop(TABLEAU, Vector3(cx + 3.76, 1.5, cz),
         Vector3(0.0, PI / 2.0, 0.0), 0.45)
 
+    # Image manga affichee sur le tableau (mur de droite du bureau)
+    var manga_tex = load("res://assets/props/tableau_Manga.jpg")
+    if manga_tex != null:
+        var manga := MeshInstance3D.new()
+        var manga_quad := QuadMesh.new()
+        manga_quad.size = Vector2(1.6, 0.8)
+        var manga_mat := StandardMaterial3D.new()
+        manga_mat.albedo_texture = manga_tex
+        manga_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+        manga_quad.material = manga_mat
+        manga.mesh = manga_quad
+        manga.position = Vector3(cx + 3.60, 1.5, cz)
+        manga.rotation.y = -PI / 2.0
+        add_child(manga)
+
     # Ecran TV 65" (16:9 : 1,45 x 0,82 m) derriere la table, au mur du fond
     var bezel := MeshInstance3D.new()
     var bezel_box := BoxMesh.new()
@@ -1464,20 +1479,7 @@ func _build_bureau_interieur() -> void:
     # modele deja a hauteur murale (min.y = 1,71) — abaissé de 30 cm
     _place_prop("res://assets/props/whiteboard.glb",
         Vector3(cx - 3.66, -0.60, -62.0), Vector3(0.0, PI / 2.0, 0.0))
-    # Image affichee sur le tableau blanc
-    var manga_tex = load("res://assets/props/tableau_Manga.jpg")
-    if manga_tex != null:
-        var manga := MeshInstance3D.new()
-        var manga_quad := QuadMesh.new()
-        manga_quad.size = Vector2(1.8, 0.9)
-        var manga_mat := StandardMaterial3D.new()
-        manga_mat.albedo_texture = manga_tex
-        manga_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-        manga_quad.material = manga_mat
-        manga.mesh = manga_quad
-        manga.position = Vector3(cx - 3.60, 1.0, -62.0)
-        manga.rotation.y = PI / 2.0
-        add_child(manga)
+
 
     # Poubelle (steel_bin) a gauche de la table
     # offset interne du modele compense : centre a (1.90, 0.22, 0.075)
@@ -1514,7 +1516,7 @@ func _build_bureau_interieur() -> void:
         lbl.outline_size = 4
         lbl.outline_modulate = Color(0.05, 0.05, 0.08)
         # a droite de la boite : 10 cm vers la porte, texte part du bord
-        lbl.position = boite_pos + Vector3(0.01, -0.088 + 0.048 * btn, -0.15)
+        lbl.position = boite_pos + Vector3(0.01, -0.088 + 0.048 * btn, 0.15)
         lbl.rotation = Vector3(0.0, -PI / 2.0, 0.0)
         add_child(lbl)
 
