@@ -1152,6 +1152,14 @@ func _build_securite_signs() -> void:
         Vector3(0.0, PI / 2.0, 0.0))
     _add_static_box(Vector3(-57.40, 0.90, -6.0), Vector3(0.93, 1.80, 0.81))
 
+    # Chariot de stockage a gauche des gondoles
+    _place_prop("res://assets/props/storage_cart.glb",
+        Vector3(HALL_MIN_X + 0.55, 0.50, 6.0), Vector3(0.0, PI / 2.0, 0.0))
+
+    # Trousse de secours sous le defibrillateur
+    _place_prop("res://assets/props/first_aid_kit.glb",
+        Vector3(HALL_MIN_X + 0.12, 0.55, -1.8), Vector3(0.0, PI / 2.0, 0.0))
+
     # Defibrillateur sous le panneau DAE
     _place_prop("res://assets/safety/defibrillator.glb",
         Vector3(HALL_MIN_X + 0.14, 1.25, -1.8), Vector3(0.0, PI / 2.0, 0.0))

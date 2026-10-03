@@ -31,6 +31,8 @@ const PROPS := [
     "res://assets/props/filing_cabinet.glb",
     "res://assets/props/golden_play_button.glb",
     "res://assets/props/medieval_stool.glb",
+    "res://assets/props/storage_cart.glb",
+    "res://assets/props/first_aid_kit.glb",
     "res://assets/props/laptop.glb",
     "res://assets/props/transpallet.glb",
     "res://assets/props/estop_mushroom.gltf",
