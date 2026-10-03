@@ -1489,6 +1489,10 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 3.66, -0.60, -62.0), Vector3(0.0, PI / 2.0, 0.0))
 
 
+    # Golden Play Button a droite de la TV, au 2/3 de la hauteur
+    _place_prop("res://assets/props/golden_play_button.glb",
+        Vector3(cx + 1.0, 1.87, cz - 4.70), Vector3(0.0, PI, 0.0), 15.0)
+
     # 2 armoires vertes (filing cabinet) a droite de la porte
     var fc_offset := Vector3(0.57, 0.965, 1.24)
     for dx in [2.2, 3.2]:
