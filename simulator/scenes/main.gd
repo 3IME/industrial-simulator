@@ -443,6 +443,7 @@ func _jouer_video_nostromo() -> void:
     if _video_jouee:
         return
     var flux = load("res://assets/videos/nostromo_destruct.ogv")
+    print("DBGVIDEO : load -> ", flux, " classe=", flux.get_class() if flux else "null")
     if flux == null:
         push_warning("video .ogv introuvable")
         return
@@ -1504,7 +1505,7 @@ func _build_bureau_interieur() -> void:
         lbl.outline_size = 4
         lbl.outline_modulate = Color(0.05, 0.05, 0.08)
         # a droite de la boite : 10 cm vers la porte, texte part du bord
-        lbl.position = boite_pos + Vector3(-0.01, -0.088 + 0.048 * btn, -0.10)
+        lbl.position = boite_pos + Vector3(-0.02, -0.088 + 0.048 * btn, -0.06)
         lbl.rotation = Vector3(0.0, PI / 2.0, 0.0)
         add_child(lbl)
 
