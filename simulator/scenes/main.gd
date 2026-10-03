@@ -1775,9 +1775,9 @@ func _build_bureau_interieur() -> void:
 
     # 2 armoires vertes (filing cabinet) a droite de la porte
     var fc_offset := Vector3(0.57, 0.965, 1.24)
-    for dx in [2.2, 3.2]:
+    for dx in [-2.2, -3.2]:
         _place_prop("res://assets/props/filing_cabinet.glb",
-            Vector3(cx + dx - fc_offset.x, -fc_offset.y, cz + 4.3 - fc_offset.z),
+            Vector3(cx + dx - fc_offset.x, -0.04, cz + 4.3 - fc_offset.z),
             Vector3(0.0, PI, 0.0))
         _add_static_box(Vector3(cx + dx, 0.925, cz + 4.3), Vector3(0.55, 1.85, 0.95))
 
