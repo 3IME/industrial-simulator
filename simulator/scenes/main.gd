@@ -153,6 +153,9 @@ var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
 var _fumee_active := false
 var _flammes: GPUParticles3D = null
 var _flammes_light: OmniLight3D = null
+var _lumieres_rouges := false
+var _lumieres_originales: Array = []   # [{node, color, energy}]
+var _env_originale := {}               # {color, energy}
 var _code_saisi := ""
 var _mode_code := false
 var _video_jouee := false
@@ -460,6 +463,57 @@ func _saisir_code(event: InputEventKey) -> void:
             print("KEYPAD : code refuse")
         _code_saisi = ""
 
+## Passage en alerte rouge : toutes les lumieres de l'usine et du bureau.
+func _lumieres_alerte_rouge() -> void:
+    if _lumieres_rouges:
+        return
+    _lumieres_rouges = true
+    _lumieres_originales = []
+    var rouge := Color(1.0, 0.1, 0.05)
+    for enfant in find_children("*", "Light3D", true, false):
+        if enfant is OmniLight3D or enfant is DirectionalLight3D:
+            _lumieres_originales.append({
+                "node": enfant,
+                "color": enfant.light_color,
+                "energy": enfant.light_energy,
+            })
+            enfant.light_color = rouge
+            enfant.light_energy = maxf(enfant.light_energy, 0.5)
+    # ambiance rouge
+    var env_nodes := find_children("*", "WorldEnvironment", true, false)
+    for env_node in env_nodes:
+        var env: Environment = env_node.environment
+        if env != null:
+            _env_originale = {
+                "color": env.ambient_light_color,
+                "energy": env.ambient_light_energy,
+            }
+            env.ambient_light_color = Color(0.4, 0.05, 0.03)
+            env.ambient_light_energy = 0.5
+    print("ALERTES : lumieres rouges")
+
+
+## Restauration des lumieres d'origine.
+func _lumieres_restauration() -> void:
+    if not _lumieres_rouges:
+        return
+    _lumieres_rouges = false
+    for sauvegarde in _lumieres_originales:
+        var node: Light3D = sauvegarde["node"]
+        if is_instance_valid(node):
+            node.light_color = sauvegarde["color"]
+            node.light_energy = sauvegarde["energy"]
+    if not _env_originale.is_empty():
+        var env_nodes2 := find_children("*", "WorldEnvironment", true, false)
+        for env_node2 in env_nodes2:
+            var env2: Environment = env_node2.environment
+            if env2 != null:
+                env2.ambient_light_color = _env_originale["color"]
+                env2.ambient_light_energy = _env_originale["energy"]
+    _lumieres_originales = []
+    print("ALERTES : lumieres restaurees")
+
+
 func _jouer_video_nostromo() -> void:
     if _video_jouee:
         return
@@ -468,6 +522,7 @@ func _jouer_video_nostromo() -> void:
         push_warning("video .ogv introuvable")
         return
     _video_jouee = true
+    _lumieres_alerte_rouge()
     print("VIDEO : Nostromo — touche 0 pour revenir aux cameras")
     # SubViewport pour la video, assigne a l'ecran via le mechanisme differe
     var vp_vid := SubViewport.new()
@@ -495,6 +550,7 @@ func _jouer_video_nostromo() -> void:
 
 func _arreter_video() -> void:
     _video_jouee = false
+    _lumieres_restauration()
     if _video_vp != null:
         _video_vp.queue_free()
         _video_vp = null
