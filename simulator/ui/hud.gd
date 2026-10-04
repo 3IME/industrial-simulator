@@ -15,6 +15,8 @@ var speed_label: Label
 var position_label: Label
 var encoder_label: Label
 var modbus_label: Label
+var fps_label: Label
+var tri_label: Label
 var pos_label: Label
 var hint_label: Label
 
@@ -52,6 +54,8 @@ func _ready() -> void:
     position_label = _make_label(box, "position       = -")
     encoder_label = _make_label(box, "encodeur       = -")
     modbus_label = _make_label(box, "modbus         = -")
+    fps_label = _make_label(box, "fps            = -")
+    tri_label = _make_label(box, "triangles      = -")
     pos_label = _make_label(box, "joueur         = -")
     hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | B boite | 1-8 annonces | clic : souris | Echap : liberer", false, true)
     add_child(panel)
@@ -90,6 +94,23 @@ func refresh() -> void:
     if joueur != null:
         pos_label.text = "joueur X %8.2f  Y %6.2f  Z %8.2f" % [
             joueur.global_position.x, joueur.global_position.y, joueur.global_position.z]
+    fps_label.text = "fps            = %d" % Engine.get_frames_per_second()
+    tri_label.text = "triangles      = %s" % _separe(
+        int(RenderingServer.get_rendering_info(
+            RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)))
+
+
+func _separe(n: int) -> String:
+    ## 1234567 -> "1 234 567" (separateur de milliers).
+    var brut := str(n)
+    var forme := ""
+    var compte := 0
+    for i in range(brut.length() - 1, -1, -1):
+        forme = brut[i] + forme
+        compte += 1
+        if compte % 3 == 0 and i > 0:
+            forme = " " + forme
+    return forme
 
 
 func _bool_line(label: Label, point_id: String) -> void:

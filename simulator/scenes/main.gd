@@ -70,6 +70,8 @@ const PROP_WORK_TABLE_BLUE := "res://assets/props/work_table_blue.glb"
 const PROP_WOODEN_PALLET := "res://assets/props/wooden_pallet1.glb"
 const PROP_SCHOOL_CABINET := "res://assets/props/school_cabinet.glb"
 const PROP_VF_2TR := "res://assets/props/vf_2tr.glb"
+const PROP_VF_2TR_MED := "res://assets/props/vf_2tr_med.glb"
+const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
 # Annonces sonores d'usine fournies par 3IME — touches 1 a 7
 const ANNONCES := [
     {"touche": KEY_1, "nom": "evacuation", "chemin": "res://assets/sounds/annonces/evacuation.mp3"},
@@ -158,6 +160,7 @@ var _gyrophare_pivots: Array[Node3D] = []
 var _gyrophare_spots: Array[SpotLight3D] = []
 var _fumee_active := false
 var _fumee_ramp_gris: GradientTexture1D = null
+var _vf2tr_lod: Array[Node3D] = []   # [haute, moyenne, basse]
 var _fumee_ramp_vert: GradientTexture1D = null
 var _flammes: GPUParticles3D = null
 var _flammes_light: OmniLight3D = null
@@ -697,6 +700,14 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+    # LOD machine Haas VF-2TR : haute / moyenne / basse selon distance
+    if _vf2tr_lod.size() == 3 and player_node != null:
+        var dist_haas := player_node.global_position.distance_to(
+            Vector3(39.0, 1.0, -28.0))
+        var niveau_vf := 0 if dist_haas < 15.0 else (1 if dist_haas < 40.0 else 2)
+        for i_vf in range(3):
+            _vf2tr_lod[i_vf].visible = (i_vf == niveau_vf)
+
     # Gyrophares (bureau + 16 murs) : rotation ~1,4 tour/s, faisceaux bleus
     # horizontaux qui pulsent pendant l'alerte (incendie/evac/confinement)
     if _alarme_active:
@@ -1585,13 +1596,26 @@ func _build_securite_signs() -> void:
         Vector3.ZERO, 6.32)
     _add_static_box(Vector3(-38.0, 6.0, 32.0), Vector3(4.39, 12.0, 4.45))
 
-    # Machine a commande numerique VF-2TR ( modele 3,16 x 2,28 x 2,35 :
-    # longueur et largeur piles l'enveloppe constructeur 3,15 x 2,25 ;
-    # hauteur modele 2,28, doc 2,72 avec partie haute). echelle 1,
-    # en (39, -28).
-    _place_prop(PROP_VF_2TR, Vector3(39.4, 0.505, -28.365),
-        Vector3(PI / 2.0, 0.0, 0.0), 1.0)
-    _add_static_box(Vector3(39.0, 1.17, -28.0), Vector3(3.16, 2.35, 2.28))
+    # Machine a commande numerique VF-2TR (Haas), en (39, -28), debout
+    # face au sud. Transformations BATIES (gltf-transform join) : les 3
+    # niveaux de detail partagent exactement la meme enveloppe
+    # 3,17 x 2,72 x 2,34 m (piles la doc constructeur 3,15 x 2,25 x 2,72).
+    #   haute   : 405 430 triangles (joueur < 15 m)
+    #   moyenne : 101 346 triangles (15-40 m)
+    #   basse   :  12 726 triangles (> 40 m)
+    # Le niveau actif est choisi dans _process selon la distance joueur.
+    _vf2tr_lod.clear()
+    for chemin_vf in [PROP_VF_2TR, PROP_VF_2TR_MED, PROP_VF_2TR_LOW]:
+        var scene_vf: PackedScene = load(chemin_vf)
+        if scene_vf == null:
+            continue
+        var machine_vf: Node3D = scene_vf.instantiate()
+        machine_vf.position = Vector3(39.393, 0.505, -28.399)
+        machine_vf.rotation = Vector3(PI / 2.0, 0.0, 0.0)
+        machine_vf.visible = _vf2tr_lod.is_empty()  # haute visible d'abord
+        add_child(machine_vf)
+        _vf2tr_lod.append(machine_vf)
+    _add_static_box(Vector3(39.0, 1.362, -28.0), Vector3(3.17, 2.72, 2.34))
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
