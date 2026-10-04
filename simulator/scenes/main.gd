@@ -157,6 +157,8 @@ var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
 var _gyrophare_pivots: Array[Node3D] = []
 var _gyrophare_spots: Array[SpotLight3D] = []
 var _fumee_active := false
+var _fumee_ramp_gris: GradientTexture1D = null
+var _fumee_ramp_vert: GradientTexture1D = null
 var _flammes: GPUParticles3D = null
 var _flammes_light: OmniLight3D = null
 var _lumieres_rouges := false
@@ -399,6 +401,7 @@ func _declencher_alarme(pos: Vector3) -> void:
         _verre_player.stream = verre
         _verre_player.play()
     _eclats_de_verre(pos)
+    _fumee_verte(false)
     _fumee_active = true
     if _flammes != null:
         _flammes.amount = 120
@@ -416,10 +419,20 @@ func _declencher_alarme(pos: Vector3) -> void:
         print("Evacuation incendie en boucle — touche 0 pour couper")
 
 
+func _fumee_verte(actif: bool) -> void:
+    ## Fumee VERTE pendant le confinement, grise pour l'incendie.
+    if _fumee_ramp_vert == null or _fumee_ramp_gris == null:
+        return
+    for part in _fumee_parts:
+        var mat_p: ParticleProcessMaterial = part.process_material
+        mat_p.color_ramp = _fumee_ramp_vert if actif else _fumee_ramp_gris
+
+
 func _couper_alarme() -> void:
     _alarme_active = false
     _en_confinement = false
     _fumee_active = false
+    _fumee_verte(false)
     if _flammes != null:
         _flammes.emitting = false
         _flammes.amount = 0
@@ -616,6 +629,8 @@ func _declencher_evacuation_bouton() -> void:
 func _declencher_confinement() -> void:
     _alarme_active = true
     _en_confinement = true
+    _fumee_verte(true)
+    _fumee_active = true
     if _cctv_mats.size() > 3:
         _cctv_mats[3].set_shader_parameter("alarme", 1.0)
     if _cctv_perte.size() > 3:
@@ -1083,6 +1098,17 @@ func _build_hall(belt_length: float) -> void:
     add_child(_flammes_light)
 
     # Emitters de fumee (actives pendant l'alerte incendie)
+        # Ramps de couleur partagees : gris (incendie) et vert (confinement)
+    var grad_f := Gradient.new()
+    grad_f.set_color(0, Color(0.12, 0.12, 0.14))
+    grad_f.set_color(1, Color(0.35, 0.35, 0.38))
+    _fumee_ramp_gris = GradientTexture1D.new()
+    _fumee_ramp_gris.gradient = grad_f
+    var grad_v := Gradient.new()
+    grad_v.set_color(0, Color(0.05, 0.38, 0.10))
+    grad_v.set_color(1, Color(0.40, 0.90, 0.45))
+    _fumee_ramp_vert = GradientTexture1D.new()
+    _fumee_ramp_vert.gradient = grad_v
     for pos_fumee in [
         Vector3(-20.0, 0.5, -44.0), Vector3(10.0, 0.5, -44.0),
         Vector3(40.0, 0.5, -44.0), Vector3(61.0, 0.5, -15.0),
@@ -1120,13 +1146,8 @@ func _build_hall(belt_length: float) -> void:
         var al_t := CurveTexture.new()
         al_t.curve = al_c
         mat_fumee.alpha_curve = al_t
-        # Couleur : gris fonce -> gris clair
-        var grad_f := Gradient.new()
-        grad_f.set_color(0, Color(0.12, 0.12, 0.14))
-        grad_f.set_color(1, Color(0.35, 0.35, 0.38))
-        var grad_ft := GradientTexture1D.new()
-        grad_ft.gradient = grad_f
-        mat_fumee.color_ramp = grad_ft
+        # Couleur : ramp partagee (gris incendie ; bascule verte au confinement)
+        mat_fumee.color_ramp = _fumee_ramp_gris
         fumee.process_material = mat_fumee
         var quad_f := QuadMesh.new()
         quad_f.size = Vector2(6, 6)
@@ -1506,7 +1527,7 @@ func _build_securite_signs() -> void:
     _add_static_box(Vector3(53.99, 1.10, 14.46), Vector3(4.18, 2.20, 0.34))
 
     # Panneau WC sur le mur OUEST (z = -13), face a la salle, POSÉ AU SOL
-    # (bas de l'image a y=0). Image portrait 1259x2869 -> 0,50 x 1,14 m.
+    # (bas de l'image a y=0). Image portrait 1259x2869 -> 1,00 x 2,28 m (taille porte).
     var wc_tex = load("res://assets/textures/wc.png")
     if wc_tex != null:
         var wc_mat := StandardMaterial3D.new()
@@ -1515,10 +1536,10 @@ func _build_securite_signs() -> void:
         wc_mat.roughness = 0.8
         var wc_panneau := MeshInstance3D.new()
         var wc_quad := QuadMesh.new()
-        wc_quad.size = Vector2(0.50, 1.14)
+        wc_quad.size = Vector2(1.00, 2.28)
         wc_quad.material = wc_mat
         wc_panneau.mesh = wc_quad
-        wc_panneau.position = Vector3(-57.88, 0.57, -13.0)
+        wc_panneau.position = Vector3(-57.88, 1.14, -13.0)
         wc_panneau.rotation.y = PI / 2.0  # face vers l'est (salle)
         add_child(wc_panneau)
 
