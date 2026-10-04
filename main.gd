@@ -1171,21 +1171,25 @@ func _build_hall(belt_length: float) -> void:
     _add_static_box(Vector3((mez_debut_x + mez_fin_x) / 2.0, mez_y + 0.55, mez_z + 2.9),
         Vector3(mez_fin_x - mez_debut_x, 1.1, 0.1))
 
-    # ESCALIERS visuels (positions conservees), montent le long de X vers les
-    # extremites ouvertes de la mezzanine (le garde-corps bloque le bord sud).
-    # Modele mesure : reculement local Z [-2.03, +1.76] (3.79 m), hauteur 4.07 m.
-    # Escalier ouest (x=-41.5, rot +90 deg) : monte vers +X, haut a x=-39.74
-    _place_prop(PROP_CELL_STAIR, Vector3(-41.5, 0.0, mez_z),
+    # ESCALIER 1 (x=-43) : monte vers +X
+    _place_prop(PROP_CELL_STAIR, Vector3(-43.0, 0.0, mez_z + 1.5),
         Vector3(0.0, PI / 2.0, 0.0), 1.0)
-    # Escalier est (x=33, rot -90 deg) : monte vers -X, haut a x=31.24
-    _place_prop(PROP_CELL_STAIR, Vector3(33.0, 0.0, mez_z),
+    # Marches AABB fines (collision garantie, pas de rotation)
+    # 26 marches de 0,155 m de haut, gravissables avec floor_snap_length
+    var marche_h := 4.0 / 26.0
+    var marche_d := 4.0 / 26.0
+    for i in range(26):
+        _add_static_box(
+            Vector3(-43.0, 4.0 - (i + 0.5) * marche_h, mez_z + 3.0 + (i + 0.5) * marche_d),
+            Vector3(2.0, 4.0 - i * marche_h, marche_d))
+
+    # ESCALIER 2 (x=34) : descend vers +X
+    _place_prop(PROP_CELL_STAIR, Vector3(34.0, 0.0, mez_z + 1.5),
         Vector3(0.0, -PI / 2.0, 0.0), 1.0)
-    # Rampes de collision INVISIBLES : meme diagonale exacte que les marches
-    # (bas de marche -> haut de marche), pente 47 deg < floor_max_angle 55 deg.
-    _make_ramp_x(mez_z, -43.53, -39.74, 4.07)
-    _make_ramp_x(mez_z, 35.03, 31.24, 4.07)
-    # Pont plat invisible : comble les 24 cm entre l'escalier est et le deck
-    _add_static_box(Vector3(31.05, 4.0, mez_z), Vector3(0.6, 0.1, 1.4))
+    for i2 in range(26):
+        _add_static_box(
+            Vector3(34.0, 4.0 - (i2 + 0.5) * marche_h, mez_z + 3.0 + (i2 + 0.5) * marche_d),
+            Vector3(2.0, 4.0 - i2 * marche_h, marche_d))
 
     _build_office_cabin()
     _build_bureau_interieur()
@@ -1922,24 +1926,6 @@ func _room_box(pos: Vector3, box_size: Vector3, mat: StandardMaterial3D) -> void
     mesh.material_override = mat
     add_child(mesh)
     _add_static_box(pos, box_size)
-
-
-## Rampe marchable : monte de (x, 0, z_bas) a (x, y_haut, z_haut).
-## Pente 30 deg (confortable pour move_and_slide). Extremites exactes.
-func _make_ramp_x(z: float, x_bas: float, x_haut: float, y_haut: float, largeur := 1.4) -> void:
-    ## Rampe de collision INVISIBLE le long de X (aucun visuel : les escaliers
-    ## modeles servent de rendu). Extremites exactes : (x_bas, 0) -> (x_haut, y_haut).
-    var dx := x_haut - x_bas
-    var longueur := sqrt(dx * dx + y_haut * y_haut)
-    var body := StaticBody3D.new()
-    var col := CollisionShape3D.new()
-    var box := BoxShape3D.new()
-    box.size = Vector3(longueur, 0.3, largeur)
-    col.shape = box
-    col.rotation.z = atan2(y_haut, dx)
-    body.add_child(col)
-    body.position = Vector3((x_bas + x_haut) / 2.0, y_haut / 2.0, z)
-    add_child(body)
 
 
 ## Bureau de chantier (site cabin) contre le mur gauche, cote fond
