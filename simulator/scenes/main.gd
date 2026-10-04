@@ -68,6 +68,7 @@ const PROP_VERTICAL_MILL := "res://assets/props/vertical_mill.glb"
 const PROP_TRANSPALLET := "res://assets/props/transpallet.glb"
 const PROP_WORK_TABLE_BLUE := "res://assets/props/work_table_blue.glb"
 const PROP_WOODEN_PALLET := "res://assets/props/wooden_pallet1.glb"
+const PROP_SCHOOL_CABINET := "res://assets/props/school_cabinet.glb"
 # Annonces sonores d'usine fournies par 3IME — touches 1 a 7
 const ANNONCES := [
     {"touche": KEY_1, "nom": "evacuation", "chemin": "res://assets/sounds/annonces/evacuation.mp3"},
@@ -1479,6 +1480,19 @@ func _build_securite_signs() -> void:
         _place_prop(PROP_WORK_TABLE_BLUE, Vector3(52.34, 0.0, zt),
             Vector3(0.0, PI / 2.0, 0.0), 1.0)
         _add_static_box(Vector3(52.34, 0.88, zt), Vector3(0.87, 1.76, 1.90))
+
+    # 4 armoires scolaires : 2 a gauche (nord) et 2 a droite (sud) des
+    # etablis bleus, dos a la cloture, face aux machines.
+    # Modele 3,95 m de haut -> echelle 0,5 (~2 m).
+    for za in [-6.26, -7.58, 6.26, 7.58]:
+        _place_prop(PROP_SCHOOL_CABINET, Vector3(52.50, 0.106, za),
+            Vector3(0.0, PI / 2.0, 0.0), 0.5)
+        _add_static_box(Vector3(52.50, 0.99, za), Vector3(1.20, 1.97, 1.22))
+
+    # Barriere d'angle en "L" : au bout a droite (sud) de la ligne de
+    # clotures, a 90 deg, entre la cloture et le mur Est
+    _place_prop(PROP_TRACK_FENCE, Vector3(53.99, 0.0, 14.46), Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(53.99, 1.10, 14.46), Vector3(4.18, 2.20, 0.34))
 
     # 2 transpalettes a gauche (nord) de l'extincteur de gauche,
     # legerement en desordre
