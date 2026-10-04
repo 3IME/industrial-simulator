@@ -1905,8 +1905,8 @@ func _build_local_wc() -> void:
     # Toilettes au fond (mur ouest), face a la porte. COLLER CLIQUABLE :
     # clic sur la cuvette -> chasse d'eau (toilet-flush.mp3)
     _place_prop("res://assets/props/toilet.glb",
-        Vector3(-65.12, 0.06, czw), Vector3(0.0, -PI / 2.0, 0.0), 0.45)
-    _add_static_box(Vector3(-65.12, 0.46, czw),
+        Vector3(-65.12, 0.006, czw), Vector3(0.0, -PI / 2.0, 0.0), 0.45)
+    _add_static_box(Vector3(-65.12, 0.43, czw),
         Vector3(0.76, 0.86, 0.54), "toilettes_wc")
     _chasse_son = AudioStreamPlayer3D.new()
     var son_chasse = load("res://assets/sounds/toilet-flush.mp3")
@@ -1923,15 +1923,15 @@ func _build_local_wc() -> void:
     _place_prop("res://assets/props/towel.glb",
         Vector3(-65.0, 1.46, czw - 0.94), Vector3.ZERO, 0.7)
     _place_prop("res://assets/props/lavabo.glb",
-        Vector3(-64.3, 0.5, czw + 0.28), Vector3.ZERO, 1.0)
+        Vector3(-64.3, 0.5, czw - 0.28), Vector3.ZERO, 1.0)
     # Clic sur le lavabo -> lavabo.mp3 (robinet)
-    _add_static_box(Vector3(-64.3, 0.5, czw + 0.28),
+    _add_static_box(Vector3(-64.3, 0.5, czw - 0.28),
         Vector3(0.47, 1.0, 0.56), "lavabo_wc")
     _lavabo_son = AudioStreamPlayer3D.new()
     var son_lavabo = load("res://assets/sounds/lavabo.mp3")
     if son_lavabo != null:
         _lavabo_son.stream = son_lavabo
-    _lavabo_son.position = Vector3(-64.3, 0.9, czw + 0.28)
+    _lavabo_son.position = Vector3(-64.3, 0.9, czw - 0.28)
     _lavabo_son.unit_size = 3.0
     _lavabo_son.max_db = -2.0
     add_child(_lavabo_son)
@@ -1946,7 +1946,7 @@ func _build_local_wc() -> void:
         Vector3(0.12, 2.2, 1.0), "porte_wc_sortie")
     # Porte visible : panneau + poignee sur le mur est (cote interieur)
     var porte_mat := StandardMaterial3D.new()
-    porte_mat.albedo_color = Color(0.82, 0.83, 0.85)
+    porte_mat.albedo_color = Color(45.0 / 255.0, 95.0 / 255.0, 105.0 / 255.0)
     porte_mat.roughness = 0.5
     var porte_panneau := MeshInstance3D.new()
     var porte_box := BoxMesh.new()
