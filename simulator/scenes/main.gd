@@ -1323,6 +1323,14 @@ func _build_hall(belt_length: float) -> void:
     # Pont plat invisible : comble les 24 cm entre l'escalier est et le deck
     _add_static_box(Vector3(31.05, 4.0, mez_z), Vector3(0.6, 0.1, 1.4))
 
+    # Porte d'acces au 1er etage (door-school) au MILIEU de la mezzanine,
+    # posee sur le deck (y = 4). Modele 1,74 x 4,20 m -> echelle 0,6.
+    var porte_mez_x := (mez_debut_x + mez_fin_x) / 2.0
+    _place_prop("res://assets/props/door_school.glb",
+        Vector3(porte_mez_x, mez_y, mez_z), Vector3.ZERO, 0.6)
+    _add_static_box(Vector3(porte_mez_x, mez_y + 1.26, mez_z),
+        Vector3(1.04, 2.52, 0.25))
+
     _build_office_cabin()
     _build_bureau_interieur()
     _build_local_wc()
