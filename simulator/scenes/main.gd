@@ -1147,7 +1147,8 @@ func _build_hall(belt_length: float) -> void:
     _build_props()
     _build_alarmes()
     _build_expo()
-    _build_expo2()    # MEZZANINE le long du mur nord (z = HALL_MIN_Z)
+    _build_expo2()
+
     # Plancher a 4 m : visuel + collision marchable
     var mez_y := 4.0
     var mez_z := HALL_MIN_Z + 3.0  # 3 m du mur
