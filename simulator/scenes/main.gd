@@ -1644,6 +1644,8 @@ func _build_securite_signs() -> void:
     if lod_manager != null:
         lod_manager.register_levels(_vf2tr_lod, [8.0, 18.0],
             Vector3(39.0, 1.0, -28.0))
+        for niveau_haas in _vf2tr_lod:
+            lod_manager.auto_register(niveau_haas)
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",

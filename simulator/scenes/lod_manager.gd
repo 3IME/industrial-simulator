@@ -23,7 +23,9 @@ extends Node
 
 const FACTEUR := 55.0        # culling a rayon * FACTEUR (metres)
 const DIST_MIN := 40.0       # jamais cullle plus pres de 40 m
-const DIST_MAX := 130.0      # ni plus loin que 130 m
+const DIST_MAX := 400.0      # cap large : dans un hall de ~150 m de
+                              # diagonale, les grandes structures restent
+                              # visibles ; seuls les petits objets cullent
 const DIST_LABEL := 45.0     # les noms au sol
 const HYSTERESIS := 2.5      # marge de retour vers un niveau superieur
 const PERIODE := 0.1         # s entre deux mises a jour des groupes
@@ -60,7 +62,9 @@ func auto_register(noeud: Node3D) -> void:
     var boite := _boite(noeud)
     if boite == AABB():
         return
-    var rayon := boite.size.length() / 2.0
+    # taille REELLE : l'AABB des enfants ne voit pas le scale du prop
+    # (ascenseur x3,5, chaudiere x6, voxel 2 x6,3 ...)
+    var rayon := (boite.size * noeud.scale).length() / 2.0
     register_cull(noeud, clampf(rayon * FACTEUR, DIST_MIN, DIST_MAX))
 
 
