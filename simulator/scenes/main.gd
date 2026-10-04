@@ -1504,6 +1504,23 @@ func _build_securite_signs() -> void:
     _place_prop(PROP_TRACK_FENCE, Vector3(53.99, 0.0, 14.46), Vector3.ZERO, 1.0)
     _add_static_box(Vector3(53.99, 1.10, 14.46), Vector3(4.18, 2.20, 0.34))
 
+    # Panneau "local maintenance" sur la derniere cloture a droite,
+    # face a la salle (banniere 730x234 px -> 1,56 x 0,50 m)
+    var panneau_tex = load("res://assets/textures/local-maintenance.png")
+    if panneau_tex != null:
+        var panneau_mat := StandardMaterial3D.new()
+        panneau_mat.albedo_texture = panneau_tex
+        panneau_mat.cull_disabled = true
+        panneau_mat.roughness = 0.8
+        var panneau := MeshInstance3D.new()
+        var quad := QuadMesh.new()
+        quad.size = Vector2(1.56, 0.50)
+        quad.material = panneau_mat
+        panneau.mesh = quad
+        panneau.position = Vector3(51.54, 1.40, 12.54)
+        panneau.rotation.y = -PI / 2.0  # face vers l'ouest (salle)
+        add_child(panneau)
+
     # 2 transpalettes a gauche (nord) de l'extincteur de gauche,
     # legerement en desordre
     _place_prop(PROP_TRANSPALLET, Vector3(58.5, 0.01, -17.0),
