@@ -1152,11 +1152,11 @@ func _build_hall(belt_length: float) -> void:
     var ramp_body := StaticBody3D.new()
     var ramp_shape := CollisionShape3D.new()
     var ramp_box := BoxShape3D.new()
-    ramp_box.size = Vector3(1.27, 0.10, 6.66)  # largeur x epaisseur x longueur pente
+    ramp_box.size = Vector3(2.0, 0.15, 7.0)
     ramp_shape.shape = ramp_box
     ramp_body.add_child(ramp_shape)
     ramp_body.position = Vector3(-17.6, 2.44, -16.0)
-    ramp_body.rotation.x = -atan(4.88 / 4.54)
+    ramp_body.rotation.x = atan(4.88 / 4.54)
     add_child(ramp_body)
     _build_office_cabin()
     _build_bureau_interieur()
@@ -1937,7 +1937,7 @@ func _build_expo2() -> void:
         {"path": PROP_STAIR_3M, "nom": "Escalier 3 m",
          "x": -24.0, "y": 0.0, "s": 0.75, "col": Vector3(1.16, 3.05, 2.58)},
         {"path": PROP_CELL_STAIR, "nom": "Escalier de cage",
-         "x": -17.6, "y": 0.0, "s": 1.2, "col": Vector3(1.27, 4.88, 4.54)},
+         "x": -17.6, "y": 0.0, "s": 1.2, "col": Vector3.ZERO},
         # marches gravissables : surfaces fines a hauteurs croissantes
         {"path": "", "nom": "", "x": 0, "y": 0, "s": 1, "col": Vector3.ZERO},
         {"path": PROP_LADDER_CAGE, "nom": "Echelle a cage",
