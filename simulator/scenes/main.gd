@@ -1172,26 +1172,35 @@ func _build_hall(belt_length: float) -> void:
         Vector3(mez_fin_x - mez_debut_x, 1.1, 0.1))
 
     # ESCALIER 1 (x=-43) : monte vers +X
-    _place_prop(PROP_CELL_STAIR, Vector3(-43.0, 0.0, mez_z + 1.5),
+    _place_prop(PROP_CELL_STAIR, Vector3(-41.5, 0.0, mez_z),
         Vector3(0.0, PI / 2.0, 0.0), 1.0)
     # Marches AABB fines (collision garantie, pas de rotation)
     # 26 marches de 0,155 m de haut, gravissables avec floor_snap_length
     var marche_h := 4.0 / 26.0
     var marche_d := 4.0 / 26.0
-    for i in range(26):
-        # i=0 : marche basse, eloignee de la mezzanine (+Z)
-        # i=25 : marche haute, contre la mezzanine (mez_z)
-        _add_static_box(
-            Vector3(-43.0, (i + 0.5) * marche_h, mez_z + 4.0 - (i + 0.5) * marche_d),
-            Vector3(2.0, marche_h, marche_d))
+    # Rampe epaisse (1 m) — collision fiable, pas de tunneling
+    var ramp1 := StaticBody3D.new()
+    var ramp1_col := CollisionShape3D.new()
+    var ramp1_box := BoxShape3D.new()
+    ramp1_box.size = Vector3(2.0, 1.0, 5.7)
+    ramp1_col.shape = ramp1_box
+    ramp1_col.rotation.x = -atan(1.0)  # 45 deg, -Z monte vers la mezzanine
+    ramp1.add_child(ramp1_col)
+    ramp1.position = Vector3(-41.5, 1.5, mez_z + 2.0)
+    add_child(ramp1)
 
     # ESCALIER 2 (x=34) : descend vers +X
-    _place_prop(PROP_CELL_STAIR, Vector3(34.0, 0.0, mez_z + 1.5),
+    _place_prop(PROP_CELL_STAIR, Vector3(33.0, 0.0, mez_z),
         Vector3(0.0, -PI / 2.0, 0.0), 1.0)
-    for i2 in range(26):
-        _add_static_box(
-            Vector3(34.0, (i2 + 0.5) * marche_h, mez_z + 4.0 - (i2 + 0.5) * marche_d),
-            Vector3(2.0, marche_h, marche_d))
+    var ramp2 := StaticBody3D.new()
+    var ramp2_col := CollisionShape3D.new()
+    var ramp2_box := BoxShape3D.new()
+    ramp2_box.size = Vector3(2.0, 1.0, 5.7)
+    ramp2_col.shape = ramp2_box
+    ramp2_col.rotation.x = -atan(1.0)
+    ramp2.add_child(ramp2_col)
+    ramp2.position = Vector3(33.0, 1.5, mez_z + 2.0)
+    add_child(ramp2)
 
     _build_office_cabin()
     _build_bureau_interieur()
