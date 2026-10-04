@@ -1178,29 +1178,9 @@ func _build_hall(belt_length: float) -> void:
     # 26 marches de 0,155 m de haut, gravissables avec floor_snap_length
     var marche_h := 4.0 / 26.0
     var marche_d := 4.0 / 26.0
-    # Rampe epaisse (1 m) — collision fiable, pas de tunneling
-    var ramp1 := StaticBody3D.new()
-    var ramp1_col := CollisionShape3D.new()
-    var ramp1_box := BoxShape3D.new()
-    ramp1_box.size = Vector3(2.0, 1.0, 5.7)
-    ramp1_col.shape = ramp1_box
-    ramp1_col.rotation.x = -atan(1.0)  # 45 deg, -Z monte vers la mezzanine
-    ramp1.add_child(ramp1_col)
-    ramp1.position = Vector3(-41.5, 1.5, mez_z + 2.0)
-    add_child(ramp1)
-
-    # ESCALIER 2 (x=34) : descend vers +X
-    _place_prop(PROP_CELL_STAIR, Vector3(33.0, 0.0, mez_z),
-        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
-    var ramp2 := StaticBody3D.new()
-    var ramp2_col := CollisionShape3D.new()
-    var ramp2_box := BoxShape3D.new()
-    ramp2_box.size = Vector3(2.0, 1.0, 5.7)
-    ramp2_col.shape = ramp2_box
-    ramp2_col.rotation.x = -atan(1.0)
-    ramp2.add_child(ramp2_col)
-    ramp2.position = Vector3(33.0, 1.5, mez_z + 2.0)
-    add_child(ramp2)
+    # Rampes : fonction generique, extremites exactes sol/mezzanine
+    _make_ramp(-41.5, mez_z + 7.0, mez_z, 4.0)
+    _make_ramp(33.0, mez_z + 7.0, mez_z, 4.0)
 
     _build_office_cabin()
     _build_bureau_interieur()
@@ -1937,6 +1917,39 @@ func _room_box(pos: Vector3, box_size: Vector3, mat: StandardMaterial3D) -> void
     mesh.material_override = mat
     add_child(mesh)
     _add_static_box(pos, box_size)
+
+
+## Rampe marchable : monte de (x, 0, z_bas) a (x, y_haut, z_haut).
+## Pente 30 deg (confortable pour move_and_slide). Extremites exactes.
+func _make_ramp(x: float, z_bas: float, z_haut: float, y_haut: float) -> void:
+    var dz := z_haut - z_bas
+    var dy := y_haut
+    var longueur := sqrt(dz * dz + dy * dy)
+    var angle := atan2(dy, -dz)
+
+    var body := StaticBody3D.new()
+    var col := CollisionShape3D.new()
+    var box := BoxShape3D.new()
+    box.size = Vector3(2.0, 0.3, longueur)
+    col.shape = box
+    col.rotation.x = -angle
+    body.add_child(col)
+    body.position = Vector3(x, y_haut / 2.0, (z_bas + z_haut) / 2.0)
+    add_child(body)
+
+    # Visuel gris metal
+    var mesh := MeshInstance3D.new()
+    var mbox := BoxMesh.new()
+    mbox.size = Vector3(2.0, 0.3, longueur)
+    mesh.mesh = mbox
+    mesh.rotation.x = -angle
+    mesh.position = body.position
+    var mat := StandardMaterial3D.new()
+    mat.albedo_color = Color(0.30, 0.32, 0.35)
+    mat.metallic = 0.6
+    mat.roughness = 0.4
+    mesh.material_override = mat
+    add_child(mesh)
 
 
 ## Bureau de chantier (site cabin) contre le mur gauche, cote fond
