@@ -1433,14 +1433,19 @@ func _clamp_prop_height(node: Node3D, target_h: float, label: String) -> void:
 
 func _build_props() -> void:
     # Deux luminaires au plafond, au-dessus de la zone convoyeur / robot
-    _place_prop(PROP_PENDANT_LAMP, Vector3(1.0, HALL_HEIGHT - 8.0, 0.0), Vector3.ZERO)
+    # 8 lampes pendantes : 4 cote gauche, 4 cote droit, 10 m du sol
+    for lx in [-30.0, -10.0, 10.0, 30.0]:
+        for lz in [-10.0, 10.0]:
+            _place_prop(PROP_PENDANT_LAMP, Vector3(lx, 10.0, lz), Vector3.ZERO)
     _place_prop(PROP_FLUO_FIXTURE, Vector3(2.6, HALL_HEIGHT - 0.01, -1.6), Vector3(0.0, 0.6, 0.0))
-    var lamp_light := OmniLight3D.new()
-    lamp_light.position = Vector3(1.0, HALL_HEIGHT - 9.3, 0.0)
-    lamp_light.light_color = Color(1.0, 0.5, 0.1)
-    lamp_light.omni_range = 12.0
-    lamp_light.light_energy = 1.2
-    add_child(lamp_light)
+    for lx2 in [-30.0, -10.0, 10.0, 30.0]:
+        for lz2 in [-10.0, 10.0]:
+            var orange_light := OmniLight3D.new()
+            orange_light.position = Vector3(lx2, 9.3, lz2)
+            orange_light.light_color = Color(1.0, 0.45, 0.08)
+            orange_light.omni_range = 18.0
+            orange_light.light_energy = 3.0
+            add_child(orange_light)
     var fluo_light := OmniLight3D.new()
     fluo_light.position = Vector3(2.6, HALL_HEIGHT - 0.6, -1.6)
     fluo_light.light_color = Color(0.95, 0.98, 1.0)
@@ -1911,13 +1916,13 @@ func _build_expo2() -> void:
         {"path": PROP_DECK_PLATE, "nom": "Plaque de caillebotis",
          "x": -43.2, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},
         {"path": PROP_MEZZANINE_FLOOR, "nom": "Plancher de mezzanine",
-         "x": -36.8, "y": 0.0, "s": 1.0, "col": Vector3(6.0, 4.01, 3.04)},
+         "x": -36.8, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},
         {"path": PROP_MEZZANINE_WALKWAY, "nom": "Passerelle de mezzanine",
          "x": -30.4, "y": 0.0, "s": 1.0, "col": Vector3(2.0, 3.54, 1.16)},
         {"path": PROP_STAIR_3M, "nom": "Escalier 3 m",
          "x": -24.0, "y": 0.0, "s": 0.75, "col": Vector3(1.16, 3.05, 2.58)},
         {"path": PROP_CELL_STAIR, "nom": "Escalier de cage",
-         "x": -17.6, "y": 0.0, "s": 0.75, "col": Vector3(0.80, 3.05, 2.84)},
+         "x": -17.6, "y": 0.0, "s": 1.2, "col": Vector3(1.27, 4.88, 4.54)},
         {"path": PROP_LADDER_CAGE, "nom": "Echelle a cage",
          "x": -11.2, "y": 0.0, "s": 0.75, "col": Vector3(0.69, 3.05, 0.65)},
         {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
