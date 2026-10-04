@@ -142,6 +142,7 @@ var capture_mode := false
 var _adult_node: Node3D = null
 var _dans_bureau := false
 var _dans_wc := false
+var _dans_classe := false
 var _alarme_active := false
 var _en_confinement := false
 var _cctv = null
@@ -266,6 +267,11 @@ func _ready() -> void:
             AABB(Vector3(-65.9, -1.0, -14.6), Vector3(3.5, 5.0, 3.2)))
         lod_manager.zone_exclusive(z_wc, z_bureau)
         lod_manager.zone_exclusive(z_wc, z_atelier)
+        var z_classe: int = lod_manager.register_zone("classe",
+            AABB(Vector3(-10.0, -1.0, -54.6), Vector3(11.0, 5.0, 7.2)))
+        lod_manager.zone_exclusive(z_classe, z_bureau)
+        lod_manager.zone_exclusive(z_classe, z_atelier)
+        lod_manager.zone_exclusive(z_classe, z_wc)
         # jamais masques : gyrophares (alerte), robot, joueur
         var exclus_zone: Array = [_robot_view]
         exclus_zone.append_array(_gyrophare_pivots)
@@ -275,8 +281,11 @@ func _ready() -> void:
             z_atelier, self, exclus_zone)
         var nb_wc: int = lod_manager.zone_ramasser_par_position(
             z_wc, self, exclus_zone)
+        var nb_classe: int = lod_manager.zone_ramasser_par_position(
+            z_classe, self, exclus_zone)
         print("Zones LOD : bureau ", nb_bureau, " objets, atelier ",
-            nb_atelier, " objets, wc ", nb_wc, " objets")
+            nb_atelier, " objets, wc ", nb_wc, " objets, classe ",
+            nb_classe, " objets")
         print("LOD global : ", lod_manager.stats())
     _show_build_badge()
     _verre_player = AudioStreamPlayer.new()
@@ -375,6 +384,16 @@ func _clic_interaction(event: InputEvent) -> void:
                 elif hit_in.collider.get_meta("interaction") == "interrupteur_bureau":
                     _basculer_lumiere_bureau()
         return
+    if _dans_classe:
+        var cam_cl := get_viewport().get_camera_3d()
+        if cam_cl != null:
+            var q_cl := PhysicsRayQueryParameters3D.create(
+                cam_cl.global_position,
+                cam_cl.global_position - cam_cl.global_transform.basis.z * 6.0)
+            var hit_cl: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_cl)
+            if not hit_cl.is_empty() and hit_cl.collider is StaticBody3D                     and hit_cl.collider.has_meta("interaction")                 and hit_cl.collider.get_meta("interaction") == "porte_classe_sortie":
+                _sortir_classe()
+        return
     if _dans_wc:
         var cam_wc := get_viewport().get_camera_3d()
         if cam_wc != null:
@@ -422,6 +441,8 @@ func _clic_interaction(event: InputEvent) -> void:
         _entrer_bureau()
     elif collider.get_meta("interaction") == "porte_wc":
         _entrer_wc()
+    elif collider.get_meta("interaction") == "porte_classe":
+        _entrer_classe()
     elif collider.get_meta("interaction") == "alarme_incendie":
         _declencher_alarme(impact.position)
     elif collider.get_meta("interaction") == "confinement":
@@ -456,6 +477,22 @@ func _sortir_wc() -> void:
         player_node.rotation.y = PI / 2.0    # face a la porte WC du hall
     _dans_wc = false
     print("Local WC : sortie")
+
+
+func _entrer_classe() -> void:
+    if player_node != null:
+        player_node.position = Vector3(-4.5, 0.2, -48.7)
+        player_node.rotation.y = 0.0        # regarde le fond de la classe
+    _dans_classe = true
+    print("Classe : entree")
+
+
+func _sortir_classe() -> void:
+    if player_node != null:
+        player_node.position = Vector3(-4.5, 4.2, -43.6)
+        player_node.rotation.y = 0.0        # sur la mezzanine, face a la porte
+    _dans_classe = false
+    print("Classe : sortie")
 
 
 func _sortir_bureau() -> void:
@@ -1323,17 +1360,18 @@ func _build_hall(belt_length: float) -> void:
     # Pont plat invisible : comble les 24 cm entre l'escalier est et le deck
     _add_static_box(Vector3(31.05, 4.0, mez_z), Vector3(0.6, 0.1, 1.4))
 
-    # Porte d'acces au 1er etage (door-school) au MILIEU de la mezzanine,
-    # posee sur le deck (y = 4). Modele 1,74 x 4,20 m -> echelle 0,6.
+    # Porte d'acces a la CLASSE (door-school) COLLEE au mur nord, posee sur
+    # le deck (y = 4). Modele 1,74 x 4,20 m -> echelle 0,6. CLIC -> classe.
     var porte_mez_x := (mez_debut_x + mez_fin_x) / 2.0
     _place_prop("res://assets/props/door_school.glb",
-        Vector3(porte_mez_x, mez_y, mez_z), Vector3.ZERO, 0.6)
-    _add_static_box(Vector3(porte_mez_x, mez_y + 1.26, mez_z),
-        Vector3(1.04, 2.52, 0.25))
+        Vector3(porte_mez_x, mez_y, mez_z - 0.62), Vector3.ZERO, 0.6)
+    _add_static_box(Vector3(porte_mez_x, mez_y + 1.26, mez_z - 0.62),
+        Vector3(1.04, 2.52, 0.25), "porte_classe")
 
     _build_office_cabin()
     _build_bureau_interieur()
     _build_local_wc()
+    _build_classe()
     _build_gyrophares_murs()
 
 
@@ -1864,6 +1902,68 @@ func _build_expo() -> void:
 ## (invisible depuis l'usine). Vraie porte dans le mur avant : c'est
 ## ELLE qu'on clique pour sortir. La porte de la cabine (dans l'usine)
 ## teleporte vers l'interieur.
+## Salle de CLASSE : 10 x 6 m derriere le mur nord (acces par la porte
+## door-school de la mezzanine). Murs clairs, sol parquet, deux lumieres
+## (passent au rouge a l'alerte comme toutes les Light3D).
+func _build_classe() -> void:
+    var cxc := -4.5
+    var czc := -51.0
+    var mur := StandardMaterial3D.new()
+    mur.albedo_color = Color(0.87, 0.85, 0.80)
+    mur.roughness = 0.9
+    var sol_mat := StandardMaterial3D.new()
+    var parquet = load("res://assets/textures/parquet_basecolor.png")
+    if parquet != null:
+        sol_mat.albedo_texture = parquet
+        sol_mat.uv1_scale = Vector3(5.0, 3.0, 1.0)
+        sol_mat.roughness = 0.55
+    else:
+        sol_mat.albedo_color = Color(0.45, 0.4, 0.35)
+    var plafond_mat := StandardMaterial3D.new()
+    plafond_mat.albedo_color = Color(0.93, 0.93, 0.9)
+
+    # Sol, plafond (2,8 m) et 4 murs - interieur 10 (X) x 6 (Z) m
+    _room_box(Vector3(cxc, -0.1, czc), Vector3(10.4, 0.2, 6.4), sol_mat)
+    _room_box(Vector3(cxc, 2.8, czc), Vector3(10.4, 0.2, 6.4), plafond_mat)
+    _room_box(Vector3(cxc - 5.1, 1.4, czc), Vector3(0.2, 2.8, 6.4), mur)
+    _room_box(Vector3(cxc + 5.1, 1.4, czc), Vector3(0.2, 2.8, 6.4), mur)
+    _room_box(Vector3(cxc, 1.4, czc - 3.1), Vector3(10.4, 2.8, 0.2), mur)
+    _room_box(Vector3(cxc, 1.4, czc + 3.1), Vector3(10.4, 2.8, 0.2), mur)
+
+    # Deux lumieres (rouge a l'alerte automatiquement)
+    for dx_l in [-2.5, 2.5]:
+        var lum := OmniLight3D.new()
+        lum.position = Vector3(cxc + dx_l, 2.6, czc)
+        lum.light_color = Color(1.0, 0.96, 0.88)
+        lum.light_energy = 1.3
+        lum.omni_range = 9.0
+        add_child(lum)
+
+    # Porte de sortie visible (mur sud, cote interieur) + collider cliquable
+    _add_static_box(Vector3(cxc, 1.2, czc + 3.0),
+        Vector3(1.2, 2.2, 0.2), "porte_classe_sortie")
+    var porte_mat := StandardMaterial3D.new()
+    porte_mat.albedo_color = Color(45.0 / 255.0, 95.0 / 255.0, 105.0 / 255.0)
+    porte_mat.roughness = 0.5
+    var porte_panneau := MeshInstance3D.new()
+    var porte_box := BoxMesh.new()
+    porte_box.size = Vector3(1.0, 2.1, 0.05)
+    porte_panneau.mesh = porte_box
+    porte_panneau.material_override = porte_mat
+    porte_panneau.position = Vector3(cxc, 1.05, czc + 3.03)
+    add_child(porte_panneau)
+    var poignee := MeshInstance3D.new()
+    var poignee_box := BoxMesh.new()
+    poignee_box.size = Vector3(0.14, 0.04, 0.04)
+    poignee.mesh = poignee_box
+    var poignee_mat := StandardMaterial3D.new()
+    poignee_mat.albedo_color = Color(0.35, 0.36, 0.38)
+    poignee_mat.metallic = 0.8
+    poignee.material_override = poignee_mat
+    poignee.position = Vector3(cxc + 0.35, 1.05, czc + 3.0)
+    add_child(poignee)
+
+
 ## Machine Haas VF-2TR a trois niveaux de detail, centree en (39, zc),
 ## debout face au sud. Chaque machine a son propre groupe LOD.
 func _placer_haas(zc: float) -> void:
