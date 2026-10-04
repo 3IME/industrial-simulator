@@ -160,6 +160,8 @@ var _chaudiere_player: AudioStreamPlayer3D = null
 var _fumee_parts: Array[GPUParticles3D] = []
 var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
 var _gyrophare_pivots: Array[Node3D] = []
+var _lumiere_bureau: OmniLight3D = null
+var _interrupteur_son: AudioStreamPlayer3D = null
 var _gyrophare_spots: Array[SpotLight3D] = []
 var _fumee_active := false
 var _fumee_ramp_gris: GradientTexture1D = null
@@ -361,6 +363,8 @@ func _clic_interaction(event: InputEvent) -> void:
                     _bouton_boite(int(str(hit_in.collider.get_meta("interaction")).split("_")[-1]))
                 elif hit_in.collider.get_meta("interaction") == "keypad_code":
                     _activer_keypad()
+                elif hit_in.collider.get_meta("interaction") == "interrupteur_bureau":
+                    _basculer_lumiere_bureau()
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -1818,6 +1822,16 @@ func _build_expo() -> void:
 ## (invisible depuis l'usine). Vraie porte dans le mur avant : c'est
 ## ELLE qu'on clique pour sortir. La porte de la cabine (dans l'usine)
 ## teleporte vers l'interieur.
+## Interrupteur du bureau : allume/eteint la lampe du plafond + son.
+func _basculer_lumiere_bureau() -> void:
+    if _lumiere_bureau != null:
+        _lumiere_bureau.visible = not _lumiere_bureau.visible
+        print("Lumiere du bureau : ",
+            "allumee" if _lumiere_bureau.visible else "eteinte")
+    if _interrupteur_son != null:
+        _interrupteur_son.play()
+
+
 func _build_bureau_interieur() -> void:
     var cx := -54.9
     var cz := -61.0
@@ -1868,6 +1882,23 @@ func _build_bureau_interieur() -> void:
     lampe.omni_range = 9.0
     lampe.light_energy = 1.3
     add_child(lampe)
+    _lumiere_bureau = lampe
+
+    # Interrupteur de lumiere : mur avant, a DROITE de la porte (cote
+    # oppose au keypad). Modele 0,69 x 1,0 m -> echelle 0,125 (~9 x 12,5 cm).
+    # Clic -> allume/eteint la lampe + son button-press.mp3
+    _place_prop("res://assets/props/light_switch.glb",
+        Vector3(cx + 1.0, 1.15, cz + 4.74), Vector3(0.0, PI, 0.0), 0.125)
+    _add_static_box(Vector3(cx + 1.0, 1.15, cz + 4.74),
+        Vector3(0.12, 0.16, 0.10), "interrupteur_bureau")
+    _interrupteur_son = AudioStreamPlayer3D.new()
+    var son_clic = load("res://assets/sounds/button-press.mp3")
+    if son_clic != null:
+        _interrupteur_son.stream = son_clic
+    _interrupteur_son.position = Vector3(cx + 1.0, 1.15, cz + 4.74)
+    _interrupteur_son.unit_size = 2.0
+    _interrupteur_son.max_db = -4.0
+    add_child(_interrupteur_son)
 
     # Tableau au mur de droite, centre (source 4,44 m -> 2,0 m)
     _place_prop(TABLEAU, Vector3(cx + 3.76, 1.5, cz),
