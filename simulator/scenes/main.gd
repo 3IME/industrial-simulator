@@ -66,6 +66,8 @@ const PROP_PRESS_BRAKE := "res://assets/props/press_brake.glb"
 const PROP_HYDRAULIC_PRESS := "res://assets/props/hydraulic_press.glb"
 const PROP_VERTICAL_MILL := "res://assets/props/vertical_mill.glb"
 const PROP_TRANSPALLET := "res://assets/props/transpallet.glb"
+const PROP_WORK_TABLE_BLUE := "res://assets/props/work_table_blue.glb"
+const PROP_WOODEN_PALLET := "res://assets/props/wooden_pallet1.glb"
 # Annonces sonores d'usine fournies par 3IME — touches 1 a 7
 const ANNONCES := [
     {"touche": KEY_1, "nom": "evacuation", "chemin": "res://assets/sounds/annonces/evacuation.mp3"},
@@ -1444,9 +1446,12 @@ func _build_securite_signs() -> void:
     _place_prop(PROP_ELEVATOR, Vector3(57.0, 0.0, -43.8), Vector3.ZERO, 3.5)
     _add_static_box(Vector3(57.0, 1.5, -43.8), Vector3(2.21, 3.0, 2.12))
 
-    # Atelier mur Est : fraiseuse, presse hydraulique, presse a plier et
-    # perceuse a colonne entre les 2 extincteurs (z = -15 / +15), dos au
-    # mur, face a la salle, 1,50 m d'ecart entre machines. SANS textes.
+    # Atelier mur Est : tour, fraiseuse, presse hydraulique, presse a
+    # plier et perceuse a colonne entre les 2 extincteurs (z = -15 / +15),
+    # dos au mur, face a la salle, 1,50 m d'ecart entre machines. SANS textes.
+    _place_prop(PROP_ENGINE_LATHE, Vector3(61.33, 0.0, -8.07),
+        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(61.33, 1.00, -8.07), Vector3(1.04, 2.00, 2.51))
     _place_prop(PROP_VERTICAL_MILL, Vector3(61.15, 0.0, -4.62),
         Vector3(0.0, -PI / 2.0, 0.0), 1.0)
     _add_static_box(Vector3(61.15, 1.30, -4.62), Vector3(1.39, 2.59, 1.39))
@@ -1460,13 +1465,38 @@ func _build_securite_signs() -> void:
         Vector3(0.0, -PI / 2.0, 0.0), 1.0)
     _add_static_box(Vector3(61.51, 1.08, 4.89), Vector3(0.68, 2.16, 0.85))
 
-    # Clotures de voie : 5 m a l'ouest du mur Est, sur toute la longueur
+    # Clotures de voie : 10 m a l'ouest du mur Est, sur toute la longueur
     # entre les 2 extincteurs (7 sections de 4,18 m bout a bout)
     for k in range(-3, 4):
         var zf: float = 4.18 * k
-        _place_prop(PROP_TRACK_FENCE, Vector3(56.73, 0.0, zf),
+        _place_prop(PROP_TRACK_FENCE, Vector3(51.73, 0.0, zf),
             Vector3(0.0, PI / 2.0, 0.0), 1.0)
-        _add_static_box(Vector3(56.73, 1.10, zf), Vector3(0.34, 2.20, 4.18))
+        _add_static_box(Vector3(51.73, 1.10, zf), Vector3(0.34, 2.20, 4.18))
+
+    # 5 tables bleues dosees contre la face est de la cloture, entre le
+    # mur et la barriere, face aux machines (sens inverse des machines)
+    for zt in [-4.4, -2.2, 0.0, 2.2, 4.4]:
+        _place_prop(PROP_WORK_TABLE_BLUE, Vector3(52.34, 0.0, zt),
+            Vector3(0.0, PI / 2.0, 0.0), 1.0)
+        _add_static_box(Vector3(52.34, 0.88, zt), Vector3(0.87, 1.76, 1.90))
+
+    # 2 transpalettes a gauche (nord) de l'extincteur de gauche,
+    # legerement en desordre
+    _place_prop(PROP_TRANSPALLET, Vector3(58.5, 0.01, -17.0),
+        Vector3(0.0, 0.35, 0.0), 1.0)
+    _add_static_box(Vector3(58.5, 0.63, -17.0), Vector3(0.90, 1.26, 1.80))
+    _place_prop(PROP_TRANSPALLET, Vector3(59.8, 0.01, -18.4),
+        Vector3(0.0, -2.4, 0.0), 1.0)
+    _add_static_box(Vector3(59.8, 0.63, -18.4), Vector3(0.90, 1.26, 1.80))
+
+    # 3 palettes en bois a cote des transpalettes, en desordre
+    # (10 cm de haut : franchissables, pas de collision)
+    _place_prop(PROP_WOODEN_PALLET, Vector3(57.6, 0.0, -18.2),
+        Vector3(0.0, 0.6, 0.0), 1.0)
+    _place_prop(PROP_WOODEN_PALLET, Vector3(58.9, 0.0, -19.3),
+        Vector3(0.0, -1.1, 0.0), 1.0)
+    _place_prop(PROP_WOODEN_PALLET, Vector3(60.3, 0.0, -17.6),
+        Vector3(0.0, 2.3, 0.0), 1.0)
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
@@ -2064,8 +2094,6 @@ func _build_expo2() -> void:
          "x": -43.2, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},
         {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
          "x": 8.0, "y": 0.0, "s": 1.0, "col": Vector3(1.14, 0.93, 0.86)},
-        {"path": PROP_ENGINE_LATHE, "nom": "Tour d'atelier",
-         "x": 14.4, "y": 0.0, "s": 1.0, "col": Vector3(2.51, 2.00, 1.04)},
         {"path": PROP_TRANSPALLET, "nom": "Transpallet",
          "x": 46.4, "y": 0.01, "s": 1.0, "col": Vector3(0.62, 1.26, 1.71)},
     ]
