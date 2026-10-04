@@ -1195,7 +1195,7 @@ func _build_hall(belt_length: float) -> void:
     r2.rotation.x = -atan(4.0 / 7.0)
     add_child(r2)
 
-        _build_office_cabin()
+    _build_office_cabin()
     _build_bureau_interieur()
 
 
