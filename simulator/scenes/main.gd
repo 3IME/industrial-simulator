@@ -1498,6 +1498,13 @@ func _build_securite_signs() -> void:
     _place_prop(PROP_WOODEN_PALLET, Vector3(60.3, 0.0, -17.6),
         Vector3(0.0, 2.3, 0.0), 1.0)
 
+    # Machine voxel 2 geante : modeele 1,90 m -> echelle 6,32 = 12 m de
+    # haut, zone sud-ouest (x -38 / z 32). Origine a mi-hauteur -> y = 6.
+    # Sans texte.
+    _place_prop(PROP_VOXEL_MACHINE_2, Vector3(-38.0, 6.0, 32.0),
+        Vector3.ZERO, 6.32)
+    _add_static_box(Vector3(-38.0, 6.0, 32.0), Vector3(4.39, 12.0, 4.45))
+
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
         Vector3(-57.0, 0.0, -20.0), Vector3.ZERO)
@@ -1611,8 +1618,6 @@ func _build_expo() -> void:
          "x": -36.0, "y": 0.76, "col": Vector3(1.9, 1.51, 1.33)},
         {"path": PROP_VOXEL_MACHINE, "nom": "Machine industrielle voxel 1",
          "x": -29.0, "y": 0.67, "col": Vector3(1.9, 1.35, 1.9)},
-        {"path": PROP_VOXEL_MACHINE_2, "nom": "Machine industrielle voxel 2",
-         "x": -22.0, "y": 0.95, "col": Vector3(0.7, 1.9, 0.7)},
         {"path": PROP_MODULAR_CONVEYOR, "nom": "Convoyeur modulaire",
          "x": -15.0, "y": 0.25, "col": Vector3(1.9, 0.51, 0.65)},
         {"path": PROP_DUMPSTER, "nom": "Benne en acier vert",
