@@ -1156,7 +1156,7 @@ func _build_hall(belt_length: float) -> void:
     ramp_shape.shape = ramp_box
     ramp_body.add_child(ramp_shape)
     ramp_body.position = Vector3(-17.6, 2.44, -16.0)
-    ramp_body.rotation.x = atan(4.88 / 4.54)
+    ramp_body.rotation.x = -atan(4.88 / 4.54)
     add_child(ramp_body)
     _build_office_cabin()
     _build_bureau_interieur()
