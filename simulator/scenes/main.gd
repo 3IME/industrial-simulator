@@ -1060,6 +1060,17 @@ func _build_hall(belt_length: float) -> void:
     _add_static_box(Vector3(HALL_MAX_X - 0.75, 0.88, 34.0),
         Vector3(0.87, 1.76, 1.90))
 
+    # Luminaire fluorescent 2 m au-dessus de la table (sommet 1,76 m ->
+    # base du luminaire a 3,76 m), dans l'axe de la table, avec sa lumiere
+    _place_prop("res://assets/props/fluorescent_fixture.glb",
+        Vector3(HALL_MAX_X - 0.75, 3.76, 34.0), Vector3.ZERO, 1.0)
+    var luminaire := OmniLight3D.new()
+    luminaire.light_color = Color(0.95, 0.98, 1.0)
+    luminaire.light_energy = 1.6
+    luminaire.omni_range = 9.0
+    luminaire.position = Vector3(HALL_MAX_X - 0.75, 3.70, 34.0)
+    add_child(luminaire)
+
     # Flammes de la chaudiere (activees pendant l'alerte incendie)
     _flammes = GPUParticles3D.new()
     _flammes.amount = 60
