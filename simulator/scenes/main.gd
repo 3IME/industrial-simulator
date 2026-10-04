@@ -1363,9 +1363,10 @@ func _build_hall(belt_length: float) -> void:
     # Porte d'acces a la CLASSE (door-school) COLLEE au mur nord, posee sur
     # le deck (y = 4). Modele 1,74 x 4,20 m -> echelle 0,6. CLIC -> classe.
     var porte_mez_x := (mez_debut_x + mez_fin_x) / 2.0
+    var porte_mez_z := -44.795   # face interieure du mur : -44,925 + demi-profondeur
     _place_prop("res://assets/props/door_school.glb",
-        Vector3(porte_mez_x, mez_y, mez_z - 0.62), Vector3.ZERO, 0.6)
-    _add_static_box(Vector3(porte_mez_x, mez_y + 1.26, mez_z - 0.62),
+        Vector3(porte_mez_x, mez_y - 0.01, porte_mez_z), Vector3.ZERO, 0.6)
+    _add_static_box(Vector3(porte_mez_x, mez_y + 1.26, porte_mez_z),
         Vector3(1.04, 2.52, 0.25), "porte_classe")
 
     _build_office_cabin()
@@ -1943,8 +1944,8 @@ func _build_classe() -> void:
     _add_static_box(Vector3(cxc, 1.2, czc + 3.0),
         Vector3(1.2, 2.2, 0.2), "porte_classe_sortie")
     var porte_mat := StandardMaterial3D.new()
-    porte_mat.albedo_color = Color(45.0 / 255.0, 95.0 / 255.0, 105.0 / 255.0)
-    porte_mat.roughness = 0.5
+    porte_mat.albedo_color = Color(102.0 / 255.0, 91.0 / 255.0, 75.0 / 255.0)
+    porte_mat.roughness = 0.6
     var porte_panneau := MeshInstance3D.new()
     var porte_box := BoxMesh.new()
     porte_box.size = Vector3(1.0, 2.1, 0.05)
