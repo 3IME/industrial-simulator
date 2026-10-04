@@ -163,6 +163,7 @@ var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
 var _gyrophare_pivots: Array[Node3D] = []
 var _lumiere_bureau: OmniLight3D = null
 var _interrupteur_son: AudioStreamPlayer3D = null
+var _chasse_son: AudioStreamPlayer3D = null
 var _gyrophare_spots: Array[SpotLight3D] = []
 var _fumee_active := false
 var _fumee_ramp_gris: GradientTexture1D = null
@@ -261,7 +262,7 @@ func _ready() -> void:
             AABB(Vector3(50.0, -1.0, -17.0), Vector3(12.0, 8.0, 33.0)))
         lod_manager.zone_exclusive(z_bureau, z_atelier)
         var z_wc: int = lod_manager.register_zone("wc",
-            AABB(Vector3(-65.6, -1.0, -14.6), Vector3(3.2, 5.0, 3.2)))
+            AABB(Vector3(-65.9, -1.0, -14.6), Vector3(3.5, 5.0, 3.2)))
         lod_manager.zone_exclusive(z_wc, z_bureau)
         lod_manager.zone_exclusive(z_wc, z_atelier)
         # jamais masques : gyrophares (alerte), robot, joueur
@@ -380,8 +381,11 @@ func _clic_interaction(event: InputEvent) -> void:
                 cam_wc.global_position,
                 cam_wc.global_position - cam_wc.global_transform.basis.z * 6.0)
             var hit_wc: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_wc)
-            if not hit_wc.is_empty() and hit_wc.collider is StaticBody3D                     and hit_wc.collider.has_meta("interaction")                 and hit_wc.collider.get_meta("interaction") == "porte_wc_sortie":
-                _sortir_wc()
+            if not hit_wc.is_empty() and hit_wc.collider is StaticBody3D                     and hit_wc.collider.has_meta("interaction"):
+                if hit_wc.collider.get_meta("interaction") == "porte_wc_sortie":
+                    _sortir_wc()
+                elif hit_wc.collider.get_meta("interaction") == "toilettes_wc":
+                    _tirer_chasse()
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -1858,13 +1862,13 @@ func _build_expo() -> void:
 ## (invisible depuis l'usine). Vraie porte dans le mur avant : c'est
 ## ELLE qu'on clique pour sortir. La porte de la cabine (dans l'usine)
 ## teleporte vers l'interieur.
-## Local WC : 2 x 2 m derriere le mur ouest (acces par la porte WC du
-## hall). Murs carreles, toilettes au fond, papier a gauche, serviette a
-## droite, gyrophare d'alerte en haut du mur du fond (meme systeme que
-## les 17 autres : rotation + faisceaux bleus pendant les alertes ; la
-## lumiere du local passe au rouge comme toutes les Light3D).
+## Local WC : 2,5 x 2 m derriere le mur ouest (acces par la porte WC du
+## hall). Murs carreles, toilettes au fond (CLIC = chasse d'eau), papier
+## a gauche, serviette et LAVABO a droite, gyrophare d'alerte horizontal
+## en haut du mur du fond (meme systeme que les 17 autres ; la lumiere
+## du local passe au rouge comme toutes les Light3D).
 func _build_local_wc() -> void:
-    var cxw := -64.0
+    var cxw := -64.25          # centre (profondeur 2,5 m vers l'ouest)
     var czw := -13.0
     var carrelage := StandardMaterial3D.new()
     var tex_carrelage = load("res://assets/textures/toilet_tile_texture.png")
@@ -1879,13 +1883,13 @@ func _build_local_wc() -> void:
     var plafond_mat := StandardMaterial3D.new()
     plafond_mat.albedo_color = Color(0.95, 0.95, 0.95)
 
-    # Sol, plafond (2,5 m) et 4 murs - interieur 2 x 2 m
-    _room_box(Vector3(cxw, -0.1, czw), Vector3(2.4, 0.2, 2.4), sol_mat)
-    _room_box(Vector3(cxw, 2.5, czw), Vector3(2.4, 0.2, 2.4), plafond_mat)
-    _room_box(Vector3(cxw - 1.1, 1.25, czw), Vector3(0.2, 2.5, 2.4), carrelage)
-    _room_box(Vector3(cxw + 1.1, 1.25, czw), Vector3(0.2, 2.5, 2.4), carrelage)
-    _room_box(Vector3(cxw, 1.25, czw - 1.1), Vector3(2.4, 2.5, 0.2), carrelage)
-    _room_box(Vector3(cxw, 1.25, czw + 1.1), Vector3(2.4, 2.5, 0.2), carrelage)
+    # Sol, plafond (2,5 m) et 4 murs - interieur 2,5 (X) x 2 (Z) m
+    _room_box(Vector3(cxw, -0.1, czw), Vector3(2.9, 0.2, 2.4), sol_mat)
+    _room_box(Vector3(cxw, 2.5, czw), Vector3(2.9, 0.2, 2.4), plafond_mat)
+    _room_box(Vector3(cxw - 1.35, 1.25, czw), Vector3(0.2, 2.5, 2.4), carrelage)
+    _room_box(Vector3(cxw + 1.35, 1.25, czw), Vector3(0.2, 2.5, 2.4), carrelage)
+    _room_box(Vector3(cxw, 1.25, czw - 1.1), Vector3(2.9, 2.5, 0.2), carrelage)
+    _room_box(Vector3(cxw, 1.25, czw + 1.1), Vector3(2.9, 2.5, 0.2), carrelage)
 
     # Lumiere du local (passe au rouge a l'alerte, comme toutes les Light3D)
     var lumiere_wc := OmniLight3D.new()
@@ -1895,23 +1899,37 @@ func _build_local_wc() -> void:
     lumiere_wc.omni_range = 6.0
     add_child(lumiere_wc)
 
-    # Toilettes au fond (mur ouest), face a la porte
+    # Toilettes au fond (mur ouest), face a la porte. COLLER CLIQUABLE :
+    # clic sur la cuvette -> chasse d'eau (toilet-flush.mp3)
     _place_prop("res://assets/props/toilet.glb",
-        Vector3(cxw - 0.38, 0.06, czw), Vector3(0.0, -PI / 2.0, 0.0), 0.45)
-    _add_static_box(Vector3(cxw - 0.38, 0.46, czw), Vector3(0.76, 0.86, 0.54))
-    # Papier toilette a gauche (mur sud), serviette a droite (mur nord)
+        Vector3(-65.12, 0.06, czw), Vector3(0.0, -PI / 2.0, 0.0), 0.45)
+    _add_static_box(Vector3(-65.12, 0.46, czw),
+        Vector3(0.76, 0.86, 0.54), "toilettes_wc")
+    _chasse_son = AudioStreamPlayer3D.new()
+    var son_chasse = load("res://assets/sounds/toilet-flush.mp3")
+    if son_chasse != null:
+        _chasse_son.stream = son_chasse
+    _chasse_son.position = Vector3(-65.12, 0.8, czw)
+    _chasse_son.unit_size = 3.0
+    _chasse_son.max_db = -2.0
+    add_child(_chasse_son)
+    # Papier toilette a gauche (mur sud)
     _place_prop("res://assets/props/toilet-paper.glb",
-        Vector3(cxw - 0.5, 0.95, czw + 0.91), Vector3(0.0, PI, 0.0), 1.0)
+        Vector3(-65.0, 0.95, czw + 0.91), Vector3(0.0, PI, 0.0), 1.0)
+    # Serviette pres de l'angle (mur nord) et LAVABO a droite, cote porte
     _place_prop("res://assets/props/towel.glb",
-        Vector3(cxw - 0.5, 1.46, czw - 0.94), Vector3.ZERO, 0.7)
+        Vector3(-65.0, 1.46, czw - 0.94), Vector3.ZERO, 0.7)
+    _place_prop("res://assets/props/lavabo.glb",
+        Vector3(-64.3, 0.5, czw + 0.28), Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(-64.3, 0.5, czw + 0.28), Vector3(0.47, 1.0, 0.56))
 
-    # Gyrophare d'alerte en haut du mur du fond (systeme global des 17)
-    _cree_gyrophare(Vector3(cxw - 0.97, 2.1, czw), false, true)
+    # Gyrophare d'alerte en haut du mur du fond, fixation horizontale
+    _cree_gyrophare(Vector3(-65.47, 2.1, czw), false, true)
 
     # Portes : entree cote hall (sur l'image WC), sortie cote local
     _add_static_box(Vector3(-57.85, 1.14, -13.0),
         Vector3(0.12, 2.28, 1.0), "porte_wc")
-    _add_static_box(Vector3(cxw + 0.95, 1.2, czw),
+    _add_static_box(Vector3(cxw + 1.2, 1.2, czw),
         Vector3(0.12, 2.2, 1.0), "porte_wc_sortie")
     # Porte visible : panneau + poignee sur le mur est (cote interieur)
     var porte_mat := StandardMaterial3D.new()
@@ -1922,7 +1940,7 @@ func _build_local_wc() -> void:
     porte_box.size = Vector3(0.05, 2.1, 1.0)
     porte_panneau.mesh = porte_box
     porte_panneau.material_override = porte_mat
-    porte_panneau.position = Vector3(cxw + 0.97, 1.05, czw)
+    porte_panneau.position = Vector3(cxw + 1.22, 1.05, czw)
     add_child(porte_panneau)
     var poignee := MeshInstance3D.new()
     var poignee_box := BoxMesh.new()
@@ -1932,8 +1950,15 @@ func _build_local_wc() -> void:
     poignee_mat.albedo_color = Color(0.35, 0.36, 0.38)
     poignee_mat.metallic = 0.8
     poignee.material_override = poignee_mat
-    poignee.position = Vector3(cxw + 0.93, 1.05, czw + 0.35)
+    poignee.position = Vector3(cxw + 1.18, 1.05, czw + 0.35)
     add_child(poignee)
+
+
+## Tirer la chasse d'eau du local WC (clic sur la cuvette).
+func _tirer_chasse() -> void:
+    if _chasse_son != null:
+        _chasse_son.play()
+        print("Local WC : chasse d'eau")
 
 
 ## Interrupteur du bureau : allume/eteint la lampe du plafond + son.
