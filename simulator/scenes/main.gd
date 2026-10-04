@@ -707,7 +707,7 @@ func _process(delta: float) -> void:
     if _vf2tr_lod.size() == 3 and player_node != null:
         var dist_haas := player_node.global_position.distance_to(
             Vector3(39.0, 1.0, -28.0))
-        var niveau_vf := 0 if dist_haas < 15.0 else (1 if dist_haas < 40.0 else 2)
+        var niveau_vf := 0 if dist_haas < 8.0 else (1 if dist_haas < 18.0 else 2)
         for i_vf in range(3):
             _vf2tr_lod[i_vf].visible = (i_vf == niveau_vf)
 
@@ -1603,9 +1603,9 @@ func _build_securite_signs() -> void:
     # face au sud. Transformations BATIES (gltf-transform join) : les 3
     # niveaux de detail partagent exactement la meme enveloppe
     # 3,17 x 2,72 x 2,34 m (piles la doc constructeur 3,15 x 2,25 x 2,72).
-    #   haute   : 405 430 triangles (joueur < 15 m)
-    #   moyenne : 101 346 triangles (15-40 m)
-    #   basse   :  12 726 triangles (> 40 m)
+    #   haute   : 405 430 triangles (joueur < 8 m)
+    #   moyenne : 101 346 triangles (8-18 m)
+    #   basse   :  12 726 triangles (> 18 m)
     # Le niveau actif est choisi dans _process selon la distance joueur.
     _vf2tr_lod.clear()
     for chemin_vf in [PROP_VF_2TR, PROP_VF_2TR_MED, PROP_VF_2TR_LOW]:
@@ -1761,13 +1761,14 @@ func _build_expo() -> void:
         label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
         add_child(label)
 
-    # Passerelle "Colony" : le fragment de pont est prolonge sur toute la
-    # ligne d'expo (z = -10) : 20 fragments de 5,14 m tournes a 90 deg,
-    # de 3 m apres le mur ouest (porte) a 3 m avant la cloture du service
-    # maintenance (x = 51,73). Plat : pas de collision.
-    for k_pont in range(20):
-        _place_prop(PROP_BRIDGE, Vector3(-51.93 + 5.14 * k_pont, 0.0, -10.0),
-            Vector3(0.0, PI / 2.0, 0.0), 1.0)
+    # Passerelle "Colony" : fragments NON TOURNES (2,77 m en X, 5,14 m en
+    # Z a rotation zero), poses bout a bout le long de la ligne d'expo
+    # (z = -10) : 37 fragments couvrent -54,9 (3 m apres le mur ouest /
+    # porte) a 47,6 (3 m avant la cloture du service maintenance a 51,73).
+    # Plat : pas de collision.
+    for k_pont in range(37):
+        _place_prop(PROP_BRIDGE, Vector3(-53.515 + 2.77 * k_pont, 0.0, -10.0),
+            Vector3.ZERO, 1.0)
 
 
 ## Piece interieure du bureau : 8 x 10 m derriere le mur du fond
