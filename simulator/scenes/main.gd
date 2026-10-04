@@ -1897,22 +1897,43 @@ func _build_local_wc() -> void:
 
     # Toilettes au fond (mur ouest), face a la porte
     _place_prop("res://assets/props/toilet.glb",
-        Vector3(cxw - 0.38, 0.0, czw), Vector3(0.0, -PI / 2.0, 0.0), 0.45)
-    _add_static_box(Vector3(cxw - 0.38, 0.43, czw), Vector3(0.76, 0.86, 0.54))
+        Vector3(cxw - 0.38, 0.06, czw), Vector3(0.0, -PI / 2.0, 0.0), 0.45)
+    _add_static_box(Vector3(cxw - 0.38, 0.46, czw), Vector3(0.76, 0.86, 0.54))
     # Papier toilette a gauche (mur sud), serviette a droite (mur nord)
     _place_prop("res://assets/props/toilet-paper.glb",
-        Vector3(cxw - 0.5, 0.95, czw + 0.91), Vector3.ZERO, 1.0)
+        Vector3(cxw - 0.5, 0.95, czw + 0.91), Vector3(0.0, PI, 0.0), 1.0)
     _place_prop("res://assets/props/towel.glb",
         Vector3(cxw - 0.5, 1.46, czw - 0.94), Vector3.ZERO, 0.7)
 
     # Gyrophare d'alerte en haut du mur du fond (systeme global des 17)
-    _cree_gyrophare(Vector3(cxw - 0.95, 2.15, czw), false)
+    _cree_gyrophare(Vector3(cxw - 0.97, 2.1, czw), false, true)
 
     # Portes : entree cote hall (sur l'image WC), sortie cote local
     _add_static_box(Vector3(-57.85, 1.14, -13.0),
         Vector3(0.12, 2.28, 1.0), "porte_wc")
     _add_static_box(Vector3(cxw + 0.95, 1.2, czw),
         Vector3(0.12, 2.2, 1.0), "porte_wc_sortie")
+    # Porte visible : panneau + poignee sur le mur est (cote interieur)
+    var porte_mat := StandardMaterial3D.new()
+    porte_mat.albedo_color = Color(0.82, 0.83, 0.85)
+    porte_mat.roughness = 0.5
+    var porte_panneau := MeshInstance3D.new()
+    var porte_box := BoxMesh.new()
+    porte_box.size = Vector3(0.05, 2.1, 1.0)
+    porte_panneau.mesh = porte_box
+    porte_panneau.material_override = porte_mat
+    porte_panneau.position = Vector3(cxw + 0.97, 1.05, czw)
+    add_child(porte_panneau)
+    var poignee := MeshInstance3D.new()
+    var poignee_box := BoxMesh.new()
+    poignee_box.size = Vector3(0.04, 0.04, 0.14)
+    poignee.mesh = poignee_box
+    var poignee_mat := StandardMaterial3D.new()
+    poignee_mat.albedo_color = Color(0.35, 0.36, 0.38)
+    poignee_mat.metallic = 0.8
+    poignee.material_override = poignee_mat
+    poignee.position = Vector3(cxw + 0.93, 1.05, czw + 0.35)
+    add_child(poignee)
 
 
 ## Interrupteur du bureau : allume/eteint la lampe du plafond + son.
@@ -2313,7 +2334,7 @@ func _make_ramp_x(z: float, x_bas: float, x_haut: float, y_haut: float, largeur 
     add_child(body)
 
 
-func _cree_gyrophare(pos: Vector3, retourne := false) -> void:
+func _cree_gyrophare(pos: Vector3, retourne := false, horizontal := false) -> void:
     ## Gyrophare standard : pivot tournant + dome (modele 3,1 m -> echelle
     ## 0,1) + deux faisceaux horizontaux opposes, comme un vrai gyrophare
     ## a reflecteurs. Pivot et faisceaux enregistres pour _process.
@@ -2327,6 +2348,8 @@ func _cree_gyrophare(pos: Vector3, retourne := false) -> void:
     dome.scale = Vector3.ONE * 0.1
     if retourne:
         dome.rotation.x = PI  # plafond : base en haut, dome vers le bas
+    elif horizontal:
+        dome.rotation.z = -PI / 2.0  # mur : axe du dome vers +X (la piece)
     pivot.add_child(dome)
     # Lampe integree du GLB (energie importee a 4348 !) : eteinte
     for lumiere in dome.find_children("*", "Light3D", true, false):
@@ -2340,7 +2363,10 @@ func _cree_gyrophare(pos: Vector3, retourne := false) -> void:
         faisceau.spot_range = 45.0
         faisceau.spot_angle = 30.0
         faisceau.visible = false
-        faisceau.position = Vector3(0.0, -0.15 if retourne else 0.12, 0.0)
+        faisceau.position = Vector3(
+            0.1 if horizontal else 0.0,
+            0.0 if horizontal else (-0.15 if retourne else 0.12),
+            0.0)
         faisceau.rotation.y = direction
         pivot.add_child(faisceau)
         _gyrophare_spots.append(faisceau)
