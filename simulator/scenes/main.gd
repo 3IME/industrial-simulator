@@ -161,6 +161,7 @@ var _chaudiere_player: AudioStreamPlayer3D = null
 var _fumee_parts: Array[GPUParticles3D] = []
 var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
 var _gyrophare_pivots: Array[Node3D] = []
+var _gyrophare_roues: Array[Node3D] = []   # girophares muraux : tournent sur leur axe
 var _lumiere_bureau: OmniLight3D = null
 var _interrupteur_son: AudioStreamPlayer3D = null
 var _chasse_son: AudioStreamPlayer3D = null
@@ -779,6 +780,8 @@ func _process(delta: float) -> void:
         var energie := 12.0 + 6.0 * sin(Time.get_ticks_msec() * 0.012)
         for pivot: Node3D in _gyrophare_pivots:
             pivot.rotation.y += delta * 9.0
+        for roue: Node3D in _gyrophare_roues:
+            roue.rotate_object_local(Vector3.UP, delta * 9.0)
         for faisceau: SpotLight3D in _gyrophare_spots:
             faisceau.visible = true
             faisceau.light_energy = energie
@@ -2399,13 +2402,21 @@ func _cree_gyrophare(pos: Vector3, retourne := false, horizontal := false) -> vo
     var pivot := Node3D.new()
     pivot.position = pos
     add_child(pivot)
+    # Porteuse = noeud qui porte dome et faisceaux. En fixation MURALE,
+    # une roue interne orientee (axe local Y vers +X monde) permet au
+    # dome de tourner sur SON PROPRE axe - comme un vrai gyrophare mural
+    # - au lieu de basculer autour de la verticale.
+    var porteuse := pivot
+    if horizontal:
+        var roue := Node3D.new()
+        roue.rotation.z = -PI / 2.0
+        pivot.add_child(roue)
+        porteuse = roue
     var dome: Node3D = scene_glb.instantiate()
     dome.scale = Vector3.ONE * 0.1
     if retourne:
         dome.rotation.x = PI  # plafond : base en haut, dome vers le bas
-    elif horizontal:
-        dome.rotation.z = -PI / 2.0  # mur : axe du dome vers +X (la piece)
-    pivot.add_child(dome)
+    porteuse.add_child(dome)
     # Lampe integree du GLB (energie importee a 4348 !) : eteinte
     for lumiere in dome.find_children("*", "Light3D", true, false):
         var l_modele: Light3D = lumiere
@@ -2419,13 +2430,16 @@ func _cree_gyrophare(pos: Vector3, retourne := false, horizontal := false) -> vo
         faisceau.spot_angle = 30.0
         faisceau.visible = false
         faisceau.position = Vector3(
-            0.1 if horizontal else 0.0,
-            0.0 if horizontal else (-0.15 if retourne else 0.12),
+            0.0,
+            0.10 if horizontal else (-0.15 if retourne else 0.12),
             0.0)
         faisceau.rotation.y = direction
-        pivot.add_child(faisceau)
+        porteuse.add_child(faisceau)
         _gyrophare_spots.append(faisceau)
-    _gyrophare_pivots.append(pivot)
+    if horizontal:
+        _gyrophare_roues.append(porteuse)
+    else:
+        _gyrophare_pivots.append(pivot)
 
 
 func _build_gyrophares_murs() -> void:
