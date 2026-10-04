@@ -1504,6 +1504,23 @@ func _build_securite_signs() -> void:
     _place_prop(PROP_TRACK_FENCE, Vector3(53.99, 0.0, 14.46), Vector3.ZERO, 1.0)
     _add_static_box(Vector3(53.99, 1.10, 14.46), Vector3(4.18, 2.20, 0.34))
 
+    # Panneau WC sur le mur Est (z = -13, entre l'extincteur et le tour),
+    # face a la salle. Image portrait 1259x2869 -> 0,50 x 1,14 m.
+    var wc_tex = load("res://assets/textures/wc.png")
+    if wc_tex != null:
+        var wc_mat := StandardMaterial3D.new()
+        wc_mat.albedo_texture = wc_tex
+        wc_mat.cull_disabled = true
+        wc_mat.roughness = 0.8
+        var wc_panneau := MeshInstance3D.new()
+        var wc_quad := QuadMesh.new()
+        wc_quad.size = Vector2(0.50, 1.14)
+        wc_quad.material = wc_mat
+        wc_panneau.mesh = wc_quad
+        wc_panneau.position = Vector3(61.88, 1.70, -13.0)
+        wc_panneau.rotation.y = -PI / 2.0  # face vers l'ouest (salle)
+        add_child(wc_panneau)
+
     # Panneau "local maintenance" sur la derniere cloture a droite,
     # face a la salle (banniere 730x234 px -> 1,56 x 0,50 m)
     var panneau_tex = load("res://assets/textures/local-maintenance.png")
