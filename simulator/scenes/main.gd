@@ -1179,6 +1179,8 @@ func _build_hall(belt_length: float) -> void:
     var marche_h := 4.0 / 26.0
     var marche_d := 4.0 / 26.0
     # Rampes : fonction generique, extremites exactes sol/mezzanine
+    _place_prop(PROP_CELL_STAIR, Vector3(33.0, 0.0, mez_z),
+        Vector3(0.0, PI, 0.0), 1.0)
     _make_ramp(-41.5, mez_z + 7.0, mez_z, 4.0)
     _make_ramp(33.0, mez_z + 7.0, mez_z, 4.0)
 
@@ -1932,24 +1934,10 @@ func _make_ramp(x: float, z_bas: float, z_haut: float, y_haut: float) -> void:
     var box := BoxShape3D.new()
     box.size = Vector3(2.0, 0.3, longueur)
     col.shape = box
-    col.rotation.x = -angle
+    col.rotation.x = angle  # POSITIF : le +Z monte (meme sens que l'escalier)
     body.add_child(col)
     body.position = Vector3(x, y_haut / 2.0, (z_bas + z_haut) / 2.0)
     add_child(body)
-
-    # Visuel gris metal
-    var mesh := MeshInstance3D.new()
-    var mbox := BoxMesh.new()
-    mbox.size = Vector3(2.0, 0.3, longueur)
-    mesh.mesh = mbox
-    mesh.rotation.x = -angle
-    mesh.position = body.position
-    var mat := StandardMaterial3D.new()
-    mat.albedo_color = Color(0.30, 0.32, 0.35)
-    mat.metallic = 0.6
-    mat.roughness = 0.4
-    mesh.material_override = mat
-    add_child(mesh)
 
 
 ## Bureau de chantier (site cabin) contre le mur gauche, cote fond
