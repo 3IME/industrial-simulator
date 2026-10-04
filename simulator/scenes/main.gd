@@ -1644,6 +1644,11 @@ func _build_securite_signs() -> void:
     if lod_manager != null:
         lod_manager.register_levels(_vf2tr_lod, [8.0, 18.0],
             Vector3(39.0, 1.0, -28.0))
+
+    # Chariot de stockage a cote de la Haas, cote EST. Sans texte.
+    _place_prop(PROP_STORAGE_CART, Vector3(40.95, 0.50, -28.0),
+        Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(40.95, 0.50, -28.0), Vector3(0.40, 1.00, 0.86))
         for niveau_haas in _vf2tr_lod:
             lod_manager.auto_register(niveau_haas)
 
@@ -1768,8 +1773,6 @@ func _build_expo() -> void:
          "x": -8.0, "y": 0.0, "col": Vector3(1.25, 0.32, 1.17)},
         {"path": PROP_DUMPSTER, "nom": "Benne en acier vert",
          "x": -1.0, "y": 0.0, "col": Vector3(0.8, 0.73, 0.74)},
-        {"path": PROP_STORAGE_CART, "nom": "Chariot de stockage",
-         "x": 6.0, "y": 0.50, "col": Vector3(0.40, 1.00, 0.86)},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -10.0), Vector3.ZERO)
