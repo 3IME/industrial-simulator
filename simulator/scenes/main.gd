@@ -164,6 +164,7 @@ var _gyrophare_pivots: Array[Node3D] = []
 var _lumiere_bureau: OmniLight3D = null
 var _interrupteur_son: AudioStreamPlayer3D = null
 var _chasse_son: AudioStreamPlayer3D = null
+var _lavabo_son: AudioStreamPlayer3D = null
 var _gyrophare_spots: Array[SpotLight3D] = []
 var _fumee_active := false
 var _fumee_ramp_gris: GradientTexture1D = null
@@ -386,6 +387,8 @@ func _clic_interaction(event: InputEvent) -> void:
                     _sortir_wc()
                 elif hit_wc.collider.get_meta("interaction") == "toilettes_wc":
                     _tirer_chasse()
+                elif hit_wc.collider.get_meta("interaction") == "lavabo_wc":
+                    _ouvrir_robinet()
         return
     var cam := get_viewport().get_camera_3d()
     if cam == null:
@@ -1921,7 +1924,17 @@ func _build_local_wc() -> void:
         Vector3(-65.0, 1.46, czw - 0.94), Vector3.ZERO, 0.7)
     _place_prop("res://assets/props/lavabo.glb",
         Vector3(-64.3, 0.5, czw + 0.28), Vector3.ZERO, 1.0)
-    _add_static_box(Vector3(-64.3, 0.5, czw + 0.28), Vector3(0.47, 1.0, 0.56))
+    # Clic sur le lavabo -> lavabo.mp3 (robinet)
+    _add_static_box(Vector3(-64.3, 0.5, czw + 0.28),
+        Vector3(0.47, 1.0, 0.56), "lavabo_wc")
+    _lavabo_son = AudioStreamPlayer3D.new()
+    var son_lavabo = load("res://assets/sounds/lavabo.mp3")
+    if son_lavabo != null:
+        _lavabo_son.stream = son_lavabo
+    _lavabo_son.position = Vector3(-64.3, 0.9, czw + 0.28)
+    _lavabo_son.unit_size = 3.0
+    _lavabo_son.max_db = -2.0
+    add_child(_lavabo_son)
 
     # Gyrophare d'alerte en haut du mur du fond, fixation horizontale
     _cree_gyrophare(Vector3(-65.47, 2.1, czw), false, true)
@@ -1952,6 +1965,13 @@ func _build_local_wc() -> void:
     poignee.material_override = poignee_mat
     poignee.position = Vector3(cxw + 1.18, 1.05, czw + 0.35)
     add_child(poignee)
+
+
+## Robinet du lavabo du local WC (clic sur le lavabo).
+func _ouvrir_robinet() -> void:
+    if _lavabo_son != null:
+        _lavabo_son.play()
+        print("Local WC : robinet du lavabo")
 
 
 ## Tirer la chasse d'eau du local WC (clic sur la cuvette).
