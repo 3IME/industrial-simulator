@@ -168,7 +168,6 @@ var _lavabo_son: AudioStreamPlayer3D = null
 var _gyrophare_spots: Array[SpotLight3D] = []
 var _fumee_active := false
 var _fumee_ramp_gris: GradientTexture1D = null
-var _vf2tr_lod: Array[Node3D] = []   # [haute, moyenne, basse]
 var _fumee_ramp_vert: GradientTexture1D = null
 var _flammes: GPUParticles3D = null
 var _flammes_light: OmniLight3D = null
@@ -1687,23 +1686,8 @@ func _build_securite_signs() -> void:
     #   moyenne : 101 346 triangles (8-18 m)
     #   basse   :  12 726 triangles (> 18 m)
     # Le niveau actif est choisi dans _process selon la distance joueur.
-    _vf2tr_lod.clear()
-    for chemin_vf in [PROP_VF_2TR, PROP_VF_2TR_MED, PROP_VF_2TR_LOW]:
-        var scene_vf: PackedScene = load(chemin_vf)
-        if scene_vf == null:
-            continue
-        var machine_vf: Node3D = scene_vf.instantiate()
-        machine_vf.position = Vector3(39.393, 0.505, -28.399)
-        machine_vf.rotation = Vector3(PI / 2.0, 0.0, 0.0)
-        machine_vf.visible = _vf2tr_lod.is_empty()  # haute visible d'abord
-        add_child(machine_vf)
-        _vf2tr_lod.append(machine_vf)
-    _add_static_box(Vector3(39.0, 1.362, -28.0), Vector3(3.17, 2.72, 2.34))
-    if lod_manager != null:
-        lod_manager.register_levels(_vf2tr_lod, [8.0, 18.0],
-            Vector3(39.0, 1.0, -28.0))
-        for niveau_haas in _vf2tr_lod:
-            lod_manager.auto_register(niveau_haas)
+    _placer_haas(-28.0)   # premiere machine
+    _placer_haas(-18.0)   # deuxieme machine, 10 m devant (sud)
 
     # Chariot de stockage a cote de la Haas, cote EST. Sans texte.
     _place_prop(PROP_STORAGE_CART, Vector3(40.95, 0.50, -28.0),
@@ -1865,6 +1849,28 @@ func _build_expo() -> void:
 ## (invisible depuis l'usine). Vraie porte dans le mur avant : c'est
 ## ELLE qu'on clique pour sortir. La porte de la cabine (dans l'usine)
 ## teleporte vers l'interieur.
+## Machine Haas VF-2TR a trois niveaux de detail, centree en (39, zc),
+## debout face au sud. Chaque machine a son propre groupe LOD.
+func _placer_haas(zc: float) -> void:
+    var niveaux: Array[Node3D] = []
+    for chemin_vf in [PROP_VF_2TR, PROP_VF_2TR_MED, PROP_VF_2TR_LOW]:
+        var scene_vf: PackedScene = load(chemin_vf)
+        if scene_vf == null:
+            continue
+        var machine_vf: Node3D = scene_vf.instantiate()
+        machine_vf.position = Vector3(39.393, 0.505, zc - 0.399)
+        machine_vf.rotation = Vector3(PI / 2.0, 0.0, 0.0)
+        machine_vf.visible = niveaux.is_empty()  # haute qualite d'abord
+        add_child(machine_vf)
+        niveaux.append(machine_vf)
+    _add_static_box(Vector3(39.0, 1.362, zc), Vector3(3.17, 2.72, 2.34))
+    if lod_manager != null:
+        lod_manager.register_levels(niveaux, [8.0, 18.0],
+            Vector3(39.0, 1.0, zc))
+        for niveau_haas in niveaux:
+            lod_manager.auto_register(niveau_haas)
+
+
 ## Local WC : 2,5 x 2 m derriere le mur ouest (acces par la porte WC du
 ## hall). Murs carreles, toilettes au fond (CLIC = chasse d'eau), papier
 ## a gauche, serviette et LAVABO a droite, gyrophare d'alerte horizontal
