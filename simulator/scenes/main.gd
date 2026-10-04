@@ -150,6 +150,8 @@ var _humm_player: AudioStreamPlayer3D = null
 var _chaudiere_player: AudioStreamPlayer3D = null
 var _fumee_parts: Array[GPUParticles3D] = []
 var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
+var _gyrophare: Node3D = null
+var _gyrophare_lumiere: SpotLight3D = null
 var _fumee_active := false
 var _flammes: GPUParticles3D = null
 var _flammes_light: OmniLight3D = null
@@ -676,6 +678,15 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+    # Gyrophare du bureau : rotation ~1,4 tour/s + pulsation bleue
+    # pendant l'alerte (incendie / evacuation / confinement)
+    if _gyrophare != null:
+        if _alarme_active:
+            _gyrophare.rotation.y += delta * 9.0
+            if _gyrophare_lumiere != null:
+                _gyrophare_lumiere.light_energy =                     4.0 + 2.0 * sin(Time.get_ticks_msec() * 0.012)
+        elif _gyrophare_lumiere != null and _gyrophare_lumiere.light_energy > 0.0:
+            _gyrophare_lumiere.light_energy = 0.0
     # Garde-fou periodique : si l'echelle rendue de l'adulte derive
     # (quel que soit la cause), elle est recallee en moins de 2 s.
     if _adult_node != null:
@@ -1164,11 +1175,13 @@ func _build_hall(belt_length: float) -> void:
         _place_prop(PROP_MEZZANINE_FLOOR,
             Vector3(mx + seg_len / 2.0, 0.0, mez_z),
             Vector3.ZERO, 1.0)
-    # Collision du plancher : surface fine marchable a y=4
+    # Collision du plancher : surface fine marchable a y=4.
+    # Largeur MESUREE du modele : 3,04 m (l'ancienne collision de 6,0 m
+    # laissait flotter le joueur ~1,5 m au-dela du deck visuel)
     _add_static_box(Vector3((mez_debut_x + mez_fin_x) / 2.0, mez_y - 0.1, mez_z),
-        Vector3(mez_fin_x - mez_debut_x, 0.2, 6.0))
-    # Garde-corps le long du bord (cote walkway)
-    _add_static_box(Vector3((mez_debut_x + mez_fin_x) / 2.0, mez_y + 0.55, mez_z + 2.9),
+        Vector3(mez_fin_x - mez_debut_x, 0.2, 3.04))
+    # Garde-corps au bord REEL du deck (mez_z + 1,52), plus a +2,9
+    _add_static_box(Vector3((mez_debut_x + mez_fin_x) / 2.0, mez_y + 0.55, mez_z + 1.52),
         Vector3(mez_fin_x - mez_debut_x, 1.1, 0.1))
 
     # ESCALIERS visuels (positions conservees), montent le long de X vers les
@@ -1415,6 +1428,11 @@ func _build_securite_signs() -> void:
     _add_static_box(Vector3(HALL_MAX_X - 0.90, 2.00, 25.0),
         Vector3(1.83, 8.01, 6.00))
 
+    # Jeu industriel realiste : x3, face a la salle, pres de la chaufferie
+    _place_prop(PROP_GAME, Vector3(56.5, 0.90, 30.0),
+        Vector3(0.0, -PI / 2.0, 0.0), 3.0)
+    _add_static_box(Vector3(56.5, 0.90, 30.0), Vector3(4.26, 1.80, 5.70))
+
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
         Vector3(-57.0, 0.0, -20.0), Vector3.ZERO)
@@ -1532,8 +1550,6 @@ func _build_expo() -> void:
          "x": -22.0, "y": 0.95, "col": Vector3(0.7, 1.9, 0.7)},
         {"path": PROP_MODULAR_CONVEYOR, "nom": "Convoyeur modulaire",
          "x": -15.0, "y": 0.25, "col": Vector3(1.9, 0.51, 0.65)},
-        {"path": PROP_GAME, "nom": "Jeu industriel realiste",
-         "x": -8.0, "y": 0.30, "col": Vector3(1.9, 0.6, 1.42)},
         {"path": PROP_DUMPSTER, "nom": "Benne en acier vert",
          "x": -1.0, "y": 0.0, "col": Vector3(0.8, 0.73, 0.74)},
         {"path": PROP_ELEVATOR, "nom": "Ascenseur",
@@ -1799,19 +1815,46 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 3.66, -0.60, -62.0), Vector3(0.0, PI / 2.0, 0.0))
 
 
-    # Golden Play Button a droite de la TV, au 2/3 de la hauteur
-    # Golden Play Button : symbole "play" dore accroche au mur
-    # (le GLB fait 1 cm et son offset le rend invisible — remplace
-    # par un rendu fiable en attendant un meilleur modele)
-    var play_label := Label3D.new()
-    play_label.text = "►"
-    play_label.font_size = 140
-    play_label.modulate = Color(1.0, 0.84, 0.0)
-    play_label.outline_size = 10
-    play_label.outline_modulate = Color(0.5, 0.35, 0.0)
-    play_label.position = Vector3(cx + 1.0, 1.87, cz - 4.68)
-    play_label.rotation.y = PI
-    add_child(play_label)
+    # Gyrophare bleu au plafond du bureau. En alerte (incendie, evacuation
+    # et confinement passent tous par _alarme_active) : le dome tourne et un
+    # projecteur bleu balaye le sol. Modele 3,1 m de diam -> echelle 0,1.
+    var gyro_scene: PackedScene = load("res://assets/props/gyrophare_bleu.glb")
+    if gyro_scene != null:
+        _gyrophare = Node3D.new()
+        _gyrophare.position = Vector3(cx, 2.8, cz)
+        add_child(_gyrophare)
+        var gyro_mesh: Node3D = gyro_scene.instantiate()
+        gyro_mesh.scale = Vector3.ONE * 0.1
+        gyro_mesh.rotation.x = PI  # retourne : base plaquee sous le plafond
+        _gyrophare.add_child(gyro_mesh)
+        # Lampe integree du modele (energie importee a 4348 !) : eteinte
+        for lumiere in gyro_mesh.find_children("*", "Light3D", true, false):
+            var l_modele: Light3D = lumiere
+            l_modele.light_energy = 0.0
+        # Projecteur bleu descendant, excentre du pivot : le disque de
+        # lumiere tourne sur le sol quand le gyrophare tourne
+        _gyrophare_lumiere = SpotLight3D.new()
+        _gyrophare_lumiere.light_color = Color(0.15, 0.48, 1.0)
+        _gyrophare_lumiere.spot_range = 16.0
+        _gyrophare_lumiere.spot_angle = 38.0
+        _gyrophare_lumiere.position = Vector3(0.6, -0.25, 0.0)
+        _gyrophare_lumiere.rotation.x = -PI / 2.0  # pointe vers le sol
+        _gyrophare.add_child(_gyrophare_lumiere)
+
+    # Golden Play Button (modele utilisateur modifie, 5,5 x 15 x 12 mm) :
+    # agrandi x14 en hauteur/largeur et x4 en epaisseur -> plaque ~21 x 17 cm,
+    # accrochee au mur du fond a droite de la TV, au 2/3 de la hauteur
+    var golden_scene: PackedScene = load("res://assets/props/golden_play_button.glb")
+    if golden_scene != null:
+        var plaque := Node3D.new()
+        plaque.position = Vector3(cx + 1.0, 1.87, cz - 4.68)
+        plaque.rotation.y = -PI / 2.0  # face tournee vers la porte
+        add_child(plaque)
+        var golden_mesh: Node3D = golden_scene.instantiate()
+        golden_mesh.scale = Vector3(4.0, 14.0, 14.0)
+        # recentre le modele minuscule sur le pivot mural (centre AABB)
+        golden_mesh.position = Vector3(0.103, -0.078, -0.030) * golden_mesh.scale
+        plaque.add_child(golden_mesh)
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
