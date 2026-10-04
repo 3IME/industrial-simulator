@@ -250,6 +250,22 @@ func _ready() -> void:
     )
     print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-8 : annonces | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
     if lod_manager != null:
+        # Zones mutuellement exclusives : dans le bureau -> atelier masque,
+        # dans l'atelier -> bureau masque, dans le hall -> tout visible.
+        var z_bureau: int = lod_manager.register_zone("bureau",
+            AABB(Vector3(-59.0, -1.0, -66.5), Vector3(9.5, 5.0, 11.0)))
+        var z_atelier: int = lod_manager.register_zone("atelier",
+            AABB(Vector3(50.0, -1.0, -17.0), Vector3(12.0, 8.0, 33.0)))
+        lod_manager.zone_exclusive(z_bureau, z_atelier)
+        # jamais masques : gyrophares (alerte), robot, joueur
+        var exclus_zone: Array = [_robot_view]
+        exclus_zone.append_array(_gyrophare_pivots)
+        var nb_bureau: int = lod_manager.zone_ramasser_par_position(
+            z_bureau, self, exclus_zone)
+        var nb_atelier: int = lod_manager.zone_ramasser_par_position(
+            z_atelier, self, exclus_zone)
+        print("Zones LOD : bureau ", nb_bureau, " objets, atelier ",
+            nb_atelier, " objets")
         print("LOD global : ", lod_manager.stats())
     _show_build_badge()
     _verre_player = AudioStreamPlayer.new()

@@ -32,6 +32,7 @@ var _origine: Node3D = null
 var _groupes: Array = []
 var _chrono := 0.0
 var _instances_gerees := 0
+var _zones: Array = []      # [{nom, boite, racines, exclus, visible}]
 
 
 func setup(p_origine: Node3D) -> void:
@@ -75,19 +76,73 @@ func register_levels(noeuds: Array, seuils: Array, centre: Vector3) -> void:
                      "centre": centre, "actif": 0})
 
 
+## ZONES : volumes mutuellement exclusifs. Le joueur dans une zone ->
+## les zones qui lui sont exclusives sont masquees entierement ; dans le
+## hall principal (aucune zone), tout reste visible. Les frontieres
+## sont des murs : pas besoin d'hysteresis.
+
+func register_zone(nom: String, boite: AABB) -> int:
+    _zones.append({"nom": nom, "boite": boite, "racines": [],
+                   "exclus": [], "visible": true})
+    return _zones.size() - 1
+
+
+func zone_exclusive(a: int, b: int) -> void:
+    ## Zones mutuellement exclusives (chacune masque l'autre).
+    if not _zones[a]["exclus"].has(b):
+        _zones[a]["exclus"].append(b)
+    if not _zones[b]["exclus"].has(a):
+        _zones[b]["exclus"].append(a)
+
+
+func zone_ramasser_par_position(id_zone: int, racine: Node3D, exclusions: Array = []) -> int:
+    ## Ajoute a la zone les enfants DIRECTS de `racine` (props, meubles,
+    ## murs...) dont la position est dans la boite. Retourne le compte.
+    var boite: AABB = _zones[id_zone]["boite"]
+    var compte := 0
+    for enfant in racine.get_children():
+        var n3d := enfant as Node3D
+        if n3d == null or exclusions.has(enfant):
+            continue
+        if boite.has_point(n3d.global_position):
+            _zones[id_zone]["racines"].append(enfant)
+            compte += 1
+    return compte
+
+
+func _maj_zones(pos: Vector3) -> void:
+    var active := -1
+    for i in _zones.size():
+        if _zones[i]["boite"].has_point(pos):
+            active = i
+            break
+    for i in _zones.size():
+        var cible: bool = not (active != -1 and _zones[active]["exclus"].has(i))
+        if _zones[i]["visible"] != cible:
+            for r in _zones[i]["racines"]:
+                if is_instance_valid(r):
+                    r.visible = cible
+            _zones[i]["visible"] = cible
+
+
 func stats() -> String:
-    return "%d instances en culling, %d groupe(s) multi-niveaux" % [
-        _instances_gerees, _groupes.size()]
+    var racines := 0
+    for z in _zones:
+        racines += z["racines"].size()
+    return "%d instances en culling, %d groupe(s) multi-niveaux, %d zone(s) (%d objets)" % [
+        _instances_gerees, _groupes.size(), _zones.size(), racines]
 
 
 func _process(delta: float) -> void:
-    if _origine == null or _groupes.is_empty():
+    if _origine == null or (_groupes.is_empty() and _zones.is_empty()):
         return
     _chrono += delta
     if _chrono < PERIODE:
         return
     _chrono = 0.0
     var pos := _origine.global_position
+    if not _zones.is_empty():
+        _maj_zones(pos)
     for groupe in _groupes:
         var dist := pos.distance_to(groupe["centre"])
         var cible: int = groupe["actif"]
