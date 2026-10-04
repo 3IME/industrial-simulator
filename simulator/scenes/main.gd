@@ -42,6 +42,9 @@ const PROP_ADULT := "res://assets/props/adult_static.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
 const PROP_IRON_MINER := "res://assets/props/iron_miner.glb"
 const PROP_BRIDGE := "res://assets/props/bridge_fragment.glb"
+const PROP_TOOL_TROLLEYS := "res://assets/props/tool_trolleys.glb"
+const PROP_STRETCHFAB := "res://assets/props/stretchfab.glb"
+const PROP_STORAGE_CART := "res://assets/props/storage_cart.glb"
 const PROP_VOXEL_MACHINE := "res://assets/props/voxel_machine.glb"
 const PROP_VOXEL_MACHINE_2 := "res://assets/props/voxel_machine_2.glb"
 const PROP_MODULAR_CONVEYOR := "res://assets/props/modular_conveyor.glb"
@@ -1732,10 +1735,14 @@ func _build_expo() -> void:
          "x": -29.0, "y": 0.67, "col": Vector3(1.9, 1.35, 1.9)},
         {"path": PROP_MODULAR_CONVEYOR, "nom": "Convoyeur modulaire",
          "x": -15.0, "y": 0.25, "col": Vector3(1.9, 0.51, 0.65)},
+        {"path": PROP_TOOL_TROLLEYS, "nom": "Chariots d'outils",
+         "x": -22.0, "y": 0.84, "col": Vector3(0.60, 1.71, 3.23)},
+        {"path": PROP_STRETCHFAB, "nom": "Stretchfab",
+         "x": -8.0, "y": 0.0, "col": Vector3(1.25, 0.32, 1.17)},
         {"path": PROP_DUMPSTER, "nom": "Benne en acier vert",
          "x": -1.0, "y": 0.0, "col": Vector3(0.8, 0.73, 0.74)},
-        {"path": PROP_BRIDGE, "nom": "Fragment de pont",
-         "x": 20.0, "y": 0.0, "col": Vector3.ZERO},    # plat : pas de collision
+        {"path": PROP_STORAGE_CART, "nom": "Chariot de stockage",
+         "x": 6.0, "y": 0.50, "col": Vector3(0.40, 1.00, 0.86)},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -10.0), Vector3.ZERO)
@@ -1753,6 +1760,14 @@ func _build_expo() -> void:
         label.position = Vector3(item.x, 0.02, -10.0 + item.col.z / 2.0 + 1.1)
         label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
         add_child(label)
+
+    # Passerelle "Colony" : le fragment de pont est prolonge sur toute la
+    # ligne d'expo (z = -10) : 20 fragments de 5,14 m tournes a 90 deg,
+    # de 3 m apres le mur ouest (porte) a 3 m avant la cloture du service
+    # maintenance (x = 51,73). Plat : pas de collision.
+    for k_pont in range(20):
+        _place_prop(PROP_BRIDGE, Vector3(-51.93 + 5.14 * k_pont, 0.0, -10.0),
+            Vector3(0.0, PI / 2.0, 0.0), 1.0)
 
 
 ## Piece interieure du bureau : 8 x 10 m derriere le mur du fond
