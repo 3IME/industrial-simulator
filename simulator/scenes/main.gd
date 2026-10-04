@@ -1162,7 +1162,7 @@ func _build_hall(belt_length: float) -> void:
     for mx in range(int(mez_debut_x), int(mez_fin_x), 6):
         var seg_len: float = minf(6.0, mez_fin_x - mx)
         _place_prop(PROP_MEZZANINE_FLOOR,
-            Vector3(mx + seg_len / 2.0, mez_y, mez_z),
+            Vector3(mx + seg_len / 2.0, 0.0, mez_z),
             Vector3.ZERO, 1.0)
     # Collision du plancher : surface fine marchable a y=4
     _add_static_box(Vector3((mez_debut_x + mez_fin_x) / 2.0, mez_y - 0.1, mez_z),
@@ -1178,12 +1178,11 @@ func _build_hall(belt_length: float) -> void:
     var r1 := StaticBody3D.new()
     var rs1 := CollisionShape3D.new()
     var rb1 := BoxShape3D.new()
-    rb1.size = Vector3(2.0, 0.15, 8.0)
+    rb1.size = Vector3(2.0, 0.15, 5.7)
     rs1.shape = rb1
     r1.add_child(rs1)
     r1.position = Vector3(-43.0, 2.0, mez_z + 2.0)
     r1.rotation.x = -atan(4.0 / 4.0)
-    r1.scale = Vector3(1, 1, 0.65)
     add_child(r1)
 
     # ESCALIER 2 (x=34) : descend vers +X
@@ -1192,12 +1191,11 @@ func _build_hall(belt_length: float) -> void:
     var r2 := StaticBody3D.new()
     var rs2 := CollisionShape3D.new()
     var rb2 := BoxShape3D.new()
-    rb2.size = Vector3(2.0, 0.15, 8.0)
+    rb2.size = Vector3(2.0, 0.15, 5.7)
     rs2.shape = rb2
     r2.add_child(rs2)
     r2.position = Vector3(34.0, 2.0, mez_z + 2.0)
     r2.rotation.x = -atan(4.0 / 4.0)
-    r2.scale = Vector3(1, 1, 0.65)
     add_child(r2)
 
     _build_office_cabin()
