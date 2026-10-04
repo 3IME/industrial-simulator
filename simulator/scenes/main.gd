@@ -186,6 +186,8 @@ var box_visual: Node3D
 var entry_lamp: MeshInstance3D
 var exit_lamp: MeshInstance3D
 var hud = null
+var lod_manager: LodManager = null
+var _robot_view: Node3D = null
 
 
 const BUILD_TAG := "e9553ef · adulte 1,60 m + garde-fou auto"
@@ -229,6 +231,8 @@ func _ready() -> void:
     var belt_length := 2.0
     if conveyor != null:
         belt_length = conveyor.length
+    lod_manager = LodManager.new()
+    add_child(lod_manager)
     _build_hall(belt_length)
     _build_visuals()
     _spawn_robot()
@@ -245,6 +249,8 @@ func _ready() -> void:
         func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     )
     print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-8 : annonces | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
+    if lod_manager != null:
+        print("LOD global : ", lod_manager.stats())
     _show_build_badge()
     _verre_player = AudioStreamPlayer.new()
     add_child(_verre_player)
@@ -703,13 +709,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
-    # LOD machine Haas VF-2TR : haute / moyenne / basse selon distance
-    if _vf2tr_lod.size() == 3 and player_node != null:
-        var dist_haas := player_node.global_position.distance_to(
-            Vector3(39.0, 1.0, -28.0))
-        var niveau_vf := 0 if dist_haas < 8.0 else (1 if dist_haas < 18.0 else 2)
-        for i_vf in range(3):
-            _vf2tr_lod[i_vf].visible = (i_vf == niveau_vf)
+    if lod_manager != null and player_node != null:
+        lod_manager.setup_si_absent(player_node)
 
     # Gyrophares (bureau + 16 murs) : rotation ~1,4 tour/s, faisceaux bleus
     # horizontaux qui pulsent pendant l'alerte (incendie/evac/confinement)
@@ -821,10 +822,13 @@ func _spawn_robot() -> void:
     if robot_machine == null:
         return
     var view := RobotKukaView.new()
+    _robot_view = view
     view.position = Vector3(2.6, 0, -1.6)
     view.rotation.y = -PI / 2.0    # portee du bras (+X) tournee vers la bande (+Z)
     add_child(view)
     view.setup(robot_machine)
+    if lod_manager != null:
+        lod_manager.register_cull(_robot_view, 130.0)
     # Enveloppe de collision approximative du bras en mouvement
     _add_static_box(Vector3(2.6, 0.6, -1.6), Vector3(1.4, 1.2, 1.4))
 
@@ -1367,6 +1371,8 @@ func _place_prop(path: String, pos: Vector3, rot: Vector3, prop_scale := 1.0) ->
     node.rotation = rot
     node.scale = Vector3.ONE * prop_scale
     add_child(node)
+    if lod_manager != null:
+        lod_manager.auto_register(node)
     return node
 
 
@@ -1619,6 +1625,9 @@ func _build_securite_signs() -> void:
         add_child(machine_vf)
         _vf2tr_lod.append(machine_vf)
     _add_static_box(Vector3(39.0, 1.362, -28.0), Vector3(3.17, 2.72, 2.34))
+    if lod_manager != null:
+        lod_manager.register_levels(_vf2tr_lod, [8.0, 18.0],
+            Vector3(39.0, 1.0, -28.0))
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
@@ -1760,6 +1769,8 @@ func _build_expo() -> void:
         label.position = Vector3(item.x, 0.02, -10.0 + item.col.z / 2.0 + 1.1)
         label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
         add_child(label)
+        if lod_manager != null:
+            lod_manager.register_cull(label, LodManager.DIST_LABEL)
 
     # Passerelle "Colony" : fragments NON TOURNES (2,77 m en X, 5,14 m en
     # Z a rotation zero), poses bout a bout le long de la ligne d'expo
@@ -2246,6 +2257,8 @@ func _build_expo2() -> void:
         label.position = Vector3(item.x, 0.02, -16.0 + item.col.z / 2.0 + 1.1)
         label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
         add_child(label)
+        if lod_manager != null:
+            lod_manager.register_cull(label, LodManager.DIST_LABEL)
 
 
 # ---------------------------------------------------------------------------
