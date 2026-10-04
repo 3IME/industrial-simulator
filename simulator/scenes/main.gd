@@ -1568,9 +1568,9 @@ func _build_securite_signs() -> void:
     # longueur et largeur piles l'enveloppe constructeur 3,15 x 2,25 ;
     # hauteur modele 2,28, doc 2,72 avec partie haute). echelle 1,
     # en (39, -28).
-    _place_prop(PROP_VF_2TR, Vector3(39.4, 0.773, -27.333),
-        Vector3.ZERO, 1.0)
-    _add_static_box(Vector3(39.0, 1.14, -28.0), Vector3(3.16, 2.28, 2.35))
+    _place_prop(PROP_VF_2TR, Vector3(39.4, 0.505, -28.365),
+        Vector3(PI / 2.0, 0.0, 0.0), 1.0)
+    _add_static_box(Vector3(39.0, 1.17, -28.0), Vector3(3.16, 2.35, 2.28))
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
