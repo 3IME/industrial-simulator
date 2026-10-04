@@ -1482,11 +1482,21 @@ func _build_securite_signs() -> void:
         _add_static_box(Vector3(52.34, 0.88, zt), Vector3(0.87, 1.76, 1.90))
 
     # 4 armoires scolaires : 2 a gauche (nord) et 2 a droite (sud) des
-    # etablis bleus, dos a la cloture, face aux machines.
-    # Modele 3,95 m de haut -> echelle 0,5 (~2 m).
+    # etablis bleus, dos COLLE a la cloture (face est = x 51,90), face aux
+    # machines. Modele 3,95 m de haut -> echelle 0,5 (~2 m). Le GLB est une
+    # vitrine dont les battants sont modelises OUVERTS en biais (ils
+    # donnaient l'impression d'armoires tournees) : on les masque.
     for za in [-6.26, -7.58, 6.26, 7.58]:
-        _place_prop(PROP_SCHOOL_CABINET, Vector3(52.50, 0.106, za),
-            Vector3(0.0, PI / 2.0, 0.0), 0.5)
+        var cab_scene: PackedScene = load(PROP_SCHOOL_CABINET)
+        if cab_scene == null:
+            continue
+        var cab: Node3D = cab_scene.instantiate()
+        cab.position = Vector3(52.50, 0.106, za)
+        cab.rotation = Vector3(0.0, PI / 2.0, 0.0)
+        cab.scale = Vector3.ONE * 0.5
+        for partie in cab.find_children("Cube_02[56]*", "MeshInstance3D", true, false):
+            partie.visible = false  # battants ouverts du GLB : masques
+        add_child(cab)
         _add_static_box(Vector3(52.50, 0.99, za), Vector3(1.20, 1.97, 1.22))
 
     # Barriere d'angle en "L" : au bout a droite (sud) de la ligne de
