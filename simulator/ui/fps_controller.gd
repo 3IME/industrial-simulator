@@ -127,6 +127,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+    floor_max_angle = deg_to_rad(55.0)  # marcher sur les rampes/escaliers
     if not is_on_floor():
         velocity.y -= GRAVITY * delta
     if Input.is_physical_key_pressed(KEY_SPACE) and is_on_floor():

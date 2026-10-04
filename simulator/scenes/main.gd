@@ -1148,12 +1148,16 @@ func _build_hall(belt_length: float) -> void:
     _build_alarmes()
     _build_expo()
     _build_expo2()
-    # Marches gravissables de l'escalier de cage (x=-17.6, z=-16)
-    # 12 marches de 0,40 m de haut, 0,38 m de profond
-    for marche in range(12):
-        _add_static_box(
-            Vector3(-17.6, 0.20 + marche * 0.40, -16.0 - 2.27 + marche * 0.38 + 0.19),
-            Vector3(1.27, 0.40, 0.38))
+    # Rampe gravissable de l'escalier de cage (surface inclinee lisse)
+    var ramp_body := StaticBody3D.new()
+    var ramp_shape := CollisionShape3D.new()
+    var ramp_box := BoxShape3D.new()
+    ramp_box.size = Vector3(1.27, 0.10, 6.66)  # largeur x epaisseur x longueur pente
+    ramp_shape.shape = ramp_box
+    ramp_body.add_child(ramp_shape)
+    ramp_body.position = Vector3(-17.6, 2.44, -16.0)
+    ramp_body.rotation.x = -atan(4.88 / 4.54)
+    add_child(ramp_body)
     _build_office_cabin()
     _build_bureau_interieur()
 
