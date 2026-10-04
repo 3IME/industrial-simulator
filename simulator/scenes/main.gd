@@ -1444,6 +1444,30 @@ func _build_securite_signs() -> void:
     _place_prop(PROP_ELEVATOR, Vector3(57.0, 0.0, -43.8), Vector3.ZERO, 3.5)
     _add_static_box(Vector3(57.0, 1.5, -43.8), Vector3(2.21, 3.0, 2.12))
 
+    # Atelier mur Est : fraiseuse, presse hydraulique, presse a plier et
+    # perceuse a colonne entre les 2 extincteurs (z = -15 / +15), dos au
+    # mur, face a la salle, 1,50 m d'ecart entre machines. SANS textes.
+    _place_prop(PROP_VERTICAL_MILL, Vector3(61.15, 0.0, -4.62),
+        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(61.15, 1.30, -4.62), Vector3(1.39, 2.59, 1.39))
+    _place_prop(PROP_HYDRAULIC_PRESS, Vector3(61.44, 0.0, -1.65),
+        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(61.44, 1.13, -1.65), Vector3(0.82, 2.26, 1.54))
+    _place_prop(PROP_PRESS_BRAKE, Vector3(61.16, 0.0, 1.79),
+        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(61.16, 1.05, 1.79), Vector3(1.38, 2.10, 2.34))
+    _place_prop(PROP_PILLAR_DRILL, Vector3(61.51, 0.0, 4.89),
+        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(61.51, 1.08, 4.89), Vector3(0.68, 2.16, 0.85))
+
+    # Clotures de voie : 5 m a l'ouest du mur Est, sur toute la longueur
+    # entre les 2 extincteurs (7 sections de 4,18 m bout a bout)
+    for k in range(-3, 4):
+        var zf: float = 4.18 * k
+        _place_prop(PROP_TRACK_FENCE, Vector3(56.73, 0.0, zf),
+            Vector3(0.0, PI / 2.0, 0.0), 1.0)
+        _add_static_box(Vector3(56.73, 1.10, zf), Vector3(0.34, 2.20, 4.18))
+
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
         Vector3(-57.0, 0.0, -20.0), Vector3.ZERO)
@@ -2036,22 +2060,12 @@ func _build_expo2() -> void:
     var items := [
         {"path": PROP_BOLLARD, "nom": "Borne de securite jaune",
          "x": -56.0, "y": 0.0, "s": 1.0, "col": Vector3(0.24, 0.90, 0.24)},
-        {"path": PROP_TRACK_FENCE, "nom": "Cloture de voie",
-         "x": -49.6, "y": 0.0, "s": 1.0, "col": Vector3(4.18, 2.20, 0.34)},
         {"path": PROP_DECK_PLATE, "nom": "Plaque de caillebotis",
          "x": -43.2, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},
         {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
          "x": 8.0, "y": 0.0, "s": 1.0, "col": Vector3(1.14, 0.93, 0.86)},
         {"path": PROP_ENGINE_LATHE, "nom": "Tour d'atelier",
          "x": 14.4, "y": 0.0, "s": 1.0, "col": Vector3(2.51, 2.00, 1.04)},
-        {"path": PROP_PILLAR_DRILL, "nom": "Perceuse a colonne",
-         "x": 20.8, "y": 0.0, "s": 1.0, "col": Vector3(0.85, 2.16, 0.68)},
-        {"path": PROP_PRESS_BRAKE, "nom": "Presse a plier la tole",
-         "x": 27.2, "y": 0.0, "s": 1.0, "col": Vector3(2.34, 2.10, 1.38)},
-        {"path": PROP_HYDRAULIC_PRESS, "nom": "Presse hydraulique",
-         "x": 33.6, "y": 0.0, "s": 1.0, "col": Vector3(1.54, 2.26, 0.82)},
-        {"path": PROP_VERTICAL_MILL, "nom": "Fraiseuse verticale",
-         "x": 40.0, "y": 0.0, "s": 1.0, "col": Vector3(1.39, 2.59, 1.39)},
         {"path": PROP_TRANSPALLET, "nom": "Transpallet",
          "x": 46.4, "y": 0.01, "s": 1.0, "col": Vector3(0.62, 1.26, 1.71)},
     ]
