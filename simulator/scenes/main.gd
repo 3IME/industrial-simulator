@@ -1174,29 +1174,22 @@ func _build_hall(belt_length: float) -> void:
     # ESCALIER 1 (x=-43) : monte vers +X
     _place_prop(PROP_CELL_STAIR, Vector3(-43.0, 0.0, mez_z),
         Vector3(0.0, PI / 2.0, 0.0), 1.0)
-    # rampe marchable (rotation autour de X, monte vers +X)
-    var r1 := StaticBody3D.new()
-    var rs1 := CollisionShape3D.new()
-    var rb1 := BoxShape3D.new()
-    rb1.size = Vector3(2.0, 0.15, 5.7)
-    rs1.shape = rb1
-    r1.add_child(rs1)
-    r1.position = Vector3(-43.0, 2.0, mez_z + 2.0)
-    r1.rotation.x = -atan(4.0 / 4.0)
-    add_child(r1)
+    # Marches AABB fines (collision garantie, pas de rotation)
+    # 26 marches de 0,155 m de haut, gravissables avec floor_snap_length
+    var marche_h := 4.0 / 26.0
+    var marche_d := 4.0 / 26.0
+    for i in range(26):
+        _add_static_box(
+            Vector3(-43.0, (i + 0.5) * marche_h, mez_z + 2.0 - 2.0 + (i + 0.5) * marche_d),
+            Vector3(2.0, marche_h, marche_d))
 
     # ESCALIER 2 (x=34) : descend vers +X
     _place_prop(PROP_CELL_STAIR, Vector3(34.0, 0.0, mez_z),
         Vector3(0.0, -PI / 2.0, 0.0), 1.0)
-    var r2 := StaticBody3D.new()
-    var rs2 := CollisionShape3D.new()
-    var rb2 := BoxShape3D.new()
-    rb2.size = Vector3(2.0, 0.15, 5.7)
-    rs2.shape = rb2
-    r2.add_child(rs2)
-    r2.position = Vector3(34.0, 2.0, mez_z + 2.0)
-    r2.rotation.x = -atan(4.0 / 4.0)
-    add_child(r2)
+    for i2 in range(26):
+        _add_static_box(
+            Vector3(34.0, (i2 + 0.5) * marche_h, mez_z + 2.0 - 2.0 + (i2 + 0.5) * marche_d),
+            Vector3(2.0, marche_h, marche_d))
 
     _build_office_cabin()
     _build_bureau_interieur()
