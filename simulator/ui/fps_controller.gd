@@ -90,18 +90,32 @@ func _ready() -> void:
 
     # Reticule discret au centre de l'ecran : le point vise par le clic
     var viseur_couche := CanvasLayer.new()
-    var viseur := Label.new()
-    viseur.text = "+"
-    viseur.add_theme_font_size_override("font_size", 22)
-    viseur.add_theme_color_override("font_color", Color(1, 1, 1, 0.9))
-    viseur.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
-    viseur.add_theme_constant_override("outline_size", 6)
-    viseur_couche.add_child(viseur)
+    _viseur = Label.new()
+    _viseur.text = "+"
+    _viseur.add_theme_font_size_override("font_size", 22)
+    _viseur.add_theme_color_override("font_color", Color(1, 1, 1, 0.9))
+    _viseur.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+    _viseur.add_theme_constant_override("outline_size", 6)
+    viseur_couche.add_child(_viseur)
     add_child(viseur_couche)
-    # centrage manuel deterministe (les presets d'ancrage ont deja piégé)
-    viseur.position = (get_viewport().get_visible_rect().size - Vector2(14.0, 24.0)) / 2.0
+    # centrage manuel deterministe (les presets d'ancrage ont deja piégé),
+    # refait a chaque redimensionnement de la fenetre
+    _centrer_viseur()
+    get_viewport().size_changed.connect(_centrer_viseur)
 
     _setup_footstepper()
+
+
+var _viseur: Label = null
+
+
+## Recentre le reticule : appele au demarrage puis a chaque changement de
+## taille de la fenetre (signal size_changed du viewport).
+func _centrer_viseur() -> void:
+    if _viseur == null:
+        return
+    var taille := _viseur.get_minimum_size()
+    _viseur.position = (get_viewport().get_visible_rect().size - taille) / 2.0
 
 
 ## Ne JAMAIS quitter (ni changer de scene) en laissant la souris capturee :
