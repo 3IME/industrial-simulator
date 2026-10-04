@@ -150,8 +150,9 @@ var _humm_player: AudioStreamPlayer3D = null
 var _chaudiere_player: AudioStreamPlayer3D = null
 var _fumee_parts: Array[GPUParticles3D] = []
 var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
-var _gyrophare: Node3D = null
-var _gyrophare_lumiere: SpotLight3D = null
+var _gyrophare_pivots: Array[Node3D] = []
+var _gyrophare_spots: Array[SpotLight3D] = []
+var _golden_plaque: Node3D = null
 var _fumee_active := false
 var _flammes: GPUParticles3D = null
 var _flammes_light: OmniLight3D = null
@@ -678,15 +679,21 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
-    # Gyrophare du bureau : rotation ~1,4 tour/s + pulsation bleue
-    # pendant l'alerte (incendie / evacuation / confinement)
-    if _gyrophare != null:
-        if _alarme_active:
-            _gyrophare.rotation.y += delta * 9.0
-            if _gyrophare_lumiere != null:
-                _gyrophare_lumiere.light_energy =                     4.0 + 2.0 * sin(Time.get_ticks_msec() * 0.012)
-        elif _gyrophare_lumiere != null and _gyrophare_lumiere.light_energy > 0.0:
-            _gyrophare_lumiere.light_energy = 0.0
+    # Gyrophares (bureau + 16 murs) : rotation ~1,4 tour/s, faisceaux bleus
+    # horizontaux qui pulsent pendant l'alerte (incendie/evac/confinement)
+    if _alarme_active:
+        var energie := 12.0 + 6.0 * sin(Time.get_ticks_msec() * 0.012)
+        for pivot: Node3D in _gyrophare_pivots:
+            pivot.rotation.y += delta * 9.0
+        for faisceau: SpotLight3D in _gyrophare_spots:
+            faisceau.visible = true
+            faisceau.light_energy = energie
+    else:
+        for faisceau: SpotLight3D in _gyrophare_spots:
+            faisceau.visible = false
+    # Golden Play Button : vitrine, rotation lente
+    if _golden_plaque != null:
+        _golden_plaque.rotation.y += delta * 0.7
     # Garde-fou periodique : si l'echelle rendue de l'adulte derive
     # (quel que soit la cause), elle est recallee en moins de 2 s.
     if _adult_node != null:
@@ -1165,7 +1172,7 @@ func _build_hall(belt_length: float) -> void:
 
     # Plancher a 4 m : visuel + collision marchable
     var mez_y := 4.0
-    var mez_z := HALL_MIN_Z + 3.0  # 3 m du mur
+    var mez_z := HALL_MIN_Z + 2.8  # 2,8 m du mur (rapprochee de 20 cm)
     var mez_debut_x := -40.0
     var mez_fin_x := 31.0
 
@@ -1202,6 +1209,7 @@ func _build_hall(belt_length: float) -> void:
 
     _build_office_cabin()
     _build_bureau_interieur()
+    _build_gyrophares_murs()
 
 
 func _build_extinguisher(anchor: Vector3, wall_rotation: float) -> void:
@@ -1428,10 +1436,10 @@ func _build_securite_signs() -> void:
     _add_static_box(Vector3(HALL_MAX_X - 0.90, 2.00, 25.0),
         Vector3(1.83, 8.01, 6.00))
 
-    # Jeu industriel realiste : x3, face a la salle, pres de la chaufferie
-    _place_prop(PROP_GAME, Vector3(56.5, 0.90, 30.0),
+    # Jeu industriel realiste : x3, face a la salle, 5 m a l'ouest de la chaufferie
+    _place_prop(PROP_GAME, Vector3(51.5, 0.90, 30.0),
         Vector3(0.0, -PI / 2.0, 0.0), 3.0)
-    _add_static_box(Vector3(56.5, 0.90, 30.0), Vector3(4.26, 1.80, 5.70))
+    _add_static_box(Vector3(51.5, 0.90, 30.0), Vector3(4.26, 1.80, 5.70))
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
@@ -1815,46 +1823,25 @@ func _build_bureau_interieur() -> void:
         Vector3(cx - 3.66, -0.60, -62.0), Vector3(0.0, PI / 2.0, 0.0))
 
 
-    # Gyrophare bleu au plafond du bureau. En alerte (incendie, evacuation
-    # et confinement passent tous par _alarme_active) : le dome tourne et un
-    # projecteur bleu balaye le sol. Modele 3,1 m de diam -> echelle 0,1.
-    var gyro_scene: PackedScene = load("res://assets/props/gyrophare_bleu.glb")
-    if gyro_scene != null:
-        _gyrophare = Node3D.new()
-        _gyrophare.position = Vector3(cx, 2.8, cz)
-        add_child(_gyrophare)
-        var gyro_mesh: Node3D = gyro_scene.instantiate()
-        gyro_mesh.scale = Vector3.ONE * 0.1
-        gyro_mesh.rotation.x = PI  # retourne : base plaquee sous le plafond
-        _gyrophare.add_child(gyro_mesh)
-        # Lampe integree du modele (energie importee a 4348 !) : eteinte
-        for lumiere in gyro_mesh.find_children("*", "Light3D", true, false):
-            var l_modele: Light3D = lumiere
-            l_modele.light_energy = 0.0
-        # Projecteur bleu descendant, excentre du pivot : le disque de
-        # lumiere tourne sur le sol quand le gyrophare tourne
-        _gyrophare_lumiere = SpotLight3D.new()
-        _gyrophare_lumiere.light_color = Color(0.15, 0.48, 1.0)
-        _gyrophare_lumiere.spot_range = 16.0
-        _gyrophare_lumiere.spot_angle = 38.0
-        _gyrophare_lumiere.position = Vector3(0.6, -0.25, 0.0)
-        _gyrophare_lumiere.rotation.x = -PI / 2.0  # pointe vers le sol
-        _gyrophare.add_child(_gyrophare_lumiere)
+    # Gyrophare bleu du bureau : a mi-chemin entre la lampe (cz) et la
+    # porte (cz + 4,9), plaque au plafond. En alerte (incendie, evacuation,
+    # confinement -> _alarme_active) le dome tourne et deux faisceaux bleus
+    # horizontaux balaient la piece, comme un vrai gyrophare.
+    _cree_gyrophare(Vector3(cx, 2.8, cz + 2.45), true)
 
     # Golden Play Button (modele utilisateur modifie, 5,5 x 15 x 12 mm) :
-    # agrandi x14 en hauteur/largeur et x4 en epaisseur -> plaque ~21 x 17 cm,
-    # accrochee au mur du fond a droite de la TV, au 2/3 de la hauteur
+    # agrandi x20 en hauteur/largeur, x5 en epaisseur -> plaque ~31 x 24 cm,
+    # exposee AU MILIEU DU BUREAU a hauteur des yeux, en rotation lente
     var golden_scene: PackedScene = load("res://assets/props/golden_play_button.glb")
     if golden_scene != null:
-        var plaque := Node3D.new()
-        plaque.position = Vector3(cx + 1.0, 1.87, cz - 4.68)
-        plaque.rotation.y = -PI / 2.0  # face tournee vers la porte
-        add_child(plaque)
+        _golden_plaque = Node3D.new()
+        _golden_plaque.position = Vector3(cx, 1.5, cz)
+        add_child(_golden_plaque)
         var golden_mesh: Node3D = golden_scene.instantiate()
-        golden_mesh.scale = Vector3(4.0, 14.0, 14.0)
-        # recentre le modele minuscule sur le pivot mural (centre AABB)
+        golden_mesh.scale = Vector3(5.0, 20.0, 20.0)
+        # recentre le modele minuscule sur le pivot (centre AABB)
         golden_mesh.position = Vector3(0.103, -0.078, -0.030) * golden_mesh.scale
-        plaque.add_child(golden_mesh)
+        _golden_plaque.add_child(golden_mesh)
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
@@ -1983,6 +1970,52 @@ func _make_ramp_x(z: float, x_bas: float, x_haut: float, y_haut: float, largeur 
     body.add_child(col)
     body.position = Vector3((x_bas + x_haut) / 2.0, y_haut / 2.0, z)
     add_child(body)
+
+
+func _cree_gyrophare(pos: Vector3, retourne := false) -> void:
+    ## Gyrophare standard : pivot tournant + dome (modele 3,1 m -> echelle
+    ## 0,1) + deux faisceaux horizontaux opposes, comme un vrai gyrophare
+    ## a reflecteurs. Pivot et faisceaux enregistres pour _process.
+    var scene_glb: PackedScene = load("res://assets/props/gyrophare_bleu.glb")
+    if scene_glb == null:
+        return
+    var pivot := Node3D.new()
+    pivot.position = pos
+    add_child(pivot)
+    var dome: Node3D = scene_glb.instantiate()
+    dome.scale = Vector3.ONE * 0.1
+    if retourne:
+        dome.rotation.x = PI  # plafond : base en haut, dome vers le bas
+    pivot.add_child(dome)
+    # Lampe integree du GLB (energie importee a 4348 !) : eteinte
+    for lumiere in dome.find_children("*", "Light3D", true, false):
+        var l_modele: Light3D = lumiere
+        l_modele.light_energy = 0.0
+    # Deux faisceaux horizontaux opposes, a hauteur du dome
+    for direction in [0.0, PI]:
+        var faisceau := SpotLight3D.new()
+        faisceau.light_color = Color(0.15, 0.48, 1.0)
+        faisceau.light_energy = 0.0
+        faisceau.spot_range = 45.0
+        faisceau.spot_angle = 30.0
+        faisceau.visible = false
+        faisceau.position = Vector3(0.0, -0.15 if retourne else 0.12, 0.0)
+        faisceau.rotation.y = direction
+        pivot.add_child(faisceau)
+        _gyrophare_spots.append(faisceau)
+    _gyrophare_pivots.append(pivot)
+
+
+func _build_gyrophares_murs() -> void:
+    ## 4 gyrophares par mur de l'usine (16 au total, + celui du bureau).
+    ## A 5,5 m : au-dessus du garde-corps de la mezzanine (5,1 m).
+    var y := 5.5
+    for x_mur in [-40.0, -15.0, 10.0, 35.0]:
+        _cree_gyrophare(Vector3(x_mur, y, HALL_MIN_Z + 0.2))  # mur nord
+        _cree_gyrophare(Vector3(x_mur, y, HALL_MAX_Z - 0.2))  # mur sud
+    for z_mur in [-30.0, -10.0, 10.0, 30.0]:
+        _cree_gyrophare(Vector3(HALL_MIN_X + 0.2, y, z_mur))  # mur ouest
+        _cree_gyrophare(Vector3(HALL_MAX_X - 0.2, y, z_mur))  # mur est
 
 
 ## Bureau de chantier (site cabin) contre le mur gauche, cote fond
