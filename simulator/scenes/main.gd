@@ -1517,7 +1517,7 @@ func _build_securite_signs() -> void:
         quad.size = Vector2(1.56, 0.50)
         quad.material = panneau_mat
         panneau.mesh = quad
-        panneau.position = Vector3(51.54, 1.40, 12.54)
+        panneau.position = Vector3(51.54, 1.50, 12.54)
         panneau.rotation.y = -PI / 2.0  # face vers l'ouest (salle)
         add_child(panneau)
 
