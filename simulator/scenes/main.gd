@@ -152,7 +152,6 @@ var _fumee_parts: Array[GPUParticles3D] = []
 var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
 var _gyrophare_pivots: Array[Node3D] = []
 var _gyrophare_spots: Array[SpotLight3D] = []
-var _golden_plaque: Node3D = null
 var _fumee_active := false
 var _flammes: GPUParticles3D = null
 var _flammes_light: OmniLight3D = null
@@ -691,9 +690,6 @@ func _process(delta: float) -> void:
     else:
         for faisceau: SpotLight3D in _gyrophare_spots:
             faisceau.visible = false
-    # Golden Play Button : vitrine, rotation lente
-    if _golden_plaque != null:
-        _golden_plaque.rotation.y += delta * 0.7
     # Garde-fou periodique : si l'echelle rendue de l'adulte derive
     # (quel que soit la cause), elle est recallee en moins de 2 s.
     if _adult_node != null:
@@ -1172,7 +1168,9 @@ func _build_hall(belt_length: float) -> void:
 
     # Plancher a 4 m : visuel + collision marchable
     var mez_y := 4.0
-    var mez_z := HALL_MIN_Z + 2.6  # 2,6 m du mur (rapprochee de 40 cm)
+    var mez_z := HALL_MIN_Z + 1.52  # bord nord du deck COLLE au mur
+    # (deck 3,04 m de large ; escaliers 1,06 m centres sur mez_z :
+    # ils suivent le deck et restent a ~1 m du mur)
     var mez_debut_x := -40.0
     var mez_fin_x := 31.0
 
@@ -1831,43 +1829,6 @@ func _build_bureau_interieur() -> void:
     # confinement -> _alarme_active) le dome tourne et deux faisceaux bleus
     # horizontaux balaient la piece, comme un vrai gyrophare.
     _cree_gyrophare(Vector3(cx, 2.8, cz + 2.45), true)
-
-    # Golden Play Button (modele utilisateur modifie, 5,5 x 15 x 12 mm) :
-    # agrandi x30 (~46 x 36 cm), materiau or EMISSIF force (l'import GLB
-    # rendait la plaque trop sombre), au MILIEU DU BUREAU a hauteur des
-    # yeux, en rotation lente, surmonte d'un grand panneau "JE SUIS ICI"
-    var golden_scene: PackedScene = load("res://assets/props/golden_play_button.glb")
-    if golden_scene != null:
-        _golden_plaque = Node3D.new()
-        _golden_plaque.position = Vector3(cx, 1.5, cz)
-        add_child(_golden_plaque)
-        var golden_mesh: Node3D = golden_scene.instantiate()
-        golden_mesh.scale = Vector3(8.0, 30.0, 30.0)
-        # recentre le modele minuscule sur le pivot (centre AABB)
-        golden_mesh.position = Vector3(0.103, -0.078, -0.030) * golden_mesh.scale
-        _golden_plaque.add_child(golden_mesh)
-        # Or emissif : visible meme dans la penombre
-        var or_mat := StandardMaterial3D.new()
-        or_mat.albedo_color = Color(1.0, 0.84, 0.2)
-        or_mat.metallic = 0.9
-        or_mat.roughness = 0.25
-        or_mat.emission_enabled = true
-        or_mat.emission = Color(1.0, 0.65, 0.1)
-        or_mat.emission_energy_multiplier = 1.5
-        for maille in golden_mesh.find_children("*", "MeshInstance3D", true, false):
-            var m_or: MeshInstance3D = maille
-            m_or.material_override = or_mat
-        # Panneau "JE SUIS ICI" en grand, toujours face au joueur
-        var marquage := Label3D.new()
-        marquage.text = "JE SUIS ICI"
-        marquage.font_size = 64
-        marquage.pixel_size = 0.01
-        marquage.modulate = Color(1.0, 0.9, 0.3)
-        marquage.outline_size = 16
-        marquage.outline_modulate = Color(0.2, 0.1, 0.0)
-        marquage.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-        marquage.position = Vector3(0.0, 0.6, 0.0)
-        _golden_plaque.add_child(marquage)
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
