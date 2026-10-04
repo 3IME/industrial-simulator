@@ -1147,18 +1147,54 @@ func _build_hall(belt_length: float) -> void:
     _build_props()
     _build_alarmes()
     _build_expo()
-    _build_expo2()
-    # Rampe gravissable de l'escalier de cage (surface inclinee lisse)
-    var ramp_body := StaticBody3D.new()
-    var ramp_shape := CollisionShape3D.new()
-    var ramp_box := BoxShape3D.new()
-    ramp_box.size = Vector3(2.0, 0.15, 7.0)
-    ramp_shape.shape = ramp_box
-    ramp_body.add_child(ramp_shape)
-    ramp_body.position = Vector3(-17.6, 2.44, -16.0)
-    ramp_body.rotation.x = -atan(4.88 / 4.54)
-    add_child(ramp_body)
-    _build_office_cabin()
+    _build_expo2()    # MEZZANINE le long du mur nord (z = HALL_MIN_Z)
+    # Plancher a 4 m : visuel + collision marchable
+    var mez_y := 4.0
+    var mez_z := HALL_MIN_Z + 3.0  # 3 m du mur
+    var mez_debut_x := -40.0
+    var mez_fin_x := 31.0
+
+    # Plancher visuel (plusieurs sections de 6 m)
+    for mx in range(int(mez_debut_x), int(mez_fin_x), 6):
+        var seg_len: float = minf(6.0, mez_fin_x - mx)
+        _place_prop(PROP_MEZZANINE_FLOOR,
+            Vector3(mx + seg_len / 2.0, mez_y, mez_z),
+            Vector3.ZERO, 1.0)
+    # Collision du plancher : surface fine marchable a y=4
+    _add_static_box(Vector3((mez_debut_x + mez_fin_x) / 2.0, mez_y - 0.1, mez_z),
+        Vector3(mez_fin_x - mez_debut_x, 0.2, 6.0))
+    # Garde-corps le long du bord (cote walkway)
+    _add_static_box(Vector3((mez_debut_x + mez_fin_x) / 2.0, mez_y + 0.55, mez_z + 2.9),
+        Vector3(mez_fin_x - mez_debut_x, 1.1, 0.1))
+
+    # ESCALIER 1 (x=-43) : monte vers +X
+    _place_prop(PROP_CELL_STAIR, Vector3(-43.0, 2.0, mez_z),
+        Vector3(0.0, PI / 2.0, 0.0), 2.0)
+    # rampe marchable (rotation autour de X, monte vers +X)
+    var r1 := StaticBody3D.new()
+    var rs1 := CollisionShape3D.new()
+    var rb1 := BoxShape3D.new()
+    rb1.size = Vector3(2.0, 0.15, 8.0)
+    rs1.shape = rb1
+    r1.add_child(rs1)
+    r1.position = Vector3(-43.0, 2.0, mez_z + 6.0)
+    r1.rotation.x = -atan(4.0 / 7.0)
+    add_child(r1)
+
+    # ESCALIER 2 (x=34) : descend vers +X
+    _place_prop(PROP_CELL_STAIR, Vector3(34.0, 2.0, mez_z),
+        Vector3(0.0, PI / 2.0, 0.0), 2.0)
+    var r2 := StaticBody3D.new()
+    var rs2 := CollisionShape3D.new()
+    var rb2 := BoxShape3D.new()
+    rb2.size = Vector3(2.0, 0.15, 8.0)
+    rs2.shape = rb2
+    r2.add_child(rs2)
+    r2.position = Vector3(34.0, 2.0, mez_z + 6.0)
+    r2.rotation.x = -atan(4.0 / 7.0)
+    add_child(r2)
+
+        _build_office_cabin()
     _build_bureau_interieur()
 
 
@@ -1929,20 +1965,7 @@ func _build_expo2() -> void:
         {"path": PROP_TRACK_FENCE, "nom": "Cloture de voie",
          "x": -49.6, "y": 0.0, "s": 1.0, "col": Vector3(4.18, 2.20, 0.34)},
         {"path": PROP_DECK_PLATE, "nom": "Plaque de caillebotis",
-         "x": -43.2, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},
-        {"path": PROP_MEZZANINE_FLOOR, "nom": "Plancher de mezzanine",
-         "x": -36.8, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},
-        {"path": PROP_MEZZANINE_WALKWAY, "nom": "Passerelle de mezzanine",
-         "x": -30.4, "y": 0.0, "s": 1.0, "col": Vector3(2.0, 3.54, 1.16)},
-        {"path": PROP_STAIR_3M, "nom": "Escalier 3 m",
-         "x": -24.0, "y": 0.0, "s": 0.75, "col": Vector3(1.16, 3.05, 2.58)},
-        {"path": PROP_CELL_STAIR, "nom": "Escalier de cage",
-         "x": -17.6, "y": 0.0, "s": 1.2, "col": Vector3.ZERO},
-        # marches gravissables : surfaces fines a hauteurs croissantes
-        {"path": "", "nom": "", "x": 0, "y": 0, "s": 1, "col": Vector3.ZERO},
-        {"path": PROP_LADDER_CAGE, "nom": "Echelle a cage",
-         "x": -11.2, "y": 0.0, "s": 0.75, "col": Vector3(0.69, 3.05, 0.65)},
-        {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
+         "x": -43.2, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},        {"path": "", "nom": "", "x": 0, "y": 0, "s": 1, "col": Vector3.ZERO},        {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
          "x": 8.0, "y": 0.0, "s": 1.0, "col": Vector3(1.14, 0.93, 0.86)},
         {"path": PROP_ENGINE_LATHE, "nom": "Tour d'atelier",
          "x": 14.4, "y": 0.0, "s": 1.0, "col": Vector3(2.51, 2.00, 1.04)},
