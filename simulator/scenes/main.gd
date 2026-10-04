@@ -265,6 +265,9 @@ func _show_build_badge() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventKey and event.pressed and not event.echo:
+        if event.keycode == KEY_H and hud != null:
+            hud.visible = not hud.visible
+            return
         if _mode_code:
             _saisir_code(event)
             return
@@ -1169,8 +1172,8 @@ func _build_hall(belt_length: float) -> void:
         Vector3(mez_fin_x - mez_debut_x, 1.1, 0.1))
 
     # ESCALIER 1 (x=-43) : monte vers +X
-    _place_prop(PROP_CELL_STAIR, Vector3(-43.0, 2.0, mez_z),
-        Vector3(0.0, PI / 2.0, 0.0), 2.0)
+    _place_prop(PROP_CELL_STAIR, Vector3(-43.0, 0.0, mez_z),
+        Vector3(0.0, PI / 2.0, 0.0), 1.0)
     # rampe marchable (rotation autour de X, monte vers +X)
     var r1 := StaticBody3D.new()
     var rs1 := CollisionShape3D.new()
@@ -1178,21 +1181,23 @@ func _build_hall(belt_length: float) -> void:
     rb1.size = Vector3(2.0, 0.15, 8.0)
     rs1.shape = rb1
     r1.add_child(rs1)
-    r1.position = Vector3(-43.0, 2.0, mez_z + 6.0)
-    r1.rotation.x = -atan(4.0 / 7.0)
+    r1.position = Vector3(-43.0, 2.0, mez_z + 2.0)
+    r1.rotation.x = -atan(4.0 / 4.0)
+    r1.scale = Vector3(1, 1, 0.65)
     add_child(r1)
 
     # ESCALIER 2 (x=34) : descend vers +X
-    _place_prop(PROP_CELL_STAIR, Vector3(34.0, 2.0, mez_z),
-        Vector3(0.0, PI / 2.0, 0.0), 2.0)
+    _place_prop(PROP_CELL_STAIR, Vector3(34.0, 0.0, mez_z),
+        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
     var r2 := StaticBody3D.new()
     var rs2 := CollisionShape3D.new()
     var rb2 := BoxShape3D.new()
     rb2.size = Vector3(2.0, 0.15, 8.0)
     rs2.shape = rb2
     r2.add_child(rs2)
-    r2.position = Vector3(34.0, 2.0, mez_z + 6.0)
-    r2.rotation.x = -atan(4.0 / 7.0)
+    r2.position = Vector3(34.0, 2.0, mez_z + 2.0)
+    r2.rotation.x = -atan(4.0 / 4.0)
+    r2.scale = Vector3(1, 1, 0.65)
     add_child(r2)
 
     _build_office_cabin()
