@@ -1172,7 +1172,7 @@ func _build_hall(belt_length: float) -> void:
         Vector3(mez_fin_x - mez_debut_x, 1.1, 0.1))
 
     # ESCALIER 1 (x=-43) : monte vers +X
-    _place_prop(PROP_CELL_STAIR, Vector3(-43.0, 0.0, mez_z),
+    _place_prop(PROP_CELL_STAIR, Vector3(-43.0, 0.0, mez_z + 1.5),
         Vector3(0.0, PI / 2.0, 0.0), 1.0)
     # Marches AABB fines (collision garantie, pas de rotation)
     # 26 marches de 0,155 m de haut, gravissables avec floor_snap_length
@@ -1180,16 +1180,16 @@ func _build_hall(belt_length: float) -> void:
     var marche_d := 4.0 / 26.0
     for i in range(26):
         _add_static_box(
-            Vector3(-43.0, (i + 0.5) * marche_h, mez_z + 2.0 - 2.0 + (i + 0.5) * marche_d),
-            Vector3(2.0, marche_h, marche_d))
+            Vector3(-43.0, 4.0 - (i + 0.5) * marche_h, mez_z + 3.0 + (i + 0.5) * marche_d),
+            Vector3(2.0, 4.0 - i * marche_h, marche_d))
 
     # ESCALIER 2 (x=34) : descend vers +X
-    _place_prop(PROP_CELL_STAIR, Vector3(34.0, 0.0, mez_z),
+    _place_prop(PROP_CELL_STAIR, Vector3(34.0, 0.0, mez_z + 1.5),
         Vector3(0.0, -PI / 2.0, 0.0), 1.0)
     for i2 in range(26):
         _add_static_box(
-            Vector3(34.0, (i2 + 0.5) * marche_h, mez_z + 2.0 - 2.0 + (i2 + 0.5) * marche_d),
-            Vector3(2.0, marche_h, marche_d))
+            Vector3(34.0, 4.0 - (i2 + 0.5) * marche_h, mez_z + 3.0 + (i2 + 0.5) * marche_d),
+            Vector3(2.0, 4.0 - i2 * marche_h, marche_d))
 
     _build_office_cabin()
     _build_bureau_interieur()

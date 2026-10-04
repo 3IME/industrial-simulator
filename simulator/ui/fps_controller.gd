@@ -11,6 +11,7 @@ const JUMP_VELOCITY := 4.5
 const GRAVITY := 9.8
 const MOUSE_SENSITIVITY := 0.0025
 const EYE_HEIGHT := 1.6
+const STEP_HEIGHT := 0.35  # hauteur de marche gravissable
 const EYE_CROUCH := 0.9
 const CROUCH_SPEED := 2.0
 const ARMS_MODEL := "res://assets/props/arms_split.glb"
@@ -160,7 +161,30 @@ func _physics_process(delta: float) -> void:
         velocity.x = move_toward(velocity.x, 0.0, speed)
         velocity.z = move_toward(velocity.z, 0.0, speed)
 
+    var pos_avant := position
     move_and_slide()
+
+    # Step-up : si bloque au sol avec intention de bouger, essayer
+    # de monter d'un cran (STEP_HEIGHT) puis d'avancer
+    if is_on_floor():
+        var deplacement := position - pos_avant
+        var bouge_horizontal: float = Vector2(deplacement.x, deplacement.z).length()
+        var veut_bouger: float = Vector2(velocity.x, velocity.z).length()
+        if bouge_horizontal < 0.005 and veut_bouger > 0.1:
+            var essai_pos := position
+            position.y += STEP_HEIGHT
+            var vel_sauvee := velocity
+            velocity = Vector3(vel_sauvee.x, 0.0, vel_sauvee.z)
+            move_and_slide()
+            if Vector2(position.x - essai_pos.x, position.z - essai_pos.z).length() > 0.01:
+                # reussi : se raccrocher au sol
+                velocity = Vector3(0, -3.0, 0)
+                move_and_slide()
+                velocity = vel_sauvee
+            else:
+                # echec : revenir
+                position = essai_pos
+                velocity = vel_sauvee
     _animate_arms(delta, crouch)
 
 
