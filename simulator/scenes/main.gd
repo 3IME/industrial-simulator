@@ -1172,7 +1172,7 @@ func _build_hall(belt_length: float) -> void:
 
     # Plancher a 4 m : visuel + collision marchable
     var mez_y := 4.0
-    var mez_z := HALL_MIN_Z + 2.8  # 2,8 m du mur (rapprochee de 20 cm)
+    var mez_z := HALL_MIN_Z + 2.6  # 2,6 m du mur (rapprochee de 40 cm)
     var mez_debut_x := -40.0
     var mez_fin_x := 31.0
 
@@ -1441,6 +1441,11 @@ func _build_securite_signs() -> void:
         Vector3(0.0, -PI / 2.0, 0.0), 3.0)
     _add_static_box(Vector3(51.5, 0.90, 30.0), Vector3(4.26, 1.80, 5.70))
 
+    # Ascenseur : agrandi a 3 m de haut (modele 0,86 m -> echelle 3,5),
+    # plaque contre le mur nord en x=57
+    _place_prop(PROP_ELEVATOR, Vector3(57.0, 0.0, -43.8), Vector3.ZERO, 3.5)
+    _add_static_box(Vector3(57.0, 1.5, -43.8), Vector3(2.21, 3.0, 2.12))
+
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
         Vector3(-57.0, 0.0, -20.0), Vector3.ZERO)
@@ -1560,8 +1565,6 @@ func _build_expo() -> void:
          "x": -15.0, "y": 0.25, "col": Vector3(1.9, 0.51, 0.65)},
         {"path": PROP_DUMPSTER, "nom": "Benne en acier vert",
          "x": -1.0, "y": 0.0, "col": Vector3(0.8, 0.73, 0.74)},
-        {"path": PROP_ELEVATOR, "nom": "Ascenseur",
-         "x": 6.0, "y": 0.0, "col": Vector3(0.63, 0.86, 0.61)},
         {"path": PROP_BRIDGE, "nom": "Fragment de pont",
          "x": 20.0, "y": 0.0, "col": Vector3.ZERO},    # plat : pas de collision
     ]
@@ -1830,18 +1833,41 @@ func _build_bureau_interieur() -> void:
     _cree_gyrophare(Vector3(cx, 2.8, cz + 2.45), true)
 
     # Golden Play Button (modele utilisateur modifie, 5,5 x 15 x 12 mm) :
-    # agrandi x20 en hauteur/largeur, x5 en epaisseur -> plaque ~31 x 24 cm,
-    # exposee AU MILIEU DU BUREAU a hauteur des yeux, en rotation lente
+    # agrandi x30 (~46 x 36 cm), materiau or EMISSIF force (l'import GLB
+    # rendait la plaque trop sombre), au MILIEU DU BUREAU a hauteur des
+    # yeux, en rotation lente, surmonte d'un grand panneau "JE SUIS ICI"
     var golden_scene: PackedScene = load("res://assets/props/golden_play_button.glb")
     if golden_scene != null:
         _golden_plaque = Node3D.new()
         _golden_plaque.position = Vector3(cx, 1.5, cz)
         add_child(_golden_plaque)
         var golden_mesh: Node3D = golden_scene.instantiate()
-        golden_mesh.scale = Vector3(5.0, 20.0, 20.0)
+        golden_mesh.scale = Vector3(8.0, 30.0, 30.0)
         # recentre le modele minuscule sur le pivot (centre AABB)
         golden_mesh.position = Vector3(0.103, -0.078, -0.030) * golden_mesh.scale
         _golden_plaque.add_child(golden_mesh)
+        # Or emissif : visible meme dans la penombre
+        var or_mat := StandardMaterial3D.new()
+        or_mat.albedo_color = Color(1.0, 0.84, 0.2)
+        or_mat.metallic = 0.9
+        or_mat.roughness = 0.25
+        or_mat.emission_enabled = true
+        or_mat.emission = Color(1.0, 0.65, 0.1)
+        or_mat.emission_energy_multiplier = 1.5
+        for maille in golden_mesh.find_children("*", "MeshInstance3D", true, false):
+            var m_or: MeshInstance3D = maille
+            m_or.material_override = or_mat
+        # Panneau "JE SUIS ICI" en grand, toujours face au joueur
+        var marquage := Label3D.new()
+        marquage.text = "JE SUIS ICI"
+        marquage.font_size = 64
+        marquage.pixel_size = 0.01
+        marquage.modulate = Color(1.0, 0.9, 0.3)
+        marquage.outline_size = 16
+        marquage.outline_modulate = Color(0.2, 0.1, 0.0)
+        marquage.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+        marquage.position = Vector3(0.0, 0.6, 0.0)
+        _golden_plaque.add_child(marquage)
 
     # Laptop sur le bureau, clavier vers le siege
     _place_prop("res://assets/props/laptop.glb",
