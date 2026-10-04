@@ -33,3 +33,6 @@ simulator/capture_3d_expo.png
 simulator/capture_splash_loading.png
 simulator/capture_3d_tv.png
 simulator/debug_composite.png
+
+# Binaires de release (trop volumineux pour le depot)
+release/
