@@ -1689,10 +1689,14 @@ func _build_securite_signs() -> void:
     _placer_haas(-28.0)   # premiere machine
     _placer_haas(-18.0)   # deuxieme machine, 10 m devant (sud)
 
-    # Chariot de stockage a cote de la Haas, cote EST. Sans texte.
-    _place_prop(PROP_STORAGE_CART, Vector3(40.95, 0.50, -28.0),
-        Vector3.ZERO, 1.0)
-    _add_static_box(Vector3(40.95, 0.50, -28.0), Vector3(0.40, 1.00, 0.86))
+    # Chariots de stockage a cote de chaque Haas, cote EST. Sans texte.
+    for zc_haas in [-28.0, -18.0]:
+        _place_prop(PROP_STORAGE_CART, Vector3(40.95, 0.50, zc_haas),
+            Vector3.ZERO, 1.0)
+        _add_static_box(Vector3(40.95, 0.50, zc_haas),
+            Vector3(0.40, 1.00, 0.86))
+
+
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
