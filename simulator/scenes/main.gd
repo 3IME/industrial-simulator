@@ -69,6 +69,7 @@ const PROP_TRANSPALLET := "res://assets/props/transpallet.glb"
 const PROP_WORK_TABLE_BLUE := "res://assets/props/work_table_blue.glb"
 const PROP_WOODEN_PALLET := "res://assets/props/wooden_pallet1.glb"
 const PROP_SCHOOL_CABINET := "res://assets/props/school_cabinet.glb"
+const PROP_VF_2TR := "res://assets/props/vf_2tr.glb"
 # Annonces sonores d'usine fournies par 3IME — touches 1 a 7
 const ANNONCES := [
     {"touche": KEY_1, "nom": "evacuation", "chemin": "res://assets/sounds/annonces/evacuation.mp3"},
@@ -1504,8 +1505,8 @@ func _build_securite_signs() -> void:
     _place_prop(PROP_TRACK_FENCE, Vector3(53.99, 0.0, 14.46), Vector3.ZERO, 1.0)
     _add_static_box(Vector3(53.99, 1.10, 14.46), Vector3(4.18, 2.20, 0.34))
 
-    # Panneau WC sur le mur Est (z = -13, entre l'extincteur et le tour),
-    # face a la salle. Image portrait 1259x2869 -> 0,50 x 1,14 m.
+    # Panneau WC sur le mur OUEST (z = -13), face a la salle, POSÉ AU SOL
+    # (bas de l'image a y=0). Image portrait 1259x2869 -> 0,50 x 1,14 m.
     var wc_tex = load("res://assets/textures/wc.png")
     if wc_tex != null:
         var wc_mat := StandardMaterial3D.new()
@@ -1517,8 +1518,8 @@ func _build_securite_signs() -> void:
         wc_quad.size = Vector2(0.50, 1.14)
         wc_quad.material = wc_mat
         wc_panneau.mesh = wc_quad
-        wc_panneau.position = Vector3(61.88, 1.70, -13.0)
-        wc_panneau.rotation.y = -PI / 2.0  # face vers l'ouest (salle)
+        wc_panneau.position = Vector3(-57.88, 0.57, -13.0)
+        wc_panneau.rotation.y = PI / 2.0  # face vers l'est (salle)
         add_child(wc_panneau)
 
     # Panneau "local maintenance" sur la derniere cloture a droite,
@@ -1562,6 +1563,14 @@ func _build_securite_signs() -> void:
     _place_prop(PROP_VOXEL_MACHINE_2, Vector3(-38.0, 6.0, 32.0),
         Vector3.ZERO, 6.32)
     _add_static_box(Vector3(-38.0, 6.0, 32.0), Vector3(4.39, 12.0, 4.45))
+
+    # Machine a commande numerique VF-2TR ( modele 3,16 x 2,28 x 2,35 :
+    # longueur et largeur piles l'enveloppe constructeur 3,15 x 2,25 ;
+    # hauteur modele 2,28, doc 2,72 avec partie haute). echelle 1,
+    # en (39, -28).
+    _place_prop(PROP_VF_2TR, Vector3(39.4, 0.773, -27.333),
+        Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(39.0, 1.14, -28.0), Vector3(3.16, 2.28, 2.35))
 
     # Panneau "caution wet floor" entre le cafe et le bureau de chantier
     _place_prop("res://assets/props/caution_wet_floor.glb",
