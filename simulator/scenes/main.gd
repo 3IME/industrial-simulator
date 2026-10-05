@@ -192,9 +192,6 @@ var lod_manager: LodManager = null
 var _robot_view: Node3D = null
 
 
-const BUILD_TAG := "e9553ef · adulte 1,60 m + garde-fou auto"
-
-
 func _ready() -> void:
     var config_path := "res://config/factory.json"
     var modbus_port := -1
@@ -285,7 +282,6 @@ func _ready() -> void:
             nb_atelier, " objets, wc ", nb_wc, " objets, classe ",
             nb_classe, " objets")
         print("LOD global : ", lod_manager.stats())
-    _show_build_badge()
     _verre_player = AudioStreamPlayer.new()
     add_child(_verre_player)
     _alarme_player = AudioStreamPlayer.new()
@@ -297,24 +293,6 @@ func _ready() -> void:
     add_child(_annonce_player)
     if capture_mode:
         _capture_and_quit()
-
-
-## Badge de version affiche 15 s au lancement : permet de verifier d'un
-## coup d'oeil que la fenetre ouverte est bien la version courante.
-func _show_build_badge() -> void:
-    var layer := CanvasLayer.new()
-    layer.layer = 10
-    add_child(layer)
-    var label := Label.new()
-    label.text = "BUILD " + BUILD_TAG
-    label.position = Vector2(12, 8)
-    label.add_theme_font_size_override("font_size", 18)
-    label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3))
-    layer.add_child(label)
-    var tween := create_tween()
-    tween.tween_interval(15.0)
-    tween.tween_property(label, "modulate:a", 0.0, 1.0)
-    tween.tween_callback(layer.queue_free)
 
 
 func _unhandled_input(event: InputEvent) -> void:
