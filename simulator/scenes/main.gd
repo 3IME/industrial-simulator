@@ -157,6 +157,8 @@ var _fumee_niveau := 0.0        # 0 = rien, 1 = usine remplie
 var _gyrophare_pivots: Array[Node3D] = []
 var _gyrophare_roues: Array[Node3D] = []   # girophares muraux : tournent sur leur axe
 var _lumiere_bureau: OmniLight3D = null
+var _lumieres_classe: Array[OmniLight3D] = []
+var _interrupteur_classe_son: AudioStreamPlayer3D = null
 var _interrupteur_son: AudioStreamPlayer3D = null
 var _chasse_son: AudioStreamPlayer3D = null
 var _lavabo_son: AudioStreamPlayer3D = null
@@ -358,6 +360,8 @@ func _clic_interaction(event: InputEvent) -> void:
             var hit_cl: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_cl)
             if not hit_cl.is_empty() and hit_cl.collider is StaticBody3D                     and hit_cl.collider.has_meta("interaction")                 and hit_cl.collider.get_meta("interaction") == "porte_classe_sortie":
                 _sortir_classe()
+            elif hit_cl.collider.get_meta("interaction") == "interrupteur_classe":
+                _basculer_lumiere_classe()
         return
     if _dans_wc:
         var cam_wc := get_viewport().get_camera_3d()
@@ -1378,6 +1382,18 @@ func _build_hall(belt_length: float) -> void:
     # Garde-corps au bord REEL du deck (mez_z + 1,52), plus a +2,9
     _add_static_box(Vector3((mez_debut_x + mez_fin_x) / 2.0, mez_y + 0.55, mez_z + 1.52),
         Vector3(mez_fin_x - mez_debut_x, 1.1, 0.1))
+    # Ligne jaune de securite au sol (facon usine) DEVANT la mezzanine,
+    # ~70 cm au sud du garde-corps, sur toute la longueur du deck
+    var ligne_jaune := MeshInstance3D.new()
+    var ligne_box := BoxMesh.new()
+    ligne_box.size = Vector3(mez_fin_x - mez_debut_x, 0.012, 0.12)
+    var mat_ligne := StandardMaterial3D.new()
+    mat_ligne.albedo_color = Color(1.0, 0.82, 0.0)
+    mat_ligne.roughness = 0.55
+    ligne_box.material = mat_ligne
+    ligne_jaune.mesh = ligne_box
+    ligne_jaune.position = Vector3((mez_debut_x + mez_fin_x) / 2.0, 0.006, mez_z + 2.2)
+    add_child(ligne_jaune)
 
     # ESCALIERS visuels (positions conservees), montent le long de X vers les
     # extremites ouvertes de la mezzanine (le garde-corps bloque le bord sud).
@@ -1426,6 +1442,15 @@ func _build_hall(belt_length: float) -> void:
     _etiquette_sprinkler.outline_size = 12
     _etiquette_sprinkler.modulate = Color(1.0, 0.85, 0.3)
     add_child(_etiquette_sprinkler)
+    var marque_sprinkler := Label3D.new()
+    marque_sprinkler.text = "SPRINKLER"
+    marque_sprinkler.position = Vector3(-58.76, 0.78, -60.4)
+    marque_sprinkler.rotation.y = PI / 2.0
+    marque_sprinkler.pixel_size = 0.0035
+    marque_sprinkler.font_size = 40
+    marque_sprinkler.outline_size = 12
+    marque_sprinkler.modulate = Color(1.0, 0.85, 0.3)
+    add_child(marque_sprinkler)
 
     _build_office_cabin()
     _build_bureau_interieur()
@@ -1996,7 +2021,8 @@ func _build_classe() -> void:
     _room_box(Vector3(cxc, 1.4, czc - 3.1), Vector3(10.4, 2.8, 0.2), mur)
     _room_box(Vector3(cxc, 1.4, czc + 3.1), Vector3(10.4, 2.8, 0.2), mur)
 
-    # Deux lumieres (rouge a l'alerte automatiquement)
+    # Deux lumieres (rouge a l'alerte automatiquement, bascules par
+    # l'interrupteur du mur est)
     for dx_l in [-2.5, 2.5]:
         var lum := OmniLight3D.new()
         lum.position = Vector3(cxc + dx_l, 2.6, czc)
@@ -2004,6 +2030,21 @@ func _build_classe() -> void:
         lum.light_energy = 1.3
         lum.omni_range = 9.0
         add_child(lum)
+        _lumieres_classe.append(lum)
+
+    # Interrupteur de lumiere : mur EST, cote sud (proche du passage de
+    # la porte). Clic -> allume/eteint les deux lumieres + son de clic.
+    _place_prop("res://assets/props/light_switch.glb",
+        Vector3(cxc + 4.93, 1.15, czc + 2.2), Vector3(0.0, -PI / 2.0, 0.0), 0.125)
+    _add_static_box(Vector3(cxc + 4.93, 1.15, czc + 2.2),
+        Vector3(0.12, 0.16, 0.10), "interrupteur_classe")
+    _interrupteur_classe_son = AudioStreamPlayer3D.new()
+    var clic_cl = load("res://assets/sounds/button-press.mp3")
+    if clic_cl != null:
+        _interrupteur_classe_son.stream = clic_cl
+    _interrupteur_classe_son.position = Vector3(cxc + 4.93, 1.15, czc + 2.2)
+    _interrupteur_classe_son.unit_size = 2.0
+    add_child(_interrupteur_classe_son)
 
     # Amenagement : baie informatique au fond (mur nord), armoire scolaire
     # sur le mur ouest, poubelle acier a gauche de la porte, gyrophare
@@ -2229,6 +2270,15 @@ func _basculer_lumiere_bureau() -> void:
             "allumee" if _lumiere_bureau.visible else "eteinte")
     if _interrupteur_son != null:
         _interrupteur_son.play()
+
+
+func _basculer_lumiere_classe() -> void:
+    var allumer: bool = _lumieres_classe.is_empty() or not _lumieres_classe[0].visible
+    for lum_c in _lumieres_classe:
+        lum_c.visible = allumer
+    print("Lumieres de la classe : ", "allumees" if allumer else "eteintes")
+    if _interrupteur_classe_son != null:
+        _interrupteur_classe_son.play()
 
 
 func _build_bureau_interieur() -> void:
