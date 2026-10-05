@@ -1970,6 +1970,21 @@ func _build_classe() -> void:
         Vector3(0.0, 0.7, 0.0), 1.0)   # origine GLB decentree de +1,90 m en X
     _add_static_box(Vector3(cxc - 1.0, 0.19, czc + 2.55),
         Vector3(0.35, 0.38, 0.35))
+
+    # Tableau craie (1,88 x 1,28 m, face +Z, epaisseur 10 cm) colle au
+    # mur EST, face vers l'ouest ; bureau d'enseignant + laptop + chaise
+    # face au tableau
+    _place_prop("res://assets/props/tableau_craie.glb",
+        Vector3(cxc + 4.98, 0.86, czc), Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(cxc + 4.94, 1.48, czc), Vector3(0.12, 1.28, 1.88))
+    _place_prop("res://assets/props/desk_2.glb",
+        Vector3(cxc + 2.6, 0.0, czc), Vector3(0.0, PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(cxc + 2.6, 0.38, czc), Vector3(0.80, 0.76, 1.60))
+    _place_prop("res://assets/props/laptop.glb",
+        Vector3(cxc + 2.6, 0.87, czc), Vector3(0.0, PI / 2.0, 0.0), 0.35)
+    _place_prop("res://assets/props/office_chair.glb",
+        Vector3(cxc + 1.3, 0.0, czc), Vector3(0.0, PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(cxc + 1.3, 0.51, czc), Vector3(0.59, 1.02, 0.60))
     _cree_gyrophare(Vector3(cxc, 2.8, czc), true)
 
     # Porte de sortie visible (mur sud, cote interieur) + collider cliquable
