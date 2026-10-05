@@ -20,6 +20,7 @@ const SUITES = [
     preload("res://tests/test_modbus_address_map.gd"),
     preload("res://tests/test_modbus_tcp.gd"),
     preload("res://tests/test_factory_builder.gd"),
+    preload("res://tests/test_sprinkler.gd"),
 ]
 
 

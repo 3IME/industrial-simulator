@@ -175,6 +175,9 @@ var _fumee_ramp_gris: GradientTexture1D = null
 var _fumee_ramp_vert: GradientTexture1D = null
 var _flammes: GPUParticles3D = null
 var _flammes_light: OmniLight3D = null
+var sprinklers: SprinklerManager = null
+var _eau_son: AudioStreamPlayer = null
+var _etiquette_sprinkler: Label3D = null
 var _lumieres_rouges := false
 var _lumieres_originales: Array = []   # [{node, color, energy}]
 var _env_originale := {}               # {color, energy}
@@ -445,6 +448,14 @@ func _clic_interaction(event: InputEvent) -> void:
         _entrer_wc()
     elif collider.get_meta("interaction") == "porte_classe":
         _entrer_classe()
+    elif collider.get_meta("interaction") == "switch_sprinkler":
+        if sprinklers != null:
+            sprinklers.set_arme(not sprinklers.arme)
+            var clic_sw = load("res://assets/sounds/button-press.mp3")
+            if clic_sw != null and _verre_player != null:
+                _verre_player.stream = clic_sw
+                _verre_player.play()
+            print("SPRINKLERS : ", "ARMES" if sprinklers.arme else "HORS SERVICE")
     elif collider.get_meta("interaction") == "alarme_incendie":
         _declencher_alarme(impact.position)
     elif collider.get_meta("interaction") == "confinement":
@@ -519,6 +530,8 @@ func _declencher_alarme(pos: Vector3) -> void:
     if _flammes != null:
         _flammes.amount = 120
         _flammes.emitting = true
+        if sprinklers != null:
+            sprinklers.set_feu(_flammes.position, true)
     if _flammes_light != null:
         _flammes_light.light_energy = 2.0
     await get_tree().create_timer(0.9).timeout
@@ -549,6 +562,8 @@ func _couper_alarme() -> void:
     if _flammes != null:
         _flammes.emitting = false
         _flammes.amount = 0
+    if sprinklers != null:
+        sprinklers.set_feu(Vector3.ZERO, false)
     if _flammes_light != null:
         _flammes_light.light_energy = 0.0
     if _cctv_mats.size() > 3:
@@ -867,6 +882,30 @@ func _process(delta: float) -> void:
     if _flammes_light != null and _flammes_light.light_energy > 0.0:
         var ft := fmod(_cctv_temps * 3.0, 1.0)
         _flammes_light.light_energy = 2.0 + sin(ft * 31.4) * 0.5 + sin(ft * 7.3) * 0.8 + randf() * 0.4
+
+    # Lutte incendie par sprinklers : l'eau maitrise les flammes
+    if sprinklers != null:
+        if _alarme_active and sprinklers.arrosage_actif                 and _flammes != null and _flammes.amount > 0:
+            _flammes.amount = maxi(_flammes.amount - int(round(delta * 10.0)), 0)
+            if _flammes.amount == 0:
+                _flammes.emitting = false
+                sprinklers.set_feu(Vector3.ZERO, false)
+                print("INCENDIE : maitrise par les sprinklers")
+        if _eau_son != null:
+            if sprinklers.arrosage_actif and not _eau_son.playing:
+                _eau_son.play()
+            elif not sprinklers.arrosage_actif and _eau_son.playing:
+                _eau_son.stop()
+        if _etiquette_sprinkler != null:
+            var txt_e := "SPRINKLERS : HORS SERVICE"
+            if sprinklers.arme:
+                txt_e = "SPRINKLERS : ARMES"
+                if sprinklers.arrosage_actif:
+                    txt_e = "SPRINKLERS : LUTTE
+%d tete(s) - eau %.1f cm" % [
+                        sprinklers.nb_actifs, sprinklers.niveau_eau * 100.0]
+            if _etiquette_sprinkler.text != txt_e:
+                _etiquette_sprinkler.text = txt_e
 
     # Fumee : monter progressivement pendant l'alerte, dissiper apres
     if _fumee_active and _fumee_niveau < 1.0:
@@ -1371,6 +1410,28 @@ func _build_hall(belt_length: float) -> void:
         Vector3(porte_mez_x, mez_y - 0.01, porte_mez_z), Vector3.ZERO, 0.6)
     _add_static_box(Vector3(porte_mez_x, mez_y + 1.26, porte_mez_z),
         Vector3(1.04, 2.52, 0.25), "porte_classe")
+
+    # Reseau de lutte incendie par sprinklers : tetes sous la charpente,
+    # plan d'eau au sol, son du jet, etiquette d'etat au switch du bureau.
+    sprinklers = SprinklerManager.new()
+    add_child(sprinklers)
+    sprinklers.construire(self, HALL_MIN_X, HALL_MAX_X, HALL_MIN_Z, HALL_MAX_Z)
+    _eau_son = AudioStreamPlayer.new()
+    var jet_eau = load("res://assets/sounds/water.mp3")
+    if jet_eau != null:
+        jet_eau.loop = true
+        _eau_son.stream = jet_eau
+        _eau_son.volume_db = -8.0
+    add_child(_eau_son)
+    _etiquette_sprinkler = Label3D.new()
+    _etiquette_sprinkler.text = "SPRINKLERS : HORS SERVICE"
+    _etiquette_sprinkler.position = Vector3(-58.72, 1.82, -60.4)
+    _etiquette_sprinkler.rotation.y = PI / 2.0
+    _etiquette_sprinkler.pixel_size = 0.0035
+    _etiquette_sprinkler.font_size = 48
+    _etiquette_sprinkler.outline_size = 12
+    _etiquette_sprinkler.modulate = Color(1.0, 0.85, 0.3)
+    add_child(_etiquette_sprinkler)
 
     _build_office_cabin()
     _build_bureau_interieur()
@@ -2227,7 +2288,8 @@ func _build_bureau_interieur() -> void:
     # echelle 0,1.
     _place_prop("res://assets/props/switch_couteaux.glb",
         Vector3(-58.81, 1.2, -60.4), Vector3(0.0, PI / 2.0, 0.0), 0.07)
-    _add_static_box(Vector3(-58.6, 1.2, -60.4), Vector3(0.45, 0.75, 0.45))
+    _add_static_box(Vector3(-58.6, 1.2, -60.4), Vector3(0.45, 0.75, 0.45),
+        "switch_sprinkler")
 
     # Golden Play Button (nouveau modele utilisateur 9,5 x 11,9 cm, origine
     # centree) echelle 5 -> plaque ~48 x 60 cm, dos colle au mur du fond,

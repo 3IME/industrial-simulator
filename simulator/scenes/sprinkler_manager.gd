@@ -19,7 +19,7 @@ extends Node
 ## `arrosage_actif` est vrai (cf. _process de la scene).
 
 const HAUTEUR_TETE := 5.0        # tetes suspendues sous la charpente
-const RAYON_COUVERTURE := 9.0    # disque arrose par une tete (detection)
+const RAYON_COUVERTURE := 13.0   # disque couvert par une tete (au sol)
 const DELAI_PAR_METRE := 0.22    # cascade : la chaleur met du temps a monter
 const DEBIT_TETE := 0.0011       # m d'eau / s apportes par une tete ouverte
 const DRAINAGE := 0.00035        # evacuation du sol / s
@@ -86,7 +86,10 @@ func _process(delta: float) -> void:
 		return
 	var actifs := 0
 	for tete in _tetes:
-		var dist_feu: float = tete["pos"].distance_to(_feu_pos)
+		# distance HORIZONTALE : la hauteur des tetes ne doit pas
+		# fausser la detection au sol
+		var dist_feu: float = Vector2(tete["pos"].x - _feu_pos.x,
+			tete["pos"].z - _feu_pos.z).length()
 		var cible: bool = arme and _feu_actif \
 			and dist_feu <= RAYON_COUVERTURE
 		if cible:
@@ -145,8 +148,8 @@ func _cree_tete(racine: Node3D, pos: Vector3) -> Dictionary:
 	mat_amp.emission_enabled = true
 	mat_amp.emission = Color(1.0, 0.2, 0.1)
 	mat_amp.emission_energy_multiplier = 0.8
-	sphere.material = mat_amp
 	ampoule.mesh = sphere
+	ampoule.material_override = mat_amp   # override : lisible par _process
 	ampoule.position = Vector3(0.0, -0.02, 0.0)
 	noeud.add_child(ampoule)
 	# Jet conique : vitesse initiale vers le bas + dispersion laterale,
