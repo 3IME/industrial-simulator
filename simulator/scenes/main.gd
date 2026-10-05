@@ -132,6 +132,7 @@ var box_timer := 0.0
 var capture_mode := false
 var _adult_node: Node3D = null
 var _dans_bureau := false
+var _fn_close_requested: Callable   # deconnectee dans _exit_tree
 var _dans_wc := false
 var _dans_classe := false
 var _alarme_active := false
@@ -245,10 +246,12 @@ func _ready() -> void:
 
     if conveyor != null:
         conveyor.spawn_box()
-    # Ceinture de securite : liberer la souris si la fenetre se ferme
-    get_tree().root.close_requested.connect(
-        func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-    )
+    # Ceinture de securite : liberer la souris si la fenetre se ferme.
+    # Callable stocke : la racine SURVIT a un rechargement de scene, la
+    # connexion serait sinon accumulee a chaque reload -> debranchee dans
+    # _exit_tree().
+    _fn_close_requested = func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+    get_tree().root.close_requested.connect(_fn_close_requested)
     print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | annonces : boutons du decor (boite 5BP, alarmes) | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
     if lod_manager != null:
         # Zones mutuellement exclusives : dans le bureau -> atelier masque,
@@ -802,6 +805,14 @@ func _eclats_de_verre(pos: Vector3) -> void:
             func() -> void:
                 if is_instance_valid(eclat):
                     eclat.queue_free())
+
+
+func _exit_tree() -> void:
+    ## La racine survit a la scene : sans deconnexion, un rechargement de
+    ## main.gd accumulerait les lambdas sur close_requested.
+    var racine := get_tree().root if get_tree() != null else null
+    if racine != null and _fn_close_requested.is_valid()             and racine.close_requested.is_connected(_fn_close_requested):
+        racine.close_requested.disconnect(_fn_close_requested)
 
 
 func _physics_process(delta: float) -> void:
