@@ -75,6 +75,7 @@ const PROP_SCHOOL_CABINET := "res://assets/props/school_cabinet.glb"
 const PROP_COMPUTER_ROOM := "res://assets/props/computer_room.glb"
 const PROP_STEEL_BIN := "res://assets/props/steel_bin.glb"
 const PROP_WELDING := "res://assets/props/welding_machine.glb"
+const PROP_CRANE := "res://assets/props/crane.glb"
 const PROP_VF_2TR := "res://assets/props/vf_2tr.glb"
 const PROP_VF_2TR_MED := "res://assets/props/vf_2tr_med.glb"
 const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
@@ -1956,6 +1957,8 @@ func _build_expo() -> void:
          "x": -1.0, "y": 0.0, "col": Vector3(0.8, 0.73, 0.74)},
         {"path": PROP_WELDING, "nom": "Poste de soudure",
          "x": 6.0, "y": 0.46, "col": Vector3(1.00, 0.92, 0.50)},
+        {"path": PROP_CRANE, "nom": "Grue",
+         "x": 13.0, "y": 0.50, "col": Vector3(0.52, 1.00, 1.00)},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -10.0), Vector3.ZERO)
