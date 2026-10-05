@@ -77,17 +77,6 @@ const PROP_STEEL_BIN := "res://assets/props/steel_bin.glb"
 const PROP_VF_2TR := "res://assets/props/vf_2tr.glb"
 const PROP_VF_2TR_MED := "res://assets/props/vf_2tr_med.glb"
 const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
-# Annonces sonores d'usine fournies par 3IME — touches 1 a 7
-const ANNONCES := [
-    {"touche": KEY_1, "nom": "evacuation", "chemin": "res://assets/sounds/annonces/evacuation.mp3"},
-    {"touche": KEY_2, "nom": "evacuation incendie", "chemin": "res://assets/sounds/annonces/evacuation_incendie.mp3"},
-    {"touche": KEY_3, "nom": "fumer", "chemin": "res://assets/sounds/annonces/fumer.mp3"},
-    {"touche": KEY_4, "nom": "maintenance", "chemin": "res://assets/sounds/annonces/maintenance.mp3"},
-    {"touche": KEY_5, "nom": "presse", "chemin": "res://assets/sounds/annonces/presse.mp3"},
-    {"touche": KEY_6, "nom": "camion", "chemin": "res://assets/sounds/annonces/camion.mp3"},
-    {"touche": KEY_7, "nom": "zone production", "chemin": "res://assets/sounds/annonces/zone_production.mp3"},
-    {"touche": KEY_8, "nom": "confinement", "chemin": "res://assets/sounds/annonces/confinement.mp3"},
-]
 var _annonce_player: AudioStreamPlayer = null
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
@@ -260,7 +249,7 @@ func _ready() -> void:
     get_tree().root.close_requested.connect(
         func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     )
-    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | 1-8 : annonces | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
+    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | annonces : boutons du decor (boite 5BP, alarmes) | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
     if lod_manager != null:
         # Zones mutuellement exclusives : dans le bureau -> atelier masque,
         # dans l'atelier -> bureau masque, dans le hall -> tout visible.
@@ -340,26 +329,13 @@ func _unhandled_input(event: InputEvent) -> void:
             if _alarme_active:
                 _couper_alarme()
                 return
-        for annonce in ANNONCES:
-            if event.keycode == annonce.touche:
-                _jouer_annonce(annonce.nom, annonce.chemin)
-                return
     _clic_interaction(event)
-
-
-func _jouer_annonce(nom: String, chemin: String) -> void:
-    var flux = load(chemin)
-    if flux == null or _annonce_player == null:
-        push_warning("annonce introuvable : " + chemin)
-        return
-    _annonce_player.stream = flux
-    _annonce_player.play()
-    print("Annonce : ", nom)
 
 
 ## Clic sur les elements interactifs (raycast depuis la camera) :
 ## porte d'usine -> quitter ; bureau de chantier -> entrer/sortir.
-## (les touches 1-7 des annonces sont traitees ci-dessus)
+## (les annonces se declenchent par les boutons/switch du decor ;
+## touche 0 : couper alarme/video)
 func _clic_interaction(event: InputEvent) -> void:
     if not (event is InputEventMouseButton and event.pressed):
         return
