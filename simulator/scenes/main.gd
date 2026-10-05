@@ -252,7 +252,7 @@ func _ready() -> void:
     # _exit_tree().
     _fn_close_requested = func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     get_tree().root.close_requested.connect(_fn_close_requested)
-    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | annonces : boutons du decor (boite 5BP, alarmes) | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (0 : couper)")
+    print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | annonces : boutons du decor (boite 5BP, alarmes) | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (M : couper)")
     if lod_manager != null:
         # Zones mutuellement exclusives : dans le bureau -> atelier masque,
         # dans l'atelier -> bureau masque, dans le hall -> tout visible.
@@ -325,7 +325,7 @@ func _unhandled_input(event: InputEvent) -> void:
         if _mode_code:
             _saisir_code(event)
             return
-        if event.keycode == KEY_0:
+        if event.keycode == KEY_M:
             if _video_jouee:
                 _arreter_video()
                 return
@@ -338,7 +338,7 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Clic sur les elements interactifs (raycast depuis la camera) :
 ## porte d'usine -> quitter ; bureau de chantier -> entrer/sortir.
 ## (les annonces se declenchent par les boutons/switch du decor ;
-## touche 0 : couper alarme/video)
+## touche M : couper alarme/video)
 func _clic_interaction(event: InputEvent) -> void:
     if not (event is InputEventMouseButton and event.pressed):
         return
@@ -544,7 +544,7 @@ func _declencher_alarme(pos: Vector3) -> void:
         flux.loop = true
         _alarme_player.stream = flux
         _alarme_player.play()
-        print("Evacuation incendie en boucle — touche 0 pour couper")
+        print("Evacuation incendie en boucle — touche M pour couper")
 
 
 func _fumee_verte(actif: bool) -> void:
@@ -675,7 +675,7 @@ func _jouer_video_nostromo() -> void:
         return
     _video_jouee = true
     _lumieres_alerte_rouge()
-    print("VIDEO : Nostromo — touche 0 pour revenir aux cameras")
+    print("VIDEO : Nostromo — touche M pour revenir aux cameras")
     # SubViewport pour la video, assigne a l'ecran via le mechanisme differe
     var vp_vid := SubViewport.new()
     vp_vid.size = Vector2i(640, 360)
@@ -733,7 +733,7 @@ func _bouton_boite(index: int) -> void:
 
 
 ## Bouton d'evacuation (meme principe que le confinement) : boucle
-## d'evacuation.mp3, coupure par la touche 0.
+## d'evacuation.mp3, coupure par la touche M.
 func _declencher_evacuation_bouton() -> void:
     _alarme_active = true
     _en_confinement = false
@@ -752,10 +752,10 @@ func _declencher_evacuation_bouton() -> void:
         flux.loop = true
         _alarme_player.stream = flux
         _alarme_player.play()
-        print("Evacuation en boucle — touche 0 pour couper")
+        print("Evacuation en boucle — touche M pour couper")
 
 
-## Arret d'urgence : annonce de confinement en boucle (touche 0).
+## Arret d'urgence : annonce de confinement en boucle (touche M).
 func _declencher_confinement() -> void:
     _alarme_active = true
     _en_confinement = true
@@ -781,7 +781,7 @@ func _declencher_confinement() -> void:
         flux.loop = true
         _alarme_player.stream = flux
         _alarme_player.play()
-        print("Confinement en boucle — touche 0 pour couper")
+        print("Confinement en boucle — touche M pour couper")
 
 
 ## Petits eclats de verre physiques qui tombent (effet bonus).
@@ -1406,21 +1406,22 @@ func _build_hall(belt_length: float) -> void:
     # Modele mesure : reculement local Z [-2.03, +1.76] (3.79 m) ; PALIER a
     # y=3,05 m (1 204 sommets) — le 4,07 m de l'AABB n'est que la rambarde.
     # Echelle 0,98 : palier a 3,0 m, pile la hauteur du deck.
-    _place_prop(PROP_CELL_STAIR, Vector3(-41.4, 0.0, mez_z),
+    _place_prop(PROP_CELL_STAIR, Vector3(-41.82, 0.0, mez_z),
         Vector3(0.0, PI / 2.0, 0.0), 0.96)
-    _place_prop(PROP_CELL_STAIR, Vector3(32.72, 0.0, mez_z),
+    _place_prop(PROP_CELL_STAIR, Vector3(32.92, 0.0, mez_z),
         Vector3(0.0, -PI / 2.0, 0.0), 0.96)
     # Rampes de collision INVISIBLES : meme diagonale exacte que les marches
     # (bas de marche -> haut de marche), pente 39 deg < floor_max_angle 55 deg.
-    _make_ramp_x(mez_z, -43.35, -39.71, 3.0)
-    _make_ramp_x(mez_z, 34.67, 31.03, 3.0)
-    # Pont plat invisible : raccord escalier est -> bord du deck
-    _add_static_box(Vector3(31.1, 3.0, mez_z), Vector3(0.5, 0.1, 1.4))
+    _make_ramp_x(mez_z, -43.77, -40.00, 3.00)
+    _make_ramp_x(mez_z, 34.87, 31.00, 3.00)
+    # Ponts plats invisibles : comblement exact du raccord rampe/deck
+    _add_static_box(Vector3(-40.10, 3.00, mez_z), Vector3(0.20, 0.1, 1.4))
+    _add_static_box(Vector3(31.10, 3.00, mez_z), Vector3(0.20, 0.1, 1.4))
 
     # Porte d'acces a la CLASSE (door-school) COLLEE au mur nord, posee sur
     # le deck (y = 4). Modele 1,74 x 4,20 m -> echelle 0,6. CLIC -> classe.
     var porte_mez_x := (mez_debut_x + mez_fin_x) / 2.0
-    var porte_mez_z := -44.795   # face interieure du mur : -44,925 + demi-profondeur
+    var porte_mez_z := -44.895   # face interieure du mur : -44,925 + demi-profondeur
     _place_prop("res://assets/props/door_school.glb",
         Vector3(porte_mez_x, mez_y - 0.01, porte_mez_z), Vector3.ZERO, 0.6)
     _add_static_box(Vector3(porte_mez_x, mez_y + 1.4, -44.75),
@@ -1581,7 +1582,7 @@ func _place_prop(path: String, pos: Vector3, rot: Vector3, prop_scale := 1.0) ->
 ## Boitiers d'alarme incendie (brise-vitre) pres de CHAQUE extincteur
 ## et dans le bureau (mur de gauche). Modele aute couche : redresse par
 ## X 90 deg + demi-tour Y 180 (l'avant etait vers le mur). Clic ->
-## bris de verre sonore et visuel puis evacuation en boucle (touche 0
+## bris de verre sonore et visuel puis evacuation en boucle (touche M
 ## pour couper).
 func _build_alarmes() -> void:
     # mur du fond (face +Z) : a cote des extincteurs x = -20, 10, 40
@@ -1736,7 +1737,7 @@ func _build_securite_signs() -> void:
             continue
         var cab: Node3D = cab_scene.instantiate()
         cab.position = Vector3(52.50, 0.106, za)
-        cab.rotation = Vector3(0.0, PI / 2.0, 0.0)
+        cab.rotation = Vector3(0.0, 3.0 * PI / 4.0, 0.0)
         cab.scale = Vector3.ONE * 0.5
         for partie in cab.find_children("Cube_02[56]*", "MeshInstance3D", true, false):
             partie.visible = false  # battants ouverts du GLB : masques
@@ -1817,9 +1818,10 @@ func _build_securite_signs() -> void:
     # Le niveau actif est choisi dans _process selon la distance joueur.
     _placer_haas(-28.0)   # premiere machine
     _placer_haas(-18.0)   # deuxieme machine, 10 m devant (sud)
+    _placer_haas(-38.0)   # troisieme machine, 10 m derriere (nord)
 
     # Chariots de stockage a cote de chaque Haas, cote EST. Sans texte.
-    for zc_haas in [-28.0, -18.0]:
+    for zc_haas in [-38.0, -28.0, -18.0]:
         _place_prop(PROP_STORAGE_CART, Vector3(40.95, 0.50, zc_haas),
             Vector3.ZERO, 1.0)
         _add_static_box(Vector3(40.95, 0.50, zc_haas),
@@ -2028,22 +2030,22 @@ func _build_classe() -> void:
     # Amenagement : baie informatique au fond (mur nord), armoire scolaire
     # sur le mur ouest, poubelle acier a gauche de la porte, gyrophare
     # d'alerte au plafond (systeme global : rotation bleue + rouge alarme)
-    _place_prop(PROP_COMPUTER_ROOM, Vector3(cxc, 0.672, czc),
-        Vector3.ZERO, 4.2)
-    _add_static_box(Vector3(cxc, 0.672, czc), Vector3(4.20, 1.34, 3.00))
+    _place_prop(PROP_COMPUTER_ROOM, Vector3(cxc-0.5, 0.672, czc),
+        Vector3(0.0, PI, 0.0), 4.2)
+    _add_static_box(Vector3(cxc-0.5, 0.672, czc), Vector3(4.20, 1.34, 3.00))
     var cab_cl_scene: PackedScene = load(PROP_SCHOOL_CABINET)
     if cab_cl_scene != null:
         var cab_cl: Node3D = cab_cl_scene.instantiate()
         cab_cl.position = Vector3(cxc - 4.4, 0.106, czc)
-        cab_cl.rotation = Vector3(0.0, PI / 2.0, 0.0)
+        cab_cl.rotation = Vector3(0.0, 3.0 * PI / 4.0, 0.0)
         cab_cl.scale = Vector3.ONE * 0.5
         for partie in cab_cl.find_children("Cube_02[56]*", "MeshInstance3D", true, false):
             partie.visible = false   # battants ouverts du GLB : masques
         add_child(cab_cl)
         _add_static_box(Vector3(cxc - 4.4, 0.99, czc), Vector3(1.20, 1.97, 1.22))
-    _place_prop(PROP_STEEL_BIN, Vector3(cxc - 1.0 - 1.90, -0.034, czc + 2.55),
+    _place_prop(PROP_STEEL_BIN, Vector3(cxc + 4.2 - 1.90, -0.034, czc + 3.25),
         Vector3(0.0, 0.7, 0.0), 1.0)   # origine GLB decentree de +1,90 m en X
-    _add_static_box(Vector3(cxc - 1.0, 0.19, czc + 2.55),
+    _add_static_box(Vector3(cxc + 4.2, 0.19, czc + 3.25),
         Vector3(0.35, 0.38, 0.35))
 
     # Tableau craie (1,88 x 1,28 m, face +Z, epaisseur 10 cm) colle au
@@ -2056,7 +2058,7 @@ func _build_classe() -> void:
         Vector3(cxc + 2.6, 0.0, czc), Vector3(0.0, PI / 2.0, 0.0), 1.0)
     _add_static_box(Vector3(cxc + 2.6, 0.38, czc), Vector3(0.80, 0.76, 1.60))
     _place_prop("res://assets/props/laptop.glb",
-        Vector3(cxc + 2.6, 0.87, czc), Vector3(0.0, PI / 2.0, 0.0), 0.35)
+        Vector3(cxc + 2.6, 0.87, czc), Vector3(0.0, 0.0, 0.0), 0.35)
     _place_prop("res://assets/props/office_chair.glb",
         Vector3(cxc + 3.6, 0.0, czc), Vector3(0.0, -PI / 2.0, 0.0), 1.0)
     _add_static_box(Vector3(cxc + 3.6, 0.51, czc), Vector3(0.60, 1.02, 0.59))
@@ -2318,8 +2320,8 @@ func _build_bureau_interieur() -> void:
     # cote du boitier d'alarme incendie (z = -59). Modele bake (join),
     # echelle 0,1.
     _place_prop("res://assets/props/switch_couteaux.glb",
-        Vector3(-58.67, 1.0, -59.5), Vector3(0.0, PI / 2.0, 0.0), 0.05)
-    _add_static_box(Vector3(-58.67, 1.0, -59.5), Vector3(0.30, 0.55, 0.35),
+        Vector3(-58.50, 1.0, -59.0), Vector3(0.0, PI / 2.0, 0.0), 0.05)
+    _add_static_box(Vector3(-58.50, 1.0, -59.0), Vector3(0.30, 0.55, 0.35),
         "switch_sprinkler")
 
     # Golden Play Button : affichage direct de la ressource utilisateur
@@ -2327,8 +2329,8 @@ func _build_bureau_interieur() -> void:
     var golden_scene: PackedScene = load("res://assets/props/golden_play_button.glb")
     if golden_scene != null:
         var golden_m: Node3D = golden_scene.instantiate()
-        golden_m.position = Vector3(cx + 1.0, 1.87, cz - 2.74)
-        golden_m.rotation = Vector3(0.0, PI, 0.0)
+        golden_m.position = Vector3(cx + 1.8, 1.55, cz - 4.76)
+        golden_m.rotation = Vector3(0.0, 0.0, 0.0)
         golden_m.scale = Vector3.ONE * 5.0
         add_child(golden_m)
 
@@ -2336,7 +2338,7 @@ func _build_bureau_interieur() -> void:
     # oppose au keypad). Modele 0,69 x 1,0 m -> echelle 0,125 (~9 x 12,5 cm).
     # Clic -> allume/eteint la lampe + son button-press.mp3
     _place_prop("res://assets/props/light_switch.glb",
-        Vector3(cx + 1.0, 1.15, cz + 4.74), Vector3(0.0, PI, 0.0), 0.125)
+        Vector3(cx + 1.0, 1.15, cz + 4.74), Vector3(0.0, PI/2, 0.0), 0.125)
     _add_static_box(Vector3(cx + 1.0, 1.15, cz + 4.74),
         Vector3(0.12, 0.16, 0.10), "interrupteur_bureau")
     _interrupteur_son = AudioStreamPlayer3D.new()
@@ -2601,7 +2603,7 @@ func _build_bureau_interieur() -> void:
         add_child(lbl)
 
     # Arret d'urgence "champignon" (modele fourni par 3IME, 7 cm) a cote
-    # de l'alarme, mur gauche : declenche le confinement (touche 0).
+    # de l'alarme, mur gauche : declenche le confinement (touche M).
     # cx - 3.7 = 8 cm devant la cloison (face interieure a cx - 3.8) :
     # ancre plus profond enterre le modele dans le mur.
     var au_pos := Vector3(cx - 3.70, 1.12, cz + 3.3)

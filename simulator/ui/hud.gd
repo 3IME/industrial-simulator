@@ -57,7 +57,7 @@ func _ready() -> void:
     fps_label = _make_label(box, "fps            = -")
     tri_label = _make_label(box, "triangles      = -")
     pos_label = _make_label(box, "joueur         = -")
-    hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | B boite | 0 couper l'alarme | clic : souris | Echap : liberer", false, true)
+    hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | B boite | M couper l'alarme | clic : souris | Echap : liberer", false, true)
     add_child(panel)
 
 
