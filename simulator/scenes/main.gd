@@ -806,7 +806,12 @@ func _eclats_de_verre(pos: Vector3) -> void:
         add_child(eclat)
         eclat.apply_central_impulse(Vector3(
             randf() * 2.0 - 1.0, randf() * 1.5, randf() * 2.0 - 1.0))
-        get_tree().create_timer(3.0).timeout.connect(eclat.queue_free)
+        # SceneTreeTimer survit au noeud : garder la validite avant free
+        # (sinon warning "previously freed" si la scene quitte < 3 s)
+        get_tree().create_timer(3.0).timeout.connect(
+            func() -> void:
+                if is_instance_valid(eclat):
+                    eclat.queue_free())
 
 
 func _physics_process(delta: float) -> void:
