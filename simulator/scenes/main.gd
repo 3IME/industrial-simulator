@@ -1392,13 +1392,13 @@ func _build_hall(belt_length: float) -> void:
     # y=3,05 m (1 204 sommets) — le 4,07 m de l'AABB n'est que la rambarde.
     # Echelle 0,98 : palier a 3,0 m, pile la hauteur du deck.
     _place_prop(PROP_CELL_STAIR, Vector3(-41.4, 0.0, mez_z),
-        Vector3(0.0, PI / 2.0, 0.0), 0.98)
+        Vector3(0.0, PI / 2.0, 0.0), 0.96)
     _place_prop(PROP_CELL_STAIR, Vector3(32.72, 0.0, mez_z),
-        Vector3(0.0, -PI / 2.0, 0.0), 0.98)
+        Vector3(0.0, -PI / 2.0, 0.0), 0.96)
     # Rampes de collision INVISIBLES : meme diagonale exacte que les marches
     # (bas de marche -> haut de marche), pente 39 deg < floor_max_angle 55 deg.
-    _make_ramp_x(mez_z, -43.39, -39.68, 3.0)
-    _make_ramp_x(mez_z, 34.71, 30.995, 3.0)
+    _make_ramp_x(mez_z, -43.35, -39.71, 3.0)
+    _make_ramp_x(mez_z, 34.67, 31.03, 3.0)
     # Pont plat invisible : raccord escalier est -> bord du deck
     _add_static_box(Vector3(31.1, 3.0, mez_z), Vector3(0.5, 0.1, 1.4))
 
@@ -1408,8 +1408,8 @@ func _build_hall(belt_length: float) -> void:
     var porte_mez_z := -44.795   # face interieure du mur : -44,925 + demi-profondeur
     _place_prop("res://assets/props/door_school.glb",
         Vector3(porte_mez_x, mez_y - 0.01, porte_mez_z), Vector3.ZERO, 0.6)
-    _add_static_box(Vector3(porte_mez_x, mez_y + 1.26, porte_mez_z),
-        Vector3(1.04, 2.52, 0.25), "porte_classe")
+    _add_static_box(Vector3(porte_mez_x, mez_y + 1.4, -44.75),
+        Vector3(1.20, 3.0, 0.35), "porte_classe")
 
     # Reseau de lutte incendie par sprinklers : tetes sous la charpente,
     # plan d'eau au sol, son du jet, etiquette d'etat au switch du bureau.
@@ -2013,9 +2013,9 @@ func _build_classe() -> void:
     # Amenagement : baie informatique au fond (mur nord), armoire scolaire
     # sur le mur ouest, poubelle acier a gauche de la porte, gyrophare
     # d'alerte au plafond (systeme global : rotation bleue + rouge alarme)
-    _place_prop(PROP_COMPUTER_ROOM, Vector3(cxc, 0.225, czc - 2.35),
-        Vector3.ZERO, 1.4)
-    _add_static_box(Vector3(cxc, 0.225, czc - 2.35), Vector3(1.40, 0.45, 1.00))
+    _place_prop(PROP_COMPUTER_ROOM, Vector3(cxc, 0.672, czc),
+        Vector3.ZERO, 4.2)
+    _add_static_box(Vector3(cxc, 0.672, czc), Vector3(4.20, 1.34, 3.00))
     var cab_cl_scene: PackedScene = load(PROP_SCHOOL_CABINET)
     if cab_cl_scene != null:
         var cab_cl: Node3D = cab_cl_scene.instantiate()
@@ -2051,14 +2051,15 @@ func _build_classe() -> void:
     _add_static_box(Vector3(cxc, 1.2, czc + 3.0),
         Vector3(1.2, 2.2, 0.2), "porte_classe_sortie")
     var porte_mat := StandardMaterial3D.new()
-    porte_mat.albedo_color = Color(0.45, 0.32, 0.2)   # brun bois, comme l'exterieur
+    porte_mat.albedo_color = Color(0.42, 0.26, 0.13)  # brun bois franc, comme l'exterieur
     porte_mat.roughness = 0.6
+    porte_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
     var porte_panneau := MeshInstance3D.new()
     var porte_box := BoxMesh.new()
-    porte_box.size = Vector3(1.0, 2.1, 0.05)
+    porte_box.size = Vector3(1.04, 2.5, 0.05)
     porte_panneau.mesh = porte_box
     porte_panneau.material_override = porte_mat
-    porte_panneau.position = Vector3(cxc, 1.05, czc + 3.03)
+    porte_panneau.position = Vector3(cxc, 1.26, czc + 2.97)
     add_child(porte_panneau)
     var poignee := MeshInstance3D.new()
     var poignee_box := BoxMesh.new()
@@ -2068,7 +2069,7 @@ func _build_classe() -> void:
     poignee_mat.albedo_color = Color(0.35, 0.36, 0.38)
     poignee_mat.metallic = 0.8
     poignee.material_override = poignee_mat
-    poignee.position = Vector3(cxc + 0.35, 1.05, czc + 3.0)
+    poignee.position = Vector3(cxc + 0.35, 1.05, czc + 2.97)
     add_child(poignee)
 
 
@@ -2267,6 +2268,7 @@ func _build_bureau_interieur() -> void:
     var porte_bur_mat := StandardMaterial3D.new()
     porte_bur_mat.albedo_color = Color(70.0 / 255.0, 75.0 / 255.0, 85.0 / 255.0)
     porte_bur_mat.roughness = 0.6
+    porte_bur_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
     var porte_bur_panneau := MeshInstance3D.new()
     var porte_bur_box := BoxMesh.new()
     porte_bur_box.size = Vector3(1.06, 1.90, 0.05)
