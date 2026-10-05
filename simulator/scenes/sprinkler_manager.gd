@@ -20,10 +20,10 @@ extends Node
 
 const HAUTEUR_TETE := 5.0        # tetes suspendues sous la charpente
 const RAYON_COUVERTURE := 14.0   # disque couvert par une tete (au sol)
-const DUREE_TEST := 2.5         # a l'armement : toutes les tetes testent
+const DUREE_TEST := 10.0         # a l'armement : toutes les tetes testent
 const DELAI_PAR_METRE := 0.22    # cascade : la chaleur met du temps a monter
 const DEBIT_TETE := 0.0011       # m d'eau / s apportes par une tete ouverte
-const DRAINAGE := 0.00035        # evacuation du sol / s
+const DRAINAGE := 0.008        # evacuation du sol / s
 const NIVEAU_MAX := 0.12         # 12 cm
 
 var arme := false                # switch a lame ferme : reseau sous tension

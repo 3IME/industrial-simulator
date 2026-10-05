@@ -2304,29 +2304,19 @@ func _build_bureau_interieur() -> void:
     # cote du boitier d'alarme incendie (z = -59). Modele bake (join),
     # echelle 0,1.
     _place_prop("res://assets/props/switch_couteaux.glb",
-        Vector3(-58.81, 1.2, -60.4), Vector3(0.0, PI / 2.0, 0.0), 0.05)
-    _add_static_box(Vector3(-58.67, 1.2, -60.4), Vector3(0.30, 0.55, 0.35),
+        Vector3(-58.67, 1.0, -59.5), Vector3(0.0, PI / 2.0, 0.0), 0.05)
+    _add_static_box(Vector3(-58.67, 1.0, -59.5), Vector3(0.30, 0.55, 0.35),
         "switch_sprinkler")
 
-    # Golden Play Button (nouveau modele utilisateur 9,5 x 11,9 cm, origine
-    # centree) echelle 5 -> plaque ~48 x 60 cm, dos colle au mur du fond,
-    # a droite de la TV. Or metallique emissif, visible meme lampe eteinte.
+    # Golden Play Button : affichage direct de la ressource utilisateur
+    # (texture d'origine du GLB, aucun materiau substitue)
     var golden_scene: PackedScene = load("res://assets/props/golden_play_button.glb")
     if golden_scene != null:
-        var golden_p := Node3D.new()
-        golden_p.position = Vector3(cx + 1.0, 1.87, cz - 4.74)
-        golden_p.rotation = Vector3(0.0, PI, 0.0)   # face deco vers la piece
-        add_child(golden_p)
         var golden_m: Node3D = golden_scene.instantiate()
+        golden_m.position = Vector3(cx + 1.0, 1.87, cz - 2.74)
+        golden_m.rotation = Vector3(0.0, PI, 0.0)
         golden_m.scale = Vector3.ONE * 5.0
-        golden_p.add_child(golden_m)
-        var or_gp := StandardMaterial3D.new()
-        or_gp.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-        or_gp.albedo_color = Color(1.0, 0.8, 0.25)
-        or_gp.cull_mode = BaseMaterial3D.CULL_DISABLED
-        for maille in golden_m.find_children("*", "MeshInstance3D", true, false):
-            var m_gp: MeshInstance3D = maille
-            m_gp.material_override = or_gp
+        add_child(golden_m)
 
     # Interrupteur de lumiere : mur avant, a DROITE de la porte (cote
     # oppose au keypad). Modele 0,69 x 1,0 m -> echelle 0,125 (~9 x 12,5 cm).
