@@ -2203,6 +2203,17 @@ func _build_bureau_interieur() -> void:
     add_child(porte)
     _add_static_box(Vector3(cx, 1.0, cz + 4.9), Vector3(1.2, 2.0, 0.15),
         "porte_bureau_interieur")
+    # Face interieure de la porte : gris ardoise bleute (choix utilisateur)
+    var porte_bur_mat := StandardMaterial3D.new()
+    porte_bur_mat.albedo_color = Color(70.0 / 255.0, 75.0 / 255.0, 85.0 / 255.0)
+    porte_bur_mat.roughness = 0.6
+    var porte_bur_panneau := MeshInstance3D.new()
+    var porte_bur_box := BoxMesh.new()
+    porte_bur_box.size = Vector3(1.06, 1.90, 0.05)
+    porte_bur_panneau.mesh = porte_bur_box
+    porte_bur_panneau.material_override = porte_bur_mat
+    porte_bur_panneau.position = Vector3(cx, 0.975, cz + 4.83)
+    add_child(porte_bur_panneau)
 
     var lampe := OmniLight3D.new()
     lampe.position = Vector3(cx, 2.4, cz)
