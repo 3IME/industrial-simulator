@@ -2223,6 +2223,13 @@ func _build_bureau_interieur() -> void:
     add_child(lampe)
     _lumiere_bureau = lampe
 
+    # Interrupteur a lame (switch a couteaux) sur le mur de gauche, a
+    # cote du boitier d'alarme incendie (z = -59). Modele bake (join),
+    # echelle 0,1.
+    _place_prop("res://assets/props/switch_couteaux.glb",
+        Vector3(-58.83, 1.2, -60.4), Vector3(0.0, PI / 2.0, 0.0), 0.1)
+    _add_static_box(Vector3(-58.55, 1.2, -60.4), Vector3(0.55, 1.0, 0.6))
+
     # Golden Play Button (nouveau modele utilisateur 9,5 x 11,9 cm, origine
     # centree) echelle 5 -> plaque ~48 x 60 cm, dos colle au mur du fond,
     # a droite de la TV. Or metallique emissif, visible meme lampe eteinte.
