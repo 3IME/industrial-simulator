@@ -76,6 +76,7 @@ const PROP_COMPUTER_ROOM := "res://assets/props/computer_room.glb"
 const PROP_STEEL_BIN := "res://assets/props/steel_bin.glb"
 const PROP_WELDING := "res://assets/props/welding_machine.glb"
 const PROP_CRANE := "res://assets/props/crane.glb"
+const PROP_EXIT_DOOR := "res://assets/props/emergency_exit_door.glb"
 const PROP_VF_2TR := "res://assets/props/vf_2tr.glb"
 const PROP_VF_2TR_MED := "res://assets/props/vf_2tr_med.glb"
 const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
@@ -364,6 +365,10 @@ func _clic_interaction(event: InputEvent) -> void:
                 _sortir_classe()
             elif hit_cl.collider.get_meta("interaction") == "interrupteur_classe":
                 _basculer_lumiere_classe()
+            elif hit_cl.collider.get_meta("interaction") == "porte_sortie_jeu":
+                print("Porte de secours : sortie du simulateur")
+                Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+                get_tree().quit(0)
         return
     if _dans_wc:
         var cam_wc := get_viewport().get_camera_3d()
@@ -2038,8 +2043,16 @@ func _build_classe() -> void:
         add_child(lum)
         _lumieres_classe.append(lum)
 
+    # Porte de secours a barre anti-panique : mur NORD (fond de la
+    # classe). Modele 0,25 x 1,00 x 0,45 m origine centree -> echelle 2,2
+    # (~0,55 x 2,20 m, barre vers la piece). CLIC = quitter le jeu.
+    _place_prop(PROP_EXIT_DOOR, Vector3(cxc, 1.10, czc - 2.78),
+        Vector3.ZERO, 2.2)
+    _add_static_box(Vector3(cxc, 1.2, czc - 2.9),
+        Vector3(0.80, 2.20, 0.40), "porte_sortie_jeu")
+
     # Interrupteur de lumiere : mur EST, cote sud (proche du passage de
-    # la porte). Clic -> allume/eteint les deux lumieres + son de clic.
+    # la porte. Clic -> allume/eteint les deux lumieres + son de clic.
     _place_prop("res://assets/props/light_switch.glb",
         Vector3(cxc + 4.93, 1.15, czc + 2.2), Vector3(0.0, -PI / 2.0, 0.0), 0.125)
     _add_static_box(Vector3(cxc + 4.93, 1.15, czc + 2.2),

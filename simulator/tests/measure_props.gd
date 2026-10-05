@@ -3,6 +3,7 @@ extends SceneTree
 ## Usage : godot --headless --path simulator --script res://tests/measure_props.gd
 
 const PROPS := [
+    "res://assets/props/emergency_exit_door.glb",
     "res://assets/props/crane.glb",
     "res://assets/props/welding_machine.glb",
     "res://assets/props/switch_couteaux.glb",
