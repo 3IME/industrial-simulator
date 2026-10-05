@@ -368,6 +368,8 @@ func _clic_interaction(event: InputEvent) -> void:
                     _activer_keypad()
                 elif hit_in.collider.get_meta("interaction") == "interrupteur_bureau":
                     _basculer_lumiere_bureau()
+                elif hit_in.collider.get_meta("interaction") == "switch_sprinkler":
+                    _basculer_sprinklers()
         return
     if _dans_classe:
         var cam_cl := get_viewport().get_camera_3d()
@@ -429,13 +431,7 @@ func _clic_interaction(event: InputEvent) -> void:
     elif collider.get_meta("interaction") == "porte_classe":
         _entrer_classe()
     elif collider.get_meta("interaction") == "switch_sprinkler":
-        if sprinklers != null:
-            sprinklers.set_arme(not sprinklers.arme)
-            var clic_sw = load("res://assets/sounds/button-press.mp3")
-            if clic_sw != null and _verre_player != null:
-                _verre_player.stream = clic_sw
-                _verre_player.play()
-            print("SPRINKLERS : ", "ARMES" if sprinklers.arme else "HORS SERVICE")
+        _basculer_sprinklers()
     elif collider.get_meta("interaction") == "alarme_incendie":
         _declencher_alarme(impact.position)
     elif collider.get_meta("interaction") == "confinement":
@@ -457,6 +453,19 @@ func _maj_rendu_cctv() -> void:
         _cctv_composite.render_target_update_mode = mode
     for vp in _cctv_flux:
         vp.render_target_update_mode = mode
+
+
+func _basculer_sprinklers() -> void:
+    ## Switch a couteaux du bureau : marche/arret du reseau sprinklers.
+    ## Appelle depuis les DEUX chaines d'interaction (bureau + generale).
+    if sprinklers == null:
+        return
+    sprinklers.set_arme(not sprinklers.arme)
+    var clic_sw = load("res://assets/sounds/button-press.mp3")
+    if clic_sw != null and _verre_player != null:
+        _verre_player.stream = clic_sw
+        _verre_player.play()
+    print("SPRINKLERS : ", "ARMES" if sprinklers.arme else "HORS SERVICE")
 
 
 func _entrer_bureau() -> void:
