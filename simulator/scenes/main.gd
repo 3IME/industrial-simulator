@@ -1349,20 +1349,19 @@ func _build_hall(belt_length: float) -> void:
 
     # ESCALIERS visuels (positions conservees), montent le long de X vers les
     # extremites ouvertes de la mezzanine (le garde-corps bloque le bord sud).
-    # Modele mesure : reculement local Z [-2.03, +1.76] (3.79 m), h. 4.07 m
-    # -> echelle 0.737 pour une montee de 3.0 m (hauteur reelle du deck).
-    # Escalier ouest (x=-41.5, rot +90 deg) : monte vers +X, haut a x=-39.74
+    # Modele mesure : reculement local Z [-2.03, +1.76] (3.79 m) ; PALIER a
+    # y=3,05 m (1 204 sommets) — le 4,07 m de l'AABB n'est que la rambarde.
+    # Echelle 0,98 : palier a 3,0 m, pile la hauteur du deck.
     _place_prop(PROP_CELL_STAIR, Vector3(-41.4, 0.0, mez_z),
-        Vector3(0.0, PI / 2.0, 0.0), 0.737)
-    # Escalier est (x=33, rot -90 deg) : monte vers -X, haut a x=31.24
-    _place_prop(PROP_CELL_STAIR, Vector3(32.4, 0.0, mez_z),
-        Vector3(0.0, -PI / 2.0, 0.0), 0.737)
+        Vector3(0.0, PI / 2.0, 0.0), 0.98)
+    _place_prop(PROP_CELL_STAIR, Vector3(32.72, 0.0, mez_z),
+        Vector3(0.0, -PI / 2.0, 0.0), 0.98)
     # Rampes de collision INVISIBLES : meme diagonale exacte que les marches
-    # (bas de marche -> haut de marche), pente 47 deg < floor_max_angle 55 deg.
-    _make_ramp_x(mez_z, -42.90, -39.60, 3.0)
-    _make_ramp_x(mez_z, 33.90, 30.50, 3.0)
-    # Pont plat invisible : comble les 24 cm entre l'escalier est et le deck
-    _add_static_box(Vector3(31.4, 3.0, mez_z), Vector3(1.2, 0.1, 1.4))
+    # (bas de marche -> haut de marche), pente 39 deg < floor_max_angle 55 deg.
+    _make_ramp_x(mez_z, -43.39, -39.68, 3.0)
+    _make_ramp_x(mez_z, 34.71, 30.995, 3.0)
+    # Pont plat invisible : raccord escalier est -> bord du deck
+    _add_static_box(Vector3(31.1, 3.0, mez_z), Vector3(0.5, 0.1, 1.4))
 
     # Porte d'acces a la CLASSE (door-school) COLLEE au mur nord, posee sur
     # le deck (y = 4). Modele 1,74 x 4,20 m -> echelle 0,6. CLIC -> classe.
@@ -1953,9 +1952,9 @@ func _build_classe() -> void:
     # Amenagement : baie informatique au fond (mur nord), armoire scolaire
     # sur le mur ouest, poubelle acier a gauche de la porte, gyrophare
     # d'alerte au plafond (systeme global : rotation bleue + rouge alarme)
-    _place_prop(PROP_COMPUTER_ROOM, Vector3(cxc, 0.161, czc - 2.64),
-        Vector3.ZERO, 1.0)
-    _add_static_box(Vector3(cxc, 0.161, czc - 2.64), Vector3(1.0, 0.32, 0.72))
+    _place_prop(PROP_COMPUTER_ROOM, Vector3(cxc, 0.225, czc - 2.35),
+        Vector3.ZERO, 1.4)
+    _add_static_box(Vector3(cxc, 0.225, czc - 2.35), Vector3(1.40, 0.45, 1.00))
     var cab_cl_scene: PackedScene = load(PROP_SCHOOL_CABINET)
     if cab_cl_scene != null:
         var cab_cl: Node3D = cab_cl_scene.instantiate()
@@ -1983,15 +1982,15 @@ func _build_classe() -> void:
     _place_prop("res://assets/props/laptop.glb",
         Vector3(cxc + 2.6, 0.87, czc), Vector3(0.0, PI / 2.0, 0.0), 0.35)
     _place_prop("res://assets/props/office_chair.glb",
-        Vector3(cxc + 1.3, 0.0, czc), Vector3(0.0, PI / 2.0, 0.0), 1.0)
-    _add_static_box(Vector3(cxc + 1.3, 0.51, czc), Vector3(0.59, 1.02, 0.60))
+        Vector3(cxc + 3.6, 0.0, czc), Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _add_static_box(Vector3(cxc + 3.6, 0.51, czc), Vector3(0.60, 1.02, 0.59))
     _cree_gyrophare(Vector3(cxc, 2.8, czc), true)
 
     # Porte de sortie visible (mur sud, cote interieur) + collider cliquable
     _add_static_box(Vector3(cxc, 1.2, czc + 3.0),
         Vector3(1.2, 2.2, 0.2), "porte_classe_sortie")
     var porte_mat := StandardMaterial3D.new()
-    porte_mat.albedo_color = Color(100.0 / 255.0, 89.0 / 255.0, 72.0 / 255.0)
+    porte_mat.albedo_color = Color(0.45, 0.32, 0.2)   # brun bois, comme l'exterieur
     porte_mat.roughness = 0.6
     var porte_panneau := MeshInstance3D.new()
     var porte_box := BoxMesh.new()
@@ -2074,7 +2073,7 @@ func _build_local_wc() -> void:
     # Toilettes au fond (mur ouest), face a la porte. COLLER CLIQUABLE :
     # clic sur la cuvette -> chasse d'eau (toilet-flush.mp3)
     _place_prop("res://assets/props/toilet.glb",
-        Vector3(-65.12, 0.006, czw), Vector3(0.0, -PI / 2.0, 0.0), 0.45)
+        Vector3(-65.12, 0, czw), Vector3(0.0, PI / 2.0, 0.0), 0.45)
     _add_static_box(Vector3(-65.12, 0.43, czw),
         Vector3(0.76, 0.86, 0.54), "toilettes_wc")
     _chasse_son = AudioStreamPlayer3D.new()
@@ -2092,10 +2091,10 @@ func _build_local_wc() -> void:
     _place_prop("res://assets/props/towel.glb",
         Vector3(-65.0, 1.46, czw - 0.94), Vector3.ZERO, 0.7)
     _place_prop("res://assets/props/lavabo.glb",
-        Vector3(-64.3, 0.5, czw - 0.28), Vector3.ZERO, 1.0)
+        Vector3(-64.3, 0.5, czw - 0.62), Vector3(0, - PI / 2.0, 0), 1.0)
     # Clic sur le lavabo -> lavabo.mp3 (robinet)
-    _add_static_box(Vector3(-64.3, 0.5, czw - 0.28),
-        Vector3(0.47, 1.0, 0.56), "lavabo_wc")
+    _add_static_box(Vector3(-64.3, 0.5, czw - 0.62),
+        Vector3(0.47, 2, 0.56), "lavabo_wc")
     _lavabo_son = AudioStreamPlayer3D.new()
     var son_lavabo = load("res://assets/sounds/lavabo.mp3")
     if son_lavabo != null:
@@ -2227,8 +2226,8 @@ func _build_bureau_interieur() -> void:
     # cote du boitier d'alarme incendie (z = -59). Modele bake (join),
     # echelle 0,1.
     _place_prop("res://assets/props/switch_couteaux.glb",
-        Vector3(-58.83, 1.2, -60.4), Vector3(0.0, PI / 2.0, 0.0), 0.1)
-    _add_static_box(Vector3(-58.55, 1.2, -60.4), Vector3(0.55, 1.0, 0.6))
+        Vector3(-58.81, 1.2, -60.4), Vector3(0.0, PI / 2.0, 0.0), 0.07)
+    _add_static_box(Vector3(-58.6, 1.2, -60.4), Vector3(0.45, 0.75, 0.45))
 
     # Golden Play Button (nouveau modele utilisateur 9,5 x 11,9 cm, origine
     # centree) echelle 5 -> plaque ~48 x 60 cm, dos colle au mur du fond,
@@ -2237,6 +2236,7 @@ func _build_bureau_interieur() -> void:
     if golden_scene != null:
         var golden_p := Node3D.new()
         golden_p.position = Vector3(cx + 1.0, 1.87, cz - 4.74)
+        golden_p.rotation = Vector3(0.0, PI, 0.0)   # face deco vers la piece
         add_child(golden_p)
         var golden_m: Node3D = golden_scene.instantiate()
         golden_m.scale = Vector3.ONE * 5.0
