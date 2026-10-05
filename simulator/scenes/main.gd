@@ -2089,7 +2089,7 @@ func _placer_haas(zc: float) -> void:
         for niveau_haas in niveaux:
             lod_manager.auto_register(niveau_haas)
     # Bruit d'usinage module par la distance : AudioStreamPlayer3D gere
-    # l'attenuation (unit_size 5 -> audible a l'approche, sourd au loin).
+    # l'attenuation (unit_size 2,5 + coupure a 22 m : proche des machines).
     # Legger detunable entre les deux machines (pas de phasage).
     var son_cnc := AudioStreamPlayer3D.new()
     var flux_cnc = load("res://assets/sounds/cnc_process.mp3")
@@ -2097,8 +2097,9 @@ func _placer_haas(zc: float) -> void:
         flux_cnc.loop = true
         son_cnc.stream = flux_cnc
         son_cnc.position = Vector3(39.0, 1.4, zc)
-        son_cnc.unit_size = 5.0
-        son_cnc.max_db = -4.0
+        son_cnc.unit_size = 2.5      # chute rapide : audible sur ~10 m
+        son_cnc.max_db = -6.0
+        son_cnc.max_distance = 22.0  # coupure nette au-dela
         son_cnc.pitch_scale = 0.97 if zc > -20.0 else 1.0
         add_child(son_cnc)
         son_cnc.play()
