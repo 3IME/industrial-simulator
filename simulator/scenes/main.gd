@@ -1425,7 +1425,7 @@ func _build_hall(belt_length: float) -> void:
     add_child(_eau_son)
     _etiquette_sprinkler = Label3D.new()
     _etiquette_sprinkler.text = "SPRINKLERS : HORS SERVICE"
-    _etiquette_sprinkler.position = Vector3(-58.72, 1.82, -60.4)
+    _etiquette_sprinkler.position = Vector3(-58.76, 1.86, -60.4)
     _etiquette_sprinkler.rotation.y = PI / 2.0
     _etiquette_sprinkler.pixel_size = 0.0035
     _etiquette_sprinkler.font_size = 48
@@ -2289,8 +2289,8 @@ func _build_bureau_interieur() -> void:
     # cote du boitier d'alarme incendie (z = -59). Modele bake (join),
     # echelle 0,1.
     _place_prop("res://assets/props/switch_couteaux.glb",
-        Vector3(-58.81, 1.2, -60.4), Vector3(0.0, PI / 2.0, 0.0), 0.07)
-    _add_static_box(Vector3(-58.6, 1.2, -60.4), Vector3(0.45, 0.75, 0.45),
+        Vector3(-58.81, 1.2, -60.4), Vector3(0.0, PI / 2.0, 0.0), 0.05)
+    _add_static_box(Vector3(-58.67, 1.2, -60.4), Vector3(0.30, 0.55, 0.35),
         "switch_sprinkler")
 
     # Golden Play Button (nouveau modele utilisateur 9,5 x 11,9 cm, origine
