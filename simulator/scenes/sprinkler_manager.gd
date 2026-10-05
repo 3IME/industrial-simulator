@@ -19,13 +19,15 @@ extends Node
 ## `arrosage_actif` est vrai (cf. _process de la scene).
 
 const HAUTEUR_TETE := 5.0        # tetes suspendues sous la charpente
-const RAYON_COUVERTURE := 13.0   # disque couvert par une tete (au sol)
+const RAYON_COUVERTURE := 14.0   # disque couvert par une tete (au sol)
+const DUREE_TEST := 2.5         # a l'armement : toutes les tetes testent
 const DELAI_PAR_METRE := 0.22    # cascade : la chaleur met du temps a monter
 const DEBIT_TETE := 0.0011       # m d'eau / s apportes par une tete ouverte
 const DRAINAGE := 0.00035        # evacuation du sol / s
 const NIVEAU_MAX := 0.12         # 12 cm
 
 var arme := false                # switch a lame ferme : reseau sous tension
+var _test_chrono := 0.0         # jet d'essai general a l'armement
 var niveau_eau := 0.0
 var nb_actifs := 0
 var arrosage_actif := false      # au moins une tete arrose
@@ -60,7 +62,7 @@ func construire(racine: Node3D, x_min: float, x_max: float,
 		(z_min + z_max) / 2.0)
 	var mat_eau := StandardMaterial3D.new()
 	mat_eau.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat_eau.albedo_color = Color(0.30, 0.55, 0.95, 0.42)
+	mat_eau.albedo_color = Color(0.30, 0.55, 0.95, 0.55)
 	mat_eau.roughness = 0.05
 	mat_eau.metallic = 0.2
 	plan.material = mat_eau
@@ -72,6 +74,10 @@ func construire(racine: Node3D, x_min: float, x_max: float,
 
 func set_arme(v: bool) -> void:
 	arme = v
+	if v:
+		_test_chrono = DUREE_TEST   # test du reseau visible partout
+	else:
+		_test_chrono = 0.0
 
 
 ## Signale l'incendie (position + actif) au reseau : appele par la scene
@@ -85,13 +91,16 @@ func _process(delta: float) -> void:
 	if _tetes.is_empty():
 		return
 	var actifs := 0
+	var en_test: bool = _test_chrono > 0.0
+	if en_test:
+		_test_chrono -= delta
 	for tete in _tetes:
 		# distance HORIZONTALE : la hauteur des tetes ne doit pas
 		# fausser la detection au sol
 		var dist_feu: float = Vector2(tete["pos"].x - _feu_pos.x,
 			tete["pos"].z - _feu_pos.z).length()
-		var cible: bool = arme and _feu_actif \
-			and dist_feu <= RAYON_COUVERTURE
+		var cible: bool = (arme and _feu_actif \
+			and dist_feu <= RAYON_COUVERTURE) or en_test
 		if cible:
 			tete["chrono"] += delta
 		else:
@@ -99,7 +108,7 @@ func _process(delta: float) -> void:
 		# cascade : plus la tete est loin du feu, plus son ampoule met
 		# de temps a eclater
 		var ouvert: bool = cible \
-			and tete["chrono"] >= dist_feu * DELAI_PAR_METRE
+			and (en_test or tete["chrono"] >= dist_feu * DELAI_PAR_METRE)
 		if ouvert != tete["actif"]:
 			tete["actif"] = ouvert
 			tete["particles"].emitting = ouvert
@@ -155,7 +164,7 @@ func _cree_tete(racine: Node3D, pos: Vector3) -> Dictionary:
 	# Jet conique : vitesse initiale vers le bas + dispersion laterale,
 	# chute gravitaire, gouttes fines translucides.
 	var particles := GPUParticles3D.new()
-	particles.amount = 350
+	particles.amount = 500
 	particles.lifetime = 0.9
 	particles.one_shot = false
 	particles.local_coords = true
@@ -171,10 +180,10 @@ func _cree_tete(racine: Node3D, pos: Vector3) -> Dictionary:
 	mat.collision_mode = ParticleProcessMaterial.COLLISION_HIDE_ON_CONTACT
 	particles.process_material = mat
 	var goutte := QuadMesh.new()
-	goutte.size = Vector2(0.05, 0.09)
+	goutte.size = Vector2(0.10, 0.18)
 	var mat_goutte := StandardMaterial3D.new()
 	mat_goutte.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat_goutte.albedo_color = Color(0.60, 0.80, 1.0, 0.50)
+	mat_goutte.albedo_color = Color(0.62, 0.82, 1.0, 0.68)
 	mat_goutte.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
 	mat_goutte.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	goutte.material = mat_goutte

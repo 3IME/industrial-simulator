@@ -24,18 +24,14 @@ func run(t) -> void:
     mgr._process(0.1)
     t.check_eq(mgr.nb_actifs, 0, "desarme : le feu ne declenche rien")
 
-    # --- armement : cascade (les tetes proches s'ouvrent d'abord) ---
+    # --- armement : jet d'essai general, puis seules les tetes du feu ---
     mgr.set_arme(true)
     mgr._process(0.1)
-    # tete la plus proche du feu (0,0) : colonne -4, rangee -5 -> d = 6,4 m
-    # delai = 6,4 * 0,22 = 1,4 s : pas encore ouverte a 0,3 s
-    for _i in range(3):
+    t.check_eq(mgr.nb_actifs, 9, "armement : test general, toutes les tetes ouvertes")
+    for _i in range(30):   # 3,1 s : le test (2,5 s) est termine
         mgr._process(0.1)
-    t.check_eq(mgr.nb_actifs, 0, "cascade : pas d'ouverture immediate")
-    for _i in range(20):   # 2 s au total
-        mgr._process(0.1)
-    t.check(mgr.nb_actifs >= 3, "plusieurs tetes ouvertes apres 2 s (obtenu: %d)" % mgr.nb_actifs)
-    t.check(mgr.nb_actifs <= 4, "seules les tetes du disque de couverture (obtenu: %d)" % mgr.nb_actifs)
+    t.check(mgr.nb_actifs >= 3, "seules les tetes pres du feu restent ouvertes (obtenu: %d)" % mgr.nb_actifs)
+    t.check(mgr.nb_actifs <= 4, "pas plus que le disque de couverture (obtenu: %d)" % mgr.nb_actifs)
     t.check(mgr.arrosage_actif, "arrosage actif signale")
 
     # --- accumulation ---
@@ -61,8 +57,11 @@ func run(t) -> void:
         mgr._process(0.1)
     t.check(mgr.niveau_eau < 0.05, "le niveau redescend (drainage)")
 
-    # --- rearmement sans feu : seches ---
+    # --- rearmement sans feu : test bref puis silence ---
     mgr.set_arme(true)
-    mgr._process(0.5)
-    t.check_eq(mgr.nb_actifs, 0, "arme sans feu : aucune tete ouverte")
-    t.check(not mgr.arrosage_actif, "arme sans feu : pas d'arrosage")
+    mgr._process(0.1)
+    t.check(mgr.nb_actifs > 0, "armement sans feu : jet d'essai visible")
+    for _i in range(35):   # 3,5 s
+        mgr._process(0.1)
+    t.check_eq(mgr.nb_actifs, 0, "apres le test, sans feu : aucune tete ouverte")
+    t.check(not mgr.arrosage_actif, "sans feu : pas d'arrosage prolonge")
