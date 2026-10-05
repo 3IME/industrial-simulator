@@ -28,7 +28,8 @@ func run(t) -> void:
     mgr.set_arme(true)
     mgr._process(0.1)
     t.check_eq(mgr.nb_actifs, 9, "armement : test general, toutes les tetes ouvertes")
-    for _i in range(30):   # 3,1 s : le test (2,5 s) est termine
+    var duree_test: float = mgr.DUREE_TEST
+    for _i in range(int((duree_test + 1.0) / 0.1)):   # le test est termine
         mgr._process(0.1)
     t.check(mgr.nb_actifs >= 3, "seules les tetes pres du feu restent ouvertes (obtenu: %d)" % mgr.nb_actifs)
     t.check(mgr.nb_actifs <= 4, "pas plus que le disque de couverture (obtenu: %d)" % mgr.nb_actifs)
@@ -53,15 +54,17 @@ func run(t) -> void:
     mgr._process(0.1)
     t.check_eq(mgr.nb_actifs, 0, "plus de feu : toutes les tetes fermees")
     t.check(not mgr.arrosage_actif, "arrosage arrete")
-    for _i in range(3000):  # 300 s de drainage
+    var garde_drain := 600   # max 60 s de drainage borne par DRAINAGE
+    while mgr.niveau_eau > 0.02 and garde_drain > 0:
         mgr._process(0.1)
+        garde_drain -= 1
     t.check(mgr.niveau_eau < 0.05, "le niveau redescend (drainage)")
 
     # --- rearmement sans feu : test bref puis silence ---
     mgr.set_arme(true)
     mgr._process(0.1)
     t.check(mgr.nb_actifs > 0, "armement sans feu : jet d'essai visible")
-    for _i in range(35):   # 3,5 s
+    for _i in range(int((mgr.DUREE_TEST + 1.0) / 0.1)):
         mgr._process(0.1)
     t.check_eq(mgr.nb_actifs, 0, "apres le test, sans feu : aucune tete ouverte")
     t.check(not mgr.arrosage_actif, "sans feu : pas d'arrosage prolonge")
