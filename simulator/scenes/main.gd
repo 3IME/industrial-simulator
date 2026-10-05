@@ -149,6 +149,7 @@ var _alarme_active := false
 var _en_confinement := false
 var _cctv = null
 var _cctv_composite: SubViewport = null
+var _cctv_flux: Array[SubViewport] = []   # 4 SubViewport individuels
 var _cctv_cams: Array[Camera3D] = []
 var _cctv_orig: Array[Vector3] = []
 var _cctv_recs: Array[ColorRect] = []
@@ -468,11 +469,23 @@ func _clic_interaction(event: InputEvent) -> void:
         _activer_keypad()
 
 
+func _maj_rendu_cctv() -> void:
+    ## Les 5 SubViewport CCTV (composite + 4 flux) ne rendent QUE quand le
+    ## joueur est dans le bureau : la TV n'est visible que la-bas, on
+    ## economise 5 rendus 3D complets en permanence ailleurs.
+    var mode := SubViewport.UPDATE_ALWAYS if _dans_bureau         else SubViewport.UPDATE_DISABLED
+    if _cctv_composite != null:
+        _cctv_composite.render_target_update_mode = mode
+    for vp in _cctv_flux:
+        vp.render_target_update_mode = mode
+
+
 func _entrer_bureau() -> void:
     if player_node != null:
         player_node.position = Vector3(-54.9, 0.2, -57.5)
         player_node.rotation.y = 0.0          # regarde le fond de la piece (bureau)
     _dans_bureau = true
+    _maj_rendu_cctv()
     print("Bureau de chantier : entree")
 
 
@@ -513,6 +526,7 @@ func _sortir_bureau() -> void:
         player_node.position = Vector3(-54.5, 0.2, -30.0)
         player_node.rotation.y = PI / 2.0     # regarde le mur (la cabine)
     _dans_bureau = false
+    _maj_rendu_cctv()
     print("Bureau de chantier : sortie")
 
 
@@ -2373,7 +2387,7 @@ func _build_bureau_interieur() -> void:
     # Videosurveillance : 4 camera reelles, grille 2x2 sur la TV
     var comp := SubViewport.new()
     comp.size = Vector2i(640, 360)
-    comp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+    comp.render_target_update_mode = SubViewport.UPDATE_DISABLED
     comp.transparent_bg = false
     comp.disable_3d = true
     comp.render_target_clear_mode = SubViewport.CLEAR_MODE_ALWAYS
@@ -2402,7 +2416,7 @@ func _build_bureau_interieur() -> void:
         var conf: Dictionary = flux_cctv[k]
         var vpk := SubViewport.new()
         vpk.size = Vector2i(320, 180)
-        vpk.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+        vpk.render_target_update_mode = SubViewport.UPDATE_DISABLED
         vpk.transparent_bg = false
         vpk.disable_3d = false
         add_child(vpk)
@@ -2414,6 +2428,7 @@ func _build_bureau_interieur() -> void:
         camk.current = true
         cams_cctv.append(camk)
         orig_cctv.append(camk.rotation)
+        _cctv_flux.append(vpk)
 
         var coin := Vector2(320.0 * (k % 2), 180.0 * (k / 2))
         var txk := TextureRect.new()
@@ -2993,12 +3008,15 @@ func _capture_and_quit() -> void:
         var lamps_shot := get_viewport().get_texture().get_image()
         lamps_shot.save_png("res://capture_3d_lamps.png")
         print("Capture ecrite : res://capture_3d_lamps.png")
-        # Ecran TV du bureau (videosurveillance)
+        # Ecran TV du bureau (videosurveillance) : activer le rendu CCTV
+        # comme si le joueur etait entre dans le bureau
+        _dans_bureau = true
+        _maj_rendu_cctv()
         player_node.position = Vector3(-54.9, 0.0, -62.3)
         player_node.rotation.y = 0.0
         for cam in player_node.find_children("*", "Camera3D"):
             cam.rotation.x = 0.06
-        await get_tree().create_timer(0.5).timeout
+        await get_tree().create_timer(0.8).timeout
         var tv_shot := get_viewport().get_texture().get_image()
         tv_shot.save_png("res://capture_3d_tv.png")
         print("Capture ecrite : res://capture_3d_tv.png")
