@@ -72,6 +72,8 @@ const PROP_TRANSPALLET := "res://assets/props/transpallet.glb"
 const PROP_WORK_TABLE_BLUE := "res://assets/props/work_table_blue.glb"
 const PROP_WOODEN_PALLET := "res://assets/props/wooden_pallet1.glb"
 const PROP_SCHOOL_CABINET := "res://assets/props/school_cabinet.glb"
+const PROP_COMPUTER_ROOM := "res://assets/props/computer_room.glb"
+const PROP_STEEL_BIN := "res://assets/props/steel_bin.glb"
 const PROP_VF_2TR := "res://assets/props/vf_2tr.glb"
 const PROP_VF_2TR_MED := "res://assets/props/vf_2tr_med.glb"
 const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
@@ -1948,6 +1950,28 @@ func _build_classe() -> void:
         lum.omni_range = 9.0
         add_child(lum)
 
+    # Amenagement : baie informatique au fond (mur nord), armoire scolaire
+    # sur le mur ouest, poubelle acier a gauche de la porte, gyrophare
+    # d'alerte au plafond (systeme global : rotation bleue + rouge alarme)
+    _place_prop(PROP_COMPUTER_ROOM, Vector3(cxc, 0.161, czc - 2.64),
+        Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(cxc, 0.161, czc - 2.64), Vector3(1.0, 0.32, 0.72))
+    var cab_cl_scene: PackedScene = load(PROP_SCHOOL_CABINET)
+    if cab_cl_scene != null:
+        var cab_cl: Node3D = cab_cl_scene.instantiate()
+        cab_cl.position = Vector3(cxc - 4.4, 0.106, czc)
+        cab_cl.rotation = Vector3(0.0, PI / 2.0, 0.0)
+        cab_cl.scale = Vector3.ONE * 0.5
+        for partie in cab_cl.find_children("Cube_02[56]*", "MeshInstance3D", true, false):
+            partie.visible = false   # battants ouverts du GLB : masques
+        add_child(cab_cl)
+        _add_static_box(Vector3(cxc - 4.4, 0.99, czc), Vector3(1.20, 1.97, 1.22))
+    _place_prop(PROP_STEEL_BIN, Vector3(cxc - 1.0 - 1.90, -0.034, czc + 2.55),
+        Vector3(0.0, 0.7, 0.0), 1.0)   # origine GLB decentree de +1,90 m en X
+    _add_static_box(Vector3(cxc - 1.0, 0.19, czc + 2.55),
+        Vector3(0.35, 0.38, 0.35))
+    _cree_gyrophare(Vector3(cxc, 2.8, czc), true)
+
     # Porte de sortie visible (mur sud, cote interieur) + collider cliquable
     _add_static_box(Vector3(cxc, 1.2, czc + 3.0),
         Vector3(1.2, 2.2, 0.2), "porte_classe_sortie")
@@ -2172,6 +2196,25 @@ func _build_bureau_interieur() -> void:
     lampe.light_energy = 1.3
     add_child(lampe)
     _lumiere_bureau = lampe
+
+    # Golden Play Button (nouveau modele utilisateur 9,5 x 11,9 cm, origine
+    # centree) echelle 5 -> plaque ~48 x 60 cm, dos colle au mur du fond,
+    # a droite de la TV. Or metallique emissif, visible meme lampe eteinte.
+    var golden_scene: PackedScene = load("res://assets/props/golden_play_button.glb")
+    if golden_scene != null:
+        var golden_p := Node3D.new()
+        golden_p.position = Vector3(cx + 1.0, 1.87, cz - 4.74)
+        add_child(golden_p)
+        var golden_m: Node3D = golden_scene.instantiate()
+        golden_m.scale = Vector3.ONE * 5.0
+        golden_p.add_child(golden_m)
+        var or_gp := StandardMaterial3D.new()
+        or_gp.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+        or_gp.albedo_color = Color(1.0, 0.8, 0.25)
+        or_gp.cull_mode = BaseMaterial3D.CULL_DISABLED
+        for maille in golden_m.find_children("*", "MeshInstance3D", true, false):
+            var m_gp: MeshInstance3D = maille
+            m_gp.material_override = or_gp
 
     # Interrupteur de lumiere : mur avant, a DROITE de la porte (cote
     # oppose au keypad). Modele 0,69 x 1,0 m -> echelle 0,125 (~9 x 12,5 cm).

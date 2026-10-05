@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://uo768j2oypjh"
-path="res://.godot/imported/golden_play_button.glb-6e236723c793c4b082e58fa1713e84d7.scn"
+uid="uid://c407rm8nb7f7k"
+path="res://.godot/imported/computer_room.glb-5cfa978888bddfc35b5cb461ffe0eb4f.scn"
 
 [deps]
 
-source_file="res://assets/props/golden_play_button.glb"
-dest_files=["res://.godot/imported/golden_play_button.glb-6e236723c793c4b082e58fa1713e84d7.scn"]
+source_file="res://assets/props/computer_room.glb"
+dest_files=["res://.godot/imported/computer_room.glb-5cfa978888bddfc35b5cb461ffe0eb4f.scn"]
 
 [params]
 
