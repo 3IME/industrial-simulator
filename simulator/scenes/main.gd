@@ -489,7 +489,7 @@ func _entrer_classe() -> void:
 
 func _sortir_classe() -> void:
     if player_node != null:
-        player_node.position = Vector3(-4.5, 4.2, -43.6)
+        player_node.position = Vector3(-4.5, 3.2, -43.6)
         player_node.rotation.y = 0.0        # sur la mezzanine, face a la porte
     _dans_classe = false
     print("Classe : sortie")
@@ -1322,7 +1322,8 @@ func _build_hall(belt_length: float) -> void:
     _build_expo2()
 
     # Plancher a 4 m : visuel + collision marchable
-    var mez_y := 4.0
+    var mez_y := 3.0  # dalle marchable MESUREE a 3,0 m (le haut de
+    # l'AABB, 4,0 m, est la rambarde integree du modele, bord sud)
     var mez_z := HALL_MIN_Z + 1.52  # bord nord du deck COLLE au mur
     # (deck 3,04 m de large ; escaliers 1,06 m centres sur mez_z :
     # ils suivent le deck et restent a ~1 m du mur)
@@ -1346,19 +1347,20 @@ func _build_hall(belt_length: float) -> void:
 
     # ESCALIERS visuels (positions conservees), montent le long de X vers les
     # extremites ouvertes de la mezzanine (le garde-corps bloque le bord sud).
-    # Modele mesure : reculement local Z [-2.03, +1.76] (3.79 m), hauteur 4.07 m.
+    # Modele mesure : reculement local Z [-2.03, +1.76] (3.79 m), h. 4.07 m
+    # -> echelle 0.737 pour une montee de 3.0 m (hauteur reelle du deck).
     # Escalier ouest (x=-41.5, rot +90 deg) : monte vers +X, haut a x=-39.74
-    _place_prop(PROP_CELL_STAIR, Vector3(-41.5, 0.0, mez_z),
-        Vector3(0.0, PI / 2.0, 0.0), 1.0)
+    _place_prop(PROP_CELL_STAIR, Vector3(-41.4, 0.0, mez_z),
+        Vector3(0.0, PI / 2.0, 0.0), 0.737)
     # Escalier est (x=33, rot -90 deg) : monte vers -X, haut a x=31.24
-    _place_prop(PROP_CELL_STAIR, Vector3(33.0, 0.0, mez_z),
-        Vector3(0.0, -PI / 2.0, 0.0), 1.0)
+    _place_prop(PROP_CELL_STAIR, Vector3(32.4, 0.0, mez_z),
+        Vector3(0.0, -PI / 2.0, 0.0), 0.737)
     # Rampes de collision INVISIBLES : meme diagonale exacte que les marches
     # (bas de marche -> haut de marche), pente 47 deg < floor_max_angle 55 deg.
-    _make_ramp_x(mez_z, -43.53, -39.74, 4.07)
-    _make_ramp_x(mez_z, 35.03, 31.24, 4.07)
+    _make_ramp_x(mez_z, -42.90, -39.60, 3.0)
+    _make_ramp_x(mez_z, 33.90, 30.50, 3.0)
     # Pont plat invisible : comble les 24 cm entre l'escalier est et le deck
-    _add_static_box(Vector3(31.05, 4.0, mez_z), Vector3(0.6, 0.1, 1.4))
+    _add_static_box(Vector3(31.4, 3.0, mez_z), Vector3(1.2, 0.1, 1.4))
 
     # Porte d'acces a la CLASSE (door-school) COLLEE au mur nord, posee sur
     # le deck (y = 4). Modele 1,74 x 4,20 m -> echelle 0,6. CLIC -> classe.
@@ -1910,8 +1912,14 @@ func _build_classe() -> void:
     var cxc := -4.5
     var czc := -51.0
     var mur := StandardMaterial3D.new()
-    mur.albedo_color = Color(0.87, 0.85, 0.80)
-    mur.roughness = 0.9
+    var mur_tex = load("res://assets/textures/blanc_classe.jpg")
+    if mur_tex != null:
+        mur.albedo_texture = mur_tex
+        mur.uv1_scale = Vector3(3.0, 1.0, 1.0)   # motif ~3 x 2,8 m
+        mur.roughness = 0.9
+    else:
+        mur.albedo_color = Color(0.87, 0.85, 0.80)
+        mur.roughness = 0.9
     var sol_mat := StandardMaterial3D.new()
     var parquet = load("res://assets/textures/parquet_basecolor.png")
     if parquet != null:
@@ -1944,7 +1952,7 @@ func _build_classe() -> void:
     _add_static_box(Vector3(cxc, 1.2, czc + 3.0),
         Vector3(1.2, 2.2, 0.2), "porte_classe_sortie")
     var porte_mat := StandardMaterial3D.new()
-    porte_mat.albedo_color = Color(102.0 / 255.0, 91.0 / 255.0, 75.0 / 255.0)
+    porte_mat.albedo_color = Color(100.0 / 255.0, 89.0 / 255.0, 72.0 / 255.0)
     porte_mat.roughness = 0.6
     var porte_panneau := MeshInstance3D.new()
     var porte_box := BoxMesh.new()
