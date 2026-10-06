@@ -77,6 +77,9 @@ const PROP_STEEL_BIN := "res://assets/props/steel_bin.glb"
 const PROP_WELDING := "res://assets/props/welding_machine.glb"
 const PROP_CRANE := "res://assets/props/crane.glb"
 const PROP_EXIT_DOOR := "res://assets/props/emergency_exit_door.glb"
+const PROP_VS3 := "res://assets/props/vs3.glb"
+const PROP_VS3_MED := "res://assets/props/vs3_med.glb"
+const PROP_VS3_LOW := "res://assets/props/vs3_low.glb"
 const PROP_VF_2TR := "res://assets/props/vf_2tr.glb"
 const PROP_VF_2TR_MED := "res://assets/props/vf_2tr_med.glb"
 const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
@@ -1829,6 +1832,7 @@ func _build_securite_signs() -> void:
     _placer_haas(-28.0)   # premiere machine
     _placer_haas(-18.0)   # deuxieme machine, 10 m devant (sud)
     _placer_haas(-38.0)   # troisieme machine, 10 m derriere (nord)
+    _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
 
     # Chariots de stockage a cote de chaque Haas, cote EST. Sans texte.
     for zc_haas in [-38.0, -28.0, -18.0]:
@@ -2130,6 +2134,42 @@ func _build_classe() -> void:
 
 ## Machine Haas VF-2TR a trois niveaux de detail, centree en (39, zc),
 ## debout face au sud. Chaque machine a son propre groupe LOD.
+## Haas VS-3 (5 axes, assemblage STEP complet machine + table palettes).
+## 714 k triangles -> 3 niveaux de detail comme les VF-2TR. Plantee a
+## x=29 (un peu plus loin que les 3 Haas de x=39), base au sol.
+func _placer_vs3() -> void:
+    var niveaux: Array[Node3D] = []
+    for chemin_vs in [PROP_VS3, PROP_VS3_MED, PROP_VS3_LOW]:
+        var scene_vs: PackedScene = load(chemin_vs)
+        if scene_vs == null:
+            continue
+        var machine_vs: Node3D = scene_vs.instantiate()
+        machine_vs.position = Vector3(29.0, 0.43, -28.0)
+        machine_vs.rotation = Vector3.ZERO
+        machine_vs.scale = Vector3.ONE * 0.8
+        machine_vs.visible = niveaux.is_empty()
+        add_child(machine_vs)
+        niveaux.append(machine_vs)
+    _add_static_box(Vector3(29.0, 1.65, -28.0), Vector3(8.0, 3.3, 6.7))
+    if lod_manager != null and niveaux.size() == 3:
+        lod_manager.register_levels(niveaux, [8.0, 18.0], Vector3(29.0, 1.5, -28.0))
+        for niveau_vs in niveaux:
+            lod_manager.auto_register(niveau_vs)
+    # Grosse CN : bruit lourd module par la distance (meme reglage que
+    # les VF-2TR : audible a proximite, coupure nette a 22 m)
+    var son_vs := AudioStreamPlayer3D.new()
+    var flux_vs = load("res://assets/sounds/grosse_cn.mp3")
+    if flux_vs != null:
+        flux_vs.loop = true
+        son_vs.stream = flux_vs
+        son_vs.position = Vector3(29.0, 1.6, -28.0)
+        son_vs.unit_size = 2.5
+        son_vs.max_db = -6.0
+        son_vs.max_distance = 22.0
+        add_child(son_vs)
+        son_vs.play()
+
+
 func _placer_haas(zc: float) -> void:
     var niveaux: Array[Node3D] = []
     for chemin_vf in [PROP_VF_2TR, PROP_VF_2TR_MED, PROP_VF_2TR_LOW]:
