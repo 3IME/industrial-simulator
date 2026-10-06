@@ -15,6 +15,10 @@ var _float_tween: Tween = null   # flottement idle : une seule instance
 
 # --- INITIALISATION ---
 func _ready() -> void:
+	# Mode capture (CI) : personne ne clique — passer direct au jeu
+	if "--capture" in OS.get_cmdline_user_args():
+		get_tree().change_scene_to_file("res://scenes/splash.tscn")
+		return
 	# Connexion des signaux de souris (survol)
 	student_card.mouse_entered.connect(_on_card_hover.bind(student_card, true))
 	student_card.mouse_exited.connect(_on_card_hover.bind(student_card, false))
@@ -124,7 +128,8 @@ func _on_confirm_pressed() -> void:
 
 	# Puis changement de scene
 	tween.tween_callback(func() -> void:
-		# Stocke le role dans un singleton (ex: GameManager.player_role)
-		# get_tree().change_scene_to_file("res://scenes/Game.tscn")
-		print("Changement de scene vers le jeu...")
+		# Role memorise pour le futur mode reseau (lisible partout via
+		# Engine.get_meta("player_role"))
+		Engine.set_meta("player_role", selected_role)
+		get_tree().change_scene_to_file("res://scenes/splash.tscn")
 	)
