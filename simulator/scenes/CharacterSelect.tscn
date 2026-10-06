@@ -1,0 +1,185 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scenes/CharacterSelect.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/factory-background.png" id="2_fond"]
+[ext_resource type="Texture2D" path="res://assets/ui/eleves.png" id="3_eleve"]
+[ext_resource type="Texture2D" path="res://assets/ui/professeur.png" id="4_prof"]
+[ext_resource type="Shader" path="res://scenes/scanline.gdshader" id="5_scan"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_carte"]
+bg_color = Color(0.1019, 0.1019, 0.1019, 0.8627)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.898, 1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.5882)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bouton"]
+bg_color = Color(1, 0.4157, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bouton_hover"]
+bg_color = Color(1, 0.5412, 0.2, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bouton_off"]
+bg_color = Color(0.2667, 0.2667, 0.2667, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_scan"]
+shader = ExtResource("5_scan")
+
+[node name="CharacterSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_fond")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="Title" type="Label" parent="MainContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.898, 1, 1)
+theme_override_font_sizes/font_size = 48
+text = "SÉLECTION DU RÔLE"
+horizontal_alignment = 1
+
+[node name="CharacterGrid" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+theme_override_constants/separation = 80
+alignment = 1
+
+[node name="StudentCard" type="PanelContainer" parent="MainContainer/CharacterGrid"]
+custom_minimum_size = Vector2(300, 450)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_carte")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/CharacterGrid/StudentCard"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="StudentImage" type="TextureRect" parent="MainContainer/CharacterGrid/StudentCard/VBoxContainer"]
+custom_minimum_size = Vector2(250, 300)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_eleve")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StudentName" type="Label" parent="MainContainer/CharacterGrid/StudentCard/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "ÉLÈVE"
+horizontal_alignment = 1
+
+[node name="StudentDesc" type="Label" parent="MainContainer/CharacterGrid/StudentCard/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.72, 0.75, 1)
+theme_override_font_sizes/font_size = 16
+text = "Apprendre et diagnostiquer"
+horizontal_alignment = 1
+
+[node name="TeacherCard" type="PanelContainer" parent="MainContainer/CharacterGrid"]
+custom_minimum_size = Vector2(300, 450)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_carte")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/CharacterGrid/TeacherCard"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="TeacherImage" type="TextureRect" parent="MainContainer/CharacterGrid/TeacherCard/VBoxContainer"]
+custom_minimum_size = Vector2(250, 300)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_prof")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TeacherName" type="Label" parent="MainContainer/CharacterGrid/TeacherCard/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "PROFESSEUR"
+horizontal_alignment = 1
+
+[node name="TeacherDesc" type="Label" parent="MainContainer/CharacterGrid/TeacherCard/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.72, 0.75, 1)
+theme_override_font_sizes/font_size = 16
+text = "Encadrer et transmettre"
+horizontal_alignment = 1
+
+[node name="ConfirmButton" type="Button" parent="MainContainer"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_bouton")
+theme_override_styles/hover = SubResource("StyleBoxFlat_bouton_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_bouton_off")
+disabled = true
+text = "VALIDER LE RÔLE"
+
+[node name="ScanlineEffect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_scan")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
