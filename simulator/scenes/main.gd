@@ -1405,6 +1405,18 @@ func _build_hall(belt_length: float) -> void:
     ligne_jaune.position = Vector3((mez_debut_x + mez_fin_x) / 2.0, 0.006, mez_z + 2.2)
     add_child(ligne_jaune)
 
+    # Ligne jaune le long des HAAS
+    var ligne_jaune_z := MeshInstance3D.new()
+    var ligne_box_z := BoxMesh.new()
+    ligne_box_z.size = Vector3(0.12, 0.012, 84.0)
+    var mat_ligne_z := StandardMaterial3D.new()
+    mat_ligne_z.albedo_color = Color(1.0, 0.82, 0.0)
+    mat_ligne_z.roughness = 0.55
+    ligne_box_z.material = mat_ligne_z
+    ligne_jaune_z.mesh = ligne_box_z
+    ligne_jaune_z.position = Vector3(25.75, 0.006, 2.0)
+    add_child(ligne_jaune_z)
+
     # ESCALIERS visuels (positions conservees), montent le long de X vers les
     # extremites ouvertes de la mezzanine (le garde-corps bloque le bord sud).
     # Modele mesure : reculement local Z [-2.03, +1.76] (3.79 m) ; PALIER a
@@ -2050,8 +2062,8 @@ func _build_classe() -> void:
     # Porte de secours a barre anti-panique : mur NORD (fond de la
     # classe). Modele 0,25 x 1,00 x 0,45 m origine centree -> echelle 2,2
     # (~0,55 x 2,20 m, barre vers la piece). CLIC = quitter le jeu.
-    _place_prop(PROP_EXIT_DOOR, Vector3(cxc, 1.10, czc - 2.78),
-        Vector3.ZERO, 2.2)
+    _place_prop(PROP_EXIT_DOOR, Vector3(cxc, 1.10, czc - 2.96),
+        Vector3(0, -23.0 * PI / 36.0, 0), 2.2)
     _add_static_box(Vector3(cxc, 1.2, czc - 2.9),
         Vector3(0.80, 2.20, 0.40), "porte_sortie_jeu")
 
@@ -2144,13 +2156,13 @@ func _placer_vs3() -> void:
         if scene_vs == null:
             continue
         var machine_vs: Node3D = scene_vs.instantiate()
-        machine_vs.position = Vector3(29.0, 0.43, -28.0)
-        machine_vs.rotation = Vector3.ZERO
+        machine_vs.position = Vector3(30.0, 0.43, -28.0)
+        machine_vs.rotation = Vector3(0, - PI / 2.0, 0)
         machine_vs.scale = Vector3.ONE * 0.8
         machine_vs.visible = niveaux.is_empty()
         add_child(machine_vs)
         niveaux.append(machine_vs)
-    _add_static_box(Vector3(29.0, 1.65, -28.0), Vector3(8.0, 3.3, 6.7))
+    _add_static_box(Vector3(29.0, 1.65, -28.0), Vector3(5.0, 1.3, 6.7))
     if lod_manager != null and niveaux.size() == 3:
         lod_manager.register_levels(niveaux, [8.0, 18.0], Vector3(29.0, 1.5, -28.0))
         for niveau_vs in niveaux:

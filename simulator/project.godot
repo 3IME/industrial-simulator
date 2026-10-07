@@ -8,6 +8,10 @@
 
 config_version=5
 
+[autoload]
+
+NetworkSession="*res://network/network_session.gd"
+
 [application]
 
 config/name="Industrial Simulator"

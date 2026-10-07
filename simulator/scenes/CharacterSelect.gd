@@ -32,6 +32,19 @@ func _ready() -> void:
 	# Connexion du bouton de validation
 	confirm_button.pressed.connect(_on_confirm_pressed)
 	confirm_button.disabled = true
+	# Couleur du bouton "VALIDER LE RÔLE"
+	var btn_style := StyleBoxFlat.new()
+	btn_style.bg_color = Color("#9683ec")
+	btn_style.corner_radius_top_left = 8
+	btn_style.corner_radius_top_right = 8
+	btn_style.corner_radius_bottom_left = 8
+	btn_style.corner_radius_bottom_right = 8
+
+	confirm_button.add_theme_stylebox_override("normal", btn_style)
+
+	var btn_hover := btn_style.duplicate()
+	btn_hover.bg_color = Color("#8806ce")
+	confirm_button.add_theme_stylebox_override("hover", btn_hover)
 
 	# Pivot centre : les grossissements (hover/pop) partent du centre de
 	# la carte et non du coin haut-gauche. Attendre une frame pour que
@@ -128,8 +141,8 @@ func _on_confirm_pressed() -> void:
 
 	# Puis changement de scene
 	tween.tween_callback(func() -> void:
-		# Role memorise pour le futur mode reseau (lisible partout via
-		# Engine.get_meta("player_role"))
-		Engine.set_meta("player_role", selected_role)
+		# Role memorise dans l'autoload NetworkSession (typage fort,
+		# accessible partout : NetworkSession.role)
+		NetworkSession.role = NetworkSession.Role.ELEVE 			if selected_role == "eleve" else NetworkSession.Role.PROF
 		get_tree().change_scene_to_file("res://scenes/splash.tscn")
 	)
