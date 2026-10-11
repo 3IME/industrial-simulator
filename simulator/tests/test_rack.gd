@@ -10,6 +10,9 @@ func _initialize() -> void:
         return
     var rack: Node3D = scene.instantiate()
     get_root().add_child(rack)
+    # une frame : laisser les transformations des 1 402 noeuds se
+    # propager (sinon l'AABB est fausse)
+    await process_frame
     var noms := {}
     for noeud in rack.find_children("*", "Node", true, false):
         noms[noeud.name] = true

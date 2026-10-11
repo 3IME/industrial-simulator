@@ -2259,8 +2259,13 @@ func _build_classe() -> void:
 ## Les controleurs Godot (deplacement X/Z, fourches, inventaire) seront
 ## ajoutes autour du GLB sans le modifier.
 func _placer_rack() -> void:
-    _place_prop(PROP_RACK, Vector3(14.0, 7.5, 36.0), Vector3.ZERO, 1.0)
-    _add_static_box(Vector3(14.0, 7.5, 36.0), Vector3(96.0, 15.0, 14.0))
+    # AABB REELLE (apres propagation des transformations) : local
+    # x -3..93, y -0.24..15, z -7..7 -> centre du contenu a x local 45.
+    # Node a x = -43 : le visuel couvre -46..50, centre pile au milieu
+    # du hall (murs internes -57.85 / 61.85, marges ~11.9 m de chaque
+    # cote). Base affleurante (y = 0.24), box alignee sur le visuel.
+    _place_prop(PROP_RACK, Vector3(-43.0, 0.24, 22.0), Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(2.0, 7.6, 22.0), Vector3(96.0, 15.2, 14.0))
 
 
 ## Haas VS-3 (5 axes, assemblage STEP complet machine + table palettes).
