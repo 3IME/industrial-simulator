@@ -90,6 +90,7 @@ const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
 const PROP_MODERN_TABLE := "res://assets/props/Modern_Table.glb"
 const PROP_STEEL_COLLECTOR := "res://assets/props/Steel_collector.glb"
 const PROP_DOOR2 := "res://assets/props/door2.glb"
+const PROP_LIGHT_TOWER := "res://assets/props/portable_light_tower.glb"
 const SIGN_ACCUEIL := "res://assets/props/accueil.png"
 const COIN_SOUND := "res://assets/sounds/coin_drop.mp3"
 const SILO_SOUND := "res://assets/sounds/silo.mp3"
@@ -1155,6 +1156,39 @@ func _build_hall(belt_length: float) -> void:
     _place_prop(PROP_DOOR2,
         Vector3(0.0, 0.01, 44.80),
         Vector3(0.0, PI, 0.0))
+    # Balise lumineuse autonome pres de la jonction mur sud / mur ouest
+    # (modele en cm -> echelle 0,01 : 3,5 x 8,2 m, tete a ~8 m). Son
+    # projecteur vise le milieu de l'atelier de maintenance (est).
+    _place_prop(PROP_LIGHT_TOWER, Vector3(-54.0, 0.01, 40.0),
+        Vector3(0.0, PI / 2.0, 0.0), 0.01)
+    var spot_tour := SpotLight3D.new()
+    spot_tour.position = Vector3(-54.0, 7.9, 40.0)
+    spot_tour.look_at_from_position(spot_tour.position,
+        Vector3(56.0, 0.0, 0.0), Vector3.UP)
+    spot_tour.light_color = Color(1.0, 0.95, 0.85)
+    spot_tour.light_energy = 4.0
+    spot_tour.spot_range = 70.0
+    spot_tour.spot_angle = 32.0
+    spot_tour.spot_attenuation = 1.5
+    add_child(spot_tour)
+    var halo_tour := OmniLight3D.new()
+    halo_tour.position = Vector3(-54.0, 7.9, 40.0)
+    halo_tour.light_color = Color(1.0, 0.95, 0.85)
+    halo_tour.light_energy = 1.2
+    halo_tour.omni_range = 7.0
+    add_child(halo_tour)
+
+    # Deux luminaires fluorescents en hauteur, a gauche et a droite de
+    # la porte double (meme modele/reglage que la maintenance)
+    for cote_fluo in [-2.8, 2.8]:
+        _place_prop(PROP_FLUO_FIXTURE,
+            Vector3(cote_fluo, 4.0, 44.35), Vector3.ZERO, 1.0)
+        var fluo_sud := OmniLight3D.new()
+        fluo_sud.light_color = Color(0.95, 0.98, 1.0)
+        fluo_sud.light_energy = 1.3
+        fluo_sud.omni_range = 8.0
+        fluo_sud.position = Vector3(cote_fluo, 3.94, 44.35)
+        add_child(fluo_sud)
     # Panneau d'accueil au-dessus de la porte d'entree de l'usine
     _place_sign(SIGN_ACCUEIL, Vector3(0.0, 3.5, HALL_MAX_Z - 0.10),
         Vector2(1.20, 0.58), PI)
