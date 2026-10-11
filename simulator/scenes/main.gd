@@ -92,6 +92,8 @@ const PROP_STEEL_COLLECTOR := "res://assets/props/Steel_collector.glb"
 const PROP_DOOR2 := "res://assets/props/door2.glb"
 const PROP_LIGHT_TOWER := "res://assets/props/portable_light_tower.glb"
 const PROP_CHARIOT := "res://assets/props/chariot.glb"
+const PROP_OREILLES := "res://assets/props/oreilles.glb"
+const SIGN_AUDITIVES := "res://assets/props/panneau_auditives.png"
 const SIGN_ACCUEIL := "res://assets/props/accueil.png"
 const COIN_SOUND := "res://assets/sounds/coin_drop.mp3"
 const SILO_SOUND := "res://assets/sounds/silo.mp3"
@@ -1193,6 +1195,13 @@ func _build_hall(belt_length: float) -> void:
         add_child(fluo_sud)
     _add_static_box(Vector3(0.0, 1.1, 44.80),
         Vector3(3.6, 2.2, 0.3), "porte_usine")
+    # Casque de protection auditive accroche pres de la porte double,
+    # centre a mi-hauteur de porte (2,13 m / 2), et son panneau
+    # "protections auditives obligatoires" au-dessus
+    _place_prop(PROP_OREILLES, Vector3(2.3, 0.90, 44.85),
+        Vector3(0.0, PI, 0.0), 1.0)
+    _place_sign(SIGN_AUDITIVES, Vector3(2.3, 1.65, 44.88),
+        Vector2(0.5, 0.5), PI)
     # Panneau d'accueil au-dessus de la porte d'entree de l'usine
     _place_sign(SIGN_ACCUEIL, Vector3(0.0, 3.5, HALL_MAX_Z - 0.10),
         Vector2(1.20, 0.58), PI)
