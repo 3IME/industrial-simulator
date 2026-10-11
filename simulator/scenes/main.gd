@@ -2718,7 +2718,7 @@ func _build_bureau_interieur() -> void:
     var hrs_cctv: Array[Label] = []
     var pertes_cctv: Array[Label] = []
     var flux_cctv := [
-        {"pos": Vector3(0.0, 6.0, 38.0), "visee": Vector3(3.5, 1.0, 4.5),
+        {"pos": Vector3(0.0, 6.0, 38.0), "visee": Vector3(-48.0, 1.0, 36.5),
          "nom": "CAM 01 — ENTREE", "intensite": 0.15, "teinte": Color(0.92, 1.0, 0.96)},
         {"pos": Vector3(1.5, 6.0, 6.0), "visee": Vector3(1.0, 0.5, 0.0),
          "nom": "CAM 02 — PRODUCTION", "intensite": 0.35, "teinte": Color(0.85, 0.95, 1.0)},
