@@ -91,6 +91,7 @@ const PROP_MODERN_TABLE := "res://assets/props/Modern_Table.glb"
 const PROP_STEEL_COLLECTOR := "res://assets/props/Steel_collector.glb"
 const PROP_DOOR2 := "res://assets/props/door2.glb"
 const PROP_LIGHT_TOWER := "res://assets/props/portable_light_tower.glb"
+const PROP_CHARIOT := "res://assets/props/chariot.glb"
 const SIGN_ACCUEIL := "res://assets/props/accueil.png"
 const COIN_SOUND := "res://assets/sounds/coin_drop.mp3"
 const SILO_SOUND := "res://assets/sounds/silo.mp3"
@@ -1962,6 +1963,10 @@ func _build_securite_signs() -> void:
     _placer_haas(-38.0)   # troisieme machine, 10 m derriere (nord)
     _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
     _placer_rack()   # magasin de toles KASTO 96 m, bande sud du hall
+    # Chariot (0,4 x 0,68 x 1 m) pose a l'ouest ; culling de distance
+    # automatique via _place_prop (masque au-dela de ~57 m)
+    _place_prop(PROP_CHARIOT, Vector3(-47.0, 0.0, -26.0), Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(-47.0, 0.34, -26.0), Vector3(0.40, 0.68, 1.00))
     # 4 collecteurs d'acier : 3 alignes pres des Haas, 1 pres de la VS-3
     var positions_collecteurs := [
         Vector3(37.11, 0.0, -17.38),
