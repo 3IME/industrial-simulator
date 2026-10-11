@@ -1198,9 +1198,9 @@ func _build_hall(belt_length: float) -> void:
     # Casque de protection auditive accroche pres de la porte double,
     # centre a mi-hauteur de porte (2,13 m / 2), et son panneau
     # "protections auditives obligatoires" au-dessus
-    _place_prop(PROP_OREILLES, Vector3(2.3, 0.90, 44.85),
-        Vector3(0.0, PI, 0.0), 1.0)
-    _place_sign(SIGN_AUDITIVES, Vector3(2.3, 1.65, 44.88),
+    _place_prop(PROP_OREILLES, Vector3(2.3, 1.20, 44.85),
+        Vector3(PI, PI, 0.0), 1.0)
+    _place_sign(SIGN_AUDITIVES, Vector3(2.3, 1.95, 44.88),
         Vector2(0.5, 0.5), PI)
     # Panneau d'accueil au-dessus de la porte d'entree de l'usine
     _place_sign(SIGN_ACCUEIL, Vector3(0.0, 3.5, HALL_MAX_Z - 0.10),
