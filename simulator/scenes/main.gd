@@ -89,7 +89,7 @@ const PROP_VF_2TR_MED := "res://assets/props/vf_2tr_med.glb"
 const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
 const PROP_MODERN_TABLE := "res://assets/props/Modern_Table.glb"
 const PROP_STEEL_COLLECTOR := "res://assets/props/Steel_collector.glb"
-const PROP_WINDOWS := "res://assets/props/windows.glb"
+const PROP_DOOR2 := "res://assets/props/door2.glb"
 const SIGN_ACCUEIL := "res://assets/props/accueil.png"
 const COIN_SOUND := "res://assets/sounds/coin_drop.mp3"
 const SILO_SOUND := "res://assets/sounds/silo.mp3"
@@ -1150,15 +1150,11 @@ func _build_hall(belt_length: float) -> void:
         add_child(frame)
 
     # Fenetre sur le mur sud, face vers l'interieur du hall (-Z)
-    _place_prop(PROP_WINDOWS,
-        Vector3(-2.4, 1.4, 44.80),
-        Vector3.ZERO)
-    _place_prop(PROP_WINDOWS,
-        Vector3(0.0, 1.4, 44.80),
-        Vector3.ZERO)
-    _place_prop(PROP_WINDOWS,
-        Vector3(2.4, 1.4, 44.80),
-        Vector3.ZERO)
+    # Porte double (3,49 x 2,13 m, origine a la base) a la place des
+    # 3 fenetres, centree sous le panneau d'accueil, face au hall
+    _place_prop(PROP_DOOR2,
+        Vector3(0.0, 0.01, 44.80),
+        Vector3(0.0, PI, 0.0))
     # Panneau d'accueil au-dessus de la porte d'entree de l'usine
     _place_sign(SIGN_ACCUEIL, Vector3(0.0, 3.5, HALL_MAX_Z - 0.10),
         Vector2(1.20, 0.58), PI)

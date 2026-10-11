@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://b02xyunpp7j8y"
-path="res://.godot/imported/windows.glb-f2be89f86645744d684805e5718d0788.scn"
+uid="uid://d3vaiujvf5aq"
+path="res://.godot/imported/door2.glb-8449cf9254fc423a0302e6d766cb7147.scn"
 
 [deps]
 
-source_file="res://assets/props/windows.glb"
-dest_files=["res://.godot/imported/windows.glb-f2be89f86645744d684805e5718d0788.scn"]
+source_file="res://assets/props/door2.glb"
+dest_files=["res://.godot/imported/door2.glb-8449cf9254fc423a0302e6d766cb7147.scn"]
 
 [params]
 
