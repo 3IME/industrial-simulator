@@ -8,6 +8,10 @@ extends Control
 @onready var student_image: TextureRect = $MainContainer/CharacterGrid/StudentCard/VBoxContainer/StudentImage
 @onready var teacher_image: TextureRect = $MainContainer/CharacterGrid/TeacherCard/VBoxContainer/TeacherImage
 @onready var confirm_button: Button = $MainContainer/ConfirmButton
+@onready var ip_zone: HBoxContainer = $MainContainer/MidZone/IpZone
+@onready var ip_field: LineEdit = $MainContainer/MidZone/IpZone/IpField
+@onready var prof_ip_label: Label = $MainContainer/MidZone/ProfIpLabel
+@onready var ip_error: Label = $MainContainer/MidZone/IpError
 
 # --- VARIABLES ---
 var selected_role: String = ""
@@ -53,6 +57,10 @@ func _ready() -> void:
 	student_card.pivot_offset = student_card.size / 2.0
 	teacher_card.pivot_offset = teacher_card.size / 2.0
 	confirm_button.pivot_offset = confirm_button.size / 2.0
+
+	# IP locale du professeur : affichee des qu'il choisit PROF, pour
+	# qu'il la communique aux eleves (premiere IPv4 non-boucle locale)
+	prof_ip_label.text = "Votre IP : " + _ip_locale()
 
 	# Animation d'entree
 	_animate_entry()
@@ -120,6 +128,11 @@ func _on_card_click(event: InputEvent, role: String, card: PanelContainer) -> vo
 		student_card.modulate = Color(1, 1, 1) if role == "eleve" else Color(0.5, 0.5, 0.5)
 		teacher_card.modulate = Color(1, 1, 1) if role == "professeur" else Color(0.5, 0.5, 0.5)
 
+		# Zone IP : saisie pour l'eleve, IP affichee pour le prof
+		ip_zone.visible = role == "eleve"
+		prof_ip_label.visible = role == "professeur"
+		ip_error.visible = false
+
 		# Activation du bouton
 		confirm_button.disabled = false
 
@@ -128,10 +141,31 @@ func _on_card_click(event: InputEvent, role: String, card: PanelContainer) -> vo
 		btn_tween.tween_property(confirm_button, "scale", Vector2(1.1, 1.1), 0.15)
 		btn_tween.tween_property(confirm_button, "scale", Vector2(1.0, 1.0), 0.15)
 
+# --- IP LOCALE (premiere IPv4 non-boucle locale) ---
+func _ip_locale() -> String:
+	for addr in IP.get_local_addresses():
+		if ":" in addr:
+			continue        # IPv6 ecartee
+		if addr.begins_with("127.") or addr.begins_with("0."):
+			continue
+		return addr
+	return "introuvable"
+
+
 # --- VALIDATION ---
 func _on_confirm_pressed() -> void:
 	if selected_role == "":
 		return
+
+	# L'eleve doit saisir l'IP du poste professeur avant de continuer
+	if selected_role == "eleve":
+		if ip_field.text.strip_edges() == "":
+			ip_error.visible = true
+			var erreur_tween = create_tween()
+			erreur_tween.tween_property(ip_zone, "modulate", Color(1, 0.4, 0.4), 0.15)
+			erreur_tween.tween_property(ip_zone, "modulate", Color(1, 1, 1), 0.15)
+			return
+		NetworkSession.host_ip = ip_field.text.strip_edges()
 
 	print("Lancement du jeu en tant que : ", selected_role)
 

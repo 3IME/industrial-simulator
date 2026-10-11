@@ -25,6 +25,8 @@ const URGENCUE_BOX := "res://assets/safety/urgence4.glb"
 const SIGN_SORTIE := "res://assets/safety/sign_sortie_secours.png"
 const SIGN_DAE := "res://assets/safety/sign_dae.png"
 const SIGN_RASSEMBLEMENT := "res://assets/safety/sign_rassemblement.png"
+const SIGN_TROUSSE := "res://assets/safety/trousse.png"
+const SIGN_CIVIERE := "res://assets/safety/civiere.png"
 const HUMM_SOUND := "res://assets/sounds/annonces/humm.mp3"
 const HUMM_PORTEE := 5.0        # audible a 5 m
 const HUMM_VOLUME_MAX := -2.0   # dB a bout portant
@@ -40,6 +42,7 @@ const PROP_FLUO_FIXTURE := "res://assets/props/fluorescent_fixture.glb"
 const PROP_SECURITY_DOOR := "res://assets/props/security_door.glb"
 const PROP_ADULT := "res://assets/props/adult_static.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
+const PROP_MOTOR_COMPRESSOR := "res://assets/props/motor_compressor.glb"
 const PROP_IRON_MINER := "res://assets/props/iron_miner.glb"
 const PROP_BRIDGE := "res://assets/props/bridge_fragment.glb"
 const PROP_TOOL_TROLLEYS := "res://assets/props/tool_trolleys.glb"
@@ -80,9 +83,16 @@ const PROP_EXIT_DOOR := "res://assets/props/emergency_exit_door.glb"
 const PROP_VS3 := "res://assets/props/vs3.glb"
 const PROP_VS3_MED := "res://assets/props/vs3_med.glb"
 const PROP_VS3_LOW := "res://assets/props/vs3_low.glb"
+const PROP_RACK := "res://assets/props/rack.glb"
 const PROP_VF_2TR := "res://assets/props/vf_2tr.glb"
 const PROP_VF_2TR_MED := "res://assets/props/vf_2tr_med.glb"
 const PROP_VF_2TR_LOW := "res://assets/props/vf_2tr_low.glb"
+const PROP_MODERN_TABLE := "res://assets/props/Modern_Table.glb"
+const PROP_STEEL_COLLECTOR := "res://assets/props/Steel_collector.glb"
+const PROP_WINDOWS := "res://assets/props/windows.glb"
+const SIGN_ACCUEIL := "res://assets/props/accueil.png"
+const COIN_SOUND := "res://assets/sounds/coin_drop.mp3"
+const SILO_SOUND := "res://assets/sounds/silo.mp3"
 var _annonce_player: AudioStreamPlayer = null
 
 # Dimensions du hall (120 x 90 m, 20 m de haut) ; le convoyeur occupe x=0..2
@@ -168,6 +178,8 @@ var _interrupteur_classe_son: AudioStreamPlayer3D = null
 var _interrupteur_son: AudioStreamPlayer3D = null
 var _chasse_son: AudioStreamPlayer3D = null
 var _lavabo_son: AudioStreamPlayer3D = null
+var _coin_player: AudioStreamPlayer3D = null
+var _silo_player: AudioStreamPlayer3D = null
 var _gyrophare_spots: Array[SpotLight3D] = []
 var _fumee_active := false
 var _fumee_ramp_gris: GradientTexture1D = null
@@ -434,6 +446,8 @@ func _clic_interaction(event: InputEvent) -> void:
         _bouton_boite(int(str(collider.get_meta("interaction")).split("_")[-1]))
     elif collider.get_meta("interaction") == "keypad_code":
         _activer_keypad()
+    elif collider.get_meta("interaction") == "distributeur_cafe":
+        _utiliser_distributeur_cafe()
 
 
 func _maj_rendu_cctv() -> void:
@@ -920,11 +934,16 @@ func _process(delta: float) -> void:
     elif not _fumee_active and _fumee_niveau > 0.0:
         _fumee_niveau = maxf(_fumee_niveau - delta * FUMEE_VITESSE * 2.0, 0.0)
     if _fumee_parts.size() > 0:
-        var nb: int = int(_fumee_niveau * FUMEE_MAX_PARTICLES / _fumee_parts.size())
         var vis: bool = _fumee_niveau > 0.01
-        for fumee in _fumee_parts:
-            fumee.amount = nb
-            fumee.emitting = vis
+        if vis:
+            var nb: int = maxi(
+                int(_fumee_niveau * FUMEE_MAX_PARTICLES / _fumee_parts.size()), 1)
+            for fumee in _fumee_parts:
+                fumee.amount = nb
+                fumee.emitting = true
+        else:
+            for fumee in _fumee_parts:
+                fumee.emitting = false
 
     # Animation CCTV : balayage, REC, horloges
     if _cctv_composite != null:
@@ -1129,6 +1148,20 @@ func _build_hall(belt_length: float) -> void:
         frame.position = Vector3(HALL_MIN_X, 1.2, 0)
         frame.material_override = plinth_mat
         add_child(frame)
+
+    # Fenetre sur le mur sud, face vers l'interieur du hall (-Z)
+    _place_prop(PROP_WINDOWS,
+        Vector3(-2.4, 1.4, 44.80),
+        Vector3.ZERO)
+    _place_prop(PROP_WINDOWS,
+        Vector3(0.0, 1.4, 44.80),
+        Vector3.ZERO)
+    _place_prop(PROP_WINDOWS,
+        Vector3(2.4, 1.4, 44.80),
+        Vector3.ZERO)
+    # Panneau d'accueil au-dessus de la porte d'entree de l'usine
+    _place_sign(SIGN_ACCUEIL, Vector3(0.0, 3.5, HALL_MAX_Z - 0.10),
+        Vector2(1.20, 0.58), PI)
 
     # Plafond texture tole
     var ceiling := MeshInstance3D.new()
@@ -1339,7 +1372,7 @@ func _build_hall(belt_length: float) -> void:
         surf_f.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
         quad_f.material = surf_f
         fumee.draw_pass_1 = quad_f
-        fumee.amount = 0
+        fumee.amount = 1
         fumee.lifetime = 8.0
         fumee.position = pos_fumee
         fumee.emitting = false
@@ -1350,7 +1383,7 @@ func _build_hall(belt_length: float) -> void:
     _lettre_mur("N", Vector3(center_x, 10.0, HALL_MIN_Z + 0.10), 0.0)       # Nord = z min
     _lettre_mur("S", Vector3(center_x, 10.0, HALL_MAX_Z - 0.10), PI)        # Sud = z max
     _lettre_mur("E", Vector3(HALL_MAX_X - 0.10, 10.0, center_z), -PI / 2.0)  # Est = x max
-    _lettre_mur("O", Vector3(HALL_MIN_X + 0.10, 10.0, center_z), -PI / 2.0) # Ouest = x min
+    _lettre_mur("O", Vector3(HALL_MIN_X + 0.10, 10.0, center_z), PI / 2.0) # Ouest = x min
 
     # Extincteurs muraux : mur du fond (z min) et mur droit (x max)
     for x in [-20.0, 10.0, 40.0]:
@@ -1688,6 +1721,12 @@ func _build_securite_signs() -> void:
     # DAE (defibrillateur) : a droite de la porte (z negatif, face +X)
     _place_sign(SIGN_DAE, Vector3(HALL_MIN_X + 0.10, 2.05, -1.8),
         Vector2(0.24, 0.36), PI / 2.0)
+    # Trousse de secours et civiere : sur le mur ouest,
+    # 1 m et 2 m au nord du DAE (face +X, vers la salle)
+    _place_sign(SIGN_TROUSSE, Vector3(HALL_MIN_X + 0.10, 2.05, -3.90),
+        Vector2(0.30, 0.40), PI / 2.0)
+    _place_sign(SIGN_CIVIERE, Vector3(HALL_MIN_X + 0.10, 2.05, -4.40),
+        Vector2(0.40, 0.40), PI / 2.0)
     _chaudiere_player = AudioStreamPlayer3D.new()
     var chau_flux = load("res://assets/sounds/annonces/chaudiere.mp3")
     if chau_flux != null:
@@ -1780,7 +1819,7 @@ func _build_securite_signs() -> void:
     if wc_tex != null:
         var wc_mat := StandardMaterial3D.new()
         wc_mat.albedo_texture = wc_tex
-        wc_mat.cull_disabled = true
+        wc_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
         wc_mat.roughness = 0.8
         var wc_panneau := MeshInstance3D.new()
         var wc_quad := QuadMesh.new()
@@ -1797,7 +1836,7 @@ func _build_securite_signs() -> void:
     if panneau_tex != null:
         var panneau_mat := StandardMaterial3D.new()
         panneau_mat.albedo_texture = panneau_tex
-        panneau_mat.cull_disabled = true
+        panneau_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
         panneau_mat.roughness = 0.8
         var panneau := MeshInstance3D.new()
         var quad := QuadMesh.new()
@@ -1825,6 +1864,11 @@ func _build_securite_signs() -> void:
         Vector3(0.0, -1.1, 0.0), 1.0)
     _place_prop(PROP_WOODEN_PALLET, Vector3(60.3, 0.0, -17.6),
         Vector3(0.0, 2.3, 0.0), 1.0)
+    # portes outils
+    _place_prop(PROP_TOOL_TROLLEYS, Vector3(52.72, 0.76, -12.50),
+        Vector3(0.0, PI, 0.0), 0.9)
+    _add_static_box(Vector3(53.00, 0.69, -11.85),
+        Vector3(0.64, 1.54, 3.11))
 
     # Machine voxel 2 geante : modeele 1,90 m -> echelle 6,32 = 12 m de
     # haut, zone sud-ouest (x -38 / z 32). Origine a mi-hauteur -> y = 6.
@@ -1832,6 +1876,45 @@ func _build_securite_signs() -> void:
     _place_prop(PROP_VOXEL_MACHINE_2, Vector3(-38.0, 6.0, 32.0),
         Vector3.ZERO, 6.32)
     _add_static_box(Vector3(-38.0, 6.0, 32.0), Vector3(4.39, 12.0, 4.45))
+    # Bruit de silo : 3D, attenue par la distance. Audible a proximite
+    # de la machine voxel geante, coupure nette au-dela (comme la
+    # chaudiere ou les CNC). Position a hauteur d'homme pres du bati.
+    _silo_player = AudioStreamPlayer3D.new()
+    var silo_flux = load(SILO_SOUND)
+    if silo_flux != null:
+        silo_flux.loop = true
+        _silo_player.stream = silo_flux
+        _silo_player.position = Vector3(-38.0, 1.5, 32.0)
+        _silo_player.unit_size = 4.0        # chute rapide du volume
+        _silo_player.max_db = -4.0
+        _silo_player.max_distance = 25.0    # coupure nette au-dela
+        add_child(_silo_player)
+        _silo_player.play()
+
+    # Benne en acier vert
+    _place_prop(PROP_DUMPSTER, Vector3(-56.5, 0.0, 31.0),
+        Vector3(0.0, PI / 2.0, 0.0), 2.25)
+    _add_static_box(Vector3(-56.5, 0.82, 31.0),
+        Vector3(1.67, 1.64, 1.80))
+    # Compresseur moteur : zone sud-ouest
+    _place_prop(PROP_MOTOR_COMPRESSOR, Vector3(-49.0, 0.6, 42.0),
+        Vector3.ZERO)
+    _add_static_box(Vector3(-49.0, 0.5, 42.0), Vector3(1.5, 1.0, 1.5))
+    # Borne de securite jaune : zone sud-ouest, pres du compresseur
+    _place_prop(PROP_BOLLARD, Vector3(-49.5, 0.0, 40.83), Vector3.ZERO)
+    _add_static_box(Vector3(-49.5, 0.45, 40.83),
+        Vector3(0.24, 0.90, 0.24))
+
+    # Grue : 5x plus grande
+    _place_prop(PROP_CRANE, Vector3(54.0, 2.5, -26.0),
+        Vector3.ZERO, 5.0)
+    _add_static_box(Vector3(54.0, 5.0, -26.0),
+        Vector3(2.60, 5.00, 5.00))
+
+    # Poste de soudure 
+    _place_prop(PROP_WELDING, Vector3(52.55, 1.15, 4.4),
+        Vector3.ZERO, 0.75)
+
 
     # Machine a commande numerique VF-2TR (Haas), en (39, -28), debout
     # face au sud. Transformations BATIES (gltf-transform join) : les 3
@@ -1845,6 +1928,18 @@ func _build_securite_signs() -> void:
     _placer_haas(-18.0)   # deuxieme machine, 10 m devant (sud)
     _placer_haas(-38.0)   # troisieme machine, 10 m derriere (nord)
     _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
+    _placer_rack()   # magasin de toles KASTO 96 m, bande sud du hall
+    # 4 collecteurs d'acier : 3 alignes pres des Haas, 1 pres de la VS-3
+    var positions_collecteurs := [
+        Vector3(37.11, 0.0, -17.38),
+        Vector3(37.11, 0.0, -27.38),
+        Vector3(37.11, 0.0, -37.38),
+        Vector3(30.00, 0.0, -32.13),
+    ]
+    for pos_col in positions_collecteurs:
+        _place_prop(PROP_STEEL_COLLECTOR, pos_col, Vector3.ZERO)
+        _add_static_box(pos_col + Vector3(0.0, 0.5, 0.0),
+            Vector3(1.0, 1.0, 1.0))
 
     # Chariots de stockage a cote de chaque Haas, cote EST. Sans texte.
     for zc_haas in [-38.0, -28.0, -18.0]:
@@ -1864,6 +1959,18 @@ func _build_securite_signs() -> void:
         Vector3(-57.0 - 1.90, 0.0, -8.0 - 0.075), Vector3.ZERO)
     _add_static_box(Vector3(-57.0, 0.19, -8.0), Vector3(0.35, 0.38, 0.35))
 
+    # Stretchfab pose SUR la table moderne (plateau a ~0.76 m)
+    _place_prop(PROP_STRETCHFAB, Vector3(HALL_MIN_X + 0.8, 0.95, -4.2),
+        Vector3(0.0, PI/4, 0.0))
+    _add_static_box(Vector3(HALL_MIN_X + 0.5, 1.12, -4.2),
+        Vector3(1.71, 0.32, 1.71))
+    # Trousse de secours sous le defibrillateur
+    _place_prop("res://assets/props/first_aid_kit.glb",
+        Vector3(HALL_MIN_X + 0.7, 1.1, -3.35), Vector3(0.0, 0.0, 0.0), 0.04)
+    # Table moderne contre le mur ouest
+    _place_prop(PROP_MODERN_TABLE, Vector3(HALL_MIN_X + 0.5, 0.0, -4.0), Vector3.ZERO, 0.33)
+    _add_static_box(Vector3(HALL_MIN_X + 0.5, 0.4, -4.0), Vector3(1.0, 0.8, 1.0))
+
     # Distributeur de cafe a droite du DAE (mur gauche, face a la salle)
     # offset interne : centre du modele a (-11.455, 0.90, 7.925)
     # position = cible - offset_apres_rotation_y_90 (x<->z inverses)
@@ -1872,15 +1979,24 @@ func _build_securite_signs() -> void:
     _place_prop("res://assets/props/distributeur_cafe.glb",
         Vector3(-65.325, 0.0, -17.455),
         Vector3(0.0, PI / 2.0, 0.0))
-    _add_static_box(Vector3(-57.40, 0.90, -6.0), Vector3(0.93, 1.80, 0.81))
+    _add_static_box(Vector3(-57.40, 0.90, -6.0), Vector3(0.93, 1.80, 0.81),
+        "distributeur_cafe")
+    # Son de piece : 3D, attenue par la distance (comme la chaudiere
+    # et le humm electrique). Portee volontairement courte : audible
+    # seulement a proximite du distributeur, PAS a 100 m.
+    _coin_player = AudioStreamPlayer3D.new()
+    var coin_flux = load(COIN_SOUND)
+    if coin_flux != null:
+        _coin_player.stream = coin_flux
+    _coin_player.position = Vector3(-57.40, 0.90, -6.0)
+    _coin_player.unit_size = 3.0        # chute rapide du volume
+    _coin_player.max_db = -2.0
+    _coin_player.max_distance = 12.0    # coupure nette au-dela
+    add_child(_coin_player)
 
     # Chariot de stockage a gauche des gondoles
     _place_prop("res://assets/props/storage_cart.glb",
         Vector3(HALL_MIN_X + 0.55, 0.50, 6.0), Vector3(0.0, PI / 2.0, 0.0))
-
-    # Trousse de secours sous le defibrillateur
-    _place_prop("res://assets/props/first_aid_kit.glb",
-        Vector3(HALL_MIN_X + 0.6, 1.0, -1.8), Vector3(0.0, 0.0, 0.0), 0.04)
 
     # Defibrillateur sous le panneau DAE
     _place_prop("res://assets/safety/defibrillator.glb",
@@ -1970,16 +2086,6 @@ func _build_expo() -> void:
          "x": -29.0, "y": 0.67, "col": Vector3(1.9, 1.35, 1.9)},
         {"path": PROP_MODULAR_CONVEYOR, "nom": "Convoyeur modulaire",
          "x": -15.0, "y": 0.25, "col": Vector3(1.9, 0.51, 0.65)},
-        {"path": PROP_TOOL_TROLLEYS, "nom": "Chariots d'outils",
-         "x": -22.0, "y": 0.84, "col": Vector3(0.60, 1.71, 3.23)},
-        {"path": PROP_STRETCHFAB, "nom": "Stretchfab",
-         "x": -8.0, "y": 0.0, "col": Vector3(1.25, 0.32, 1.17)},
-        {"path": PROP_DUMPSTER, "nom": "Benne en acier vert",
-         "x": -1.0, "y": 0.0, "col": Vector3(0.8, 0.73, 0.74)},
-        {"path": PROP_WELDING, "nom": "Poste de soudure",
-         "x": 6.0, "y": 0.46, "col": Vector3(1.00, 0.92, 0.50)},
-        {"path": PROP_CRANE, "nom": "Grue",
-         "x": 13.0, "y": 0.50, "col": Vector3(0.52, 1.00, 1.00)},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -10.0), Vector3.ZERO)
@@ -2122,7 +2228,7 @@ func _build_classe() -> void:
     _add_static_box(Vector3(cxc, 1.2, czc + 3.0),
         Vector3(1.2, 2.2, 0.2), "porte_classe_sortie")
     var porte_mat := StandardMaterial3D.new()
-    porte_mat.albedo_color = Color(0.42, 0.26, 0.13)  # brun bois franc, comme l'exterieur
+    porte_mat.albedo_color = Color("#6A6051")  # brun comme l'exterieur
     porte_mat.roughness = 0.6
     porte_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
     var porte_panneau := MeshInstance3D.new()
@@ -2146,6 +2252,17 @@ func _build_classe() -> void:
 
 ## Machine Haas VF-2TR a trois niveaux de detail, centree en (39, zc),
 ## debout face au sud. Chaque machine a son propre groupe LOD.
+## Magasin vertical de toles type KASTO (GODOT_INSTRUCTIONS_RACK.md,
+## phase 1-2 : import + nomenclature verifiee — TRANSSTOCKEUR_ROOT,
+## CARRIAGE_Z, FORK_LEFT/RIGHT atteignables). 96 x 15 x 14 m, pose sur
+## la bande SUD du hall (seule zone libre sur 96 m), le long de X.
+## Les controleurs Godot (deplacement X/Z, fourches, inventaire) seront
+## ajoutes autour du GLB sans le modifier.
+func _placer_rack() -> void:
+    _place_prop(PROP_RACK, Vector3(14.0, 7.5, 36.0), Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(14.0, 7.5, 36.0), Vector3(96.0, 15.0, 14.0))
+
+
 ## Haas VS-3 (5 axes, assemblage STEP complet machine + table palettes).
 ## 714 k triangles -> 3 niveaux de detail comme les VF-2TR. Plantee a
 ## x=29 (un peu plus loin que les 3 Haas de x=39), base au sol.
@@ -2331,6 +2448,12 @@ func _tirer_chasse() -> void:
     if _chasse_son != null:
         _chasse_son.play()
         print("Local WC : chasse d'eau")
+
+## Clic sur le distributeur de cafe : bruit de piece qui tombe.
+func _utiliser_distributeur_cafe() -> void:
+    if _coin_player != null:
+        _coin_player.play()
+        print("Distributeur de cafe : piece inseree")
 
 
 ## Interrupteur du bureau : allume/eteint la lampe du plafond + son.

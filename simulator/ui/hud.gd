@@ -57,13 +57,14 @@ func _ready() -> void:
     fps_label = _make_label(box, "fps            = -")
     tri_label = _make_label(box, "triangles      = -")
     pos_label = _make_label(box, "joueur         = -")
-    hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | B boite | M couper l'alarme | clic : souris | Echap : liberer", false, true)
+    hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | \nB boite | M couper l'alarme | clic : souris | Echap : liberer", false, true)
     add_child(panel)
 
 
 func _make_label(parent: Control, text: String, bold := false, dim := false) -> Label:
     var label := Label.new()
     label.text = text
+    label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART 
     if bold:
         label.add_theme_font_size_override("font_size", 18)
     if dim:
