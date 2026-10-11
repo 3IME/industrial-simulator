@@ -2266,6 +2266,53 @@ func _placer_rack() -> void:
     # cote). Base affleurante (y = 0.24), box alignee sur le visuel.
     _place_prop(PROP_RACK, Vector3(-43.0, 0.24, 22.0), Vector3.ZERO, 1.0)
     _add_static_box(Vector3(2.0, 7.6, 22.0), Vector3(96.0, 15.2, 14.0))
+    # Marquage de danger raye jaune/noir autour du rack (zone "ne pas
+    # traverser"), 80 cm au-dela de l'emprise, bandes de 30 cm
+    _cadran_hazard(Vector3(2.0, 0.008, 22.0), 97.6, 15.6)
+
+
+## Texture raye jaune/noir en diagonale (generee, 45 deg, tuile ~1 m).
+func _tex_rayures() -> ImageTexture:
+    var img := Image.create(64, 64, false, Image.FORMAT_RGB8)
+    for x in 64:
+        for y in 64:
+            var jaune: bool = ((x + y) % 64) < 32
+            var c := Color(1.0, 0.82, 0.0) if jaune else Color(0.06, 0.06, 0.06)
+            img.set_pixel(x, y, c)
+    return ImageTexture.create_from_image(img)
+
+
+## Cadre de securite raye autour d'une zone (4 bandes au sol de 30 cm,
+## largeur lx x lz centree sur 'centre') — signale "ne pas traverser".
+func _cadran_hazard(centre: Vector3, lx: float, lz: float) -> void:
+    var tex := _tex_rayures()
+    var epaisseur := 0.30
+    for cote in ["nord", "sud", "ouest", "est"]:
+        var bande := MeshInstance3D.new()
+        var box := BoxMesh.new()
+        var mat := StandardMaterial3D.new()
+        mat.albedo_texture = tex
+        mat.roughness = 0.55
+        match cote:
+            "nord":
+                box.size = Vector3(lx, 0.012, epaisseur)
+                bande.position = centre + Vector3(0, 0, -lz / 2.0)
+                mat.uv1_scale = Vector3(lx, 0.3, 1.0)
+            "sud":
+                box.size = Vector3(lx, 0.012, epaisseur)
+                bande.position = centre + Vector3(0, 0, lz / 2.0)
+                mat.uv1_scale = Vector3(lx, 0.3, 1.0)
+            "ouest":
+                box.size = Vector3(epaisseur, 0.012, lz)
+                bande.position = centre + Vector3(-lx / 2.0, 0, 0)
+                mat.uv1_scale = Vector3(0.3, lz, 1.0)
+            "est":
+                box.size = Vector3(epaisseur, 0.012, lz)
+                bande.position = centre + Vector3(lx / 2.0, 0, 0)
+                mat.uv1_scale = Vector3(0.3, lz, 1.0)
+        box.material = mat
+        bande.mesh = box
+        add_child(bande)
 
 
 ## Haas VS-3 (5 axes, assemblage STEP complet machine + table palettes).
