@@ -1179,16 +1179,19 @@ func _build_hall(belt_length: float) -> void:
     add_child(halo_tour)
 
     # Deux luminaires fluorescents en hauteur, a gauche et a droite de
-    # la porte double (meme modele/reglage que la maintenance)
-    for cote_fluo in [-2.8, 2.8]:
+    # la porte double (pivotes de PI/2, ecartes de 7,6 m) ; clic sur la
+    # porte = sortie du jeu (meta porte_usine, meme comportement)
+    for cote_fluo in [-3.8, 3.8]:
         _place_prop(PROP_FLUO_FIXTURE,
-            Vector3(cote_fluo, 4.0, 44.35), Vector3.ZERO, 1.0)
+            Vector3(cote_fluo, 4.0, 44.35), Vector3(0.0, PI / 2.0, 0.0), 1.0)
         var fluo_sud := OmniLight3D.new()
         fluo_sud.light_color = Color(0.95, 0.98, 1.0)
         fluo_sud.light_energy = 1.3
         fluo_sud.omni_range = 8.0
         fluo_sud.position = Vector3(cote_fluo, 3.94, 44.35)
         add_child(fluo_sud)
+    _add_static_box(Vector3(0.0, 1.1, 44.80),
+        Vector3(3.6, 2.2, 0.3), "porte_usine")
     # Panneau d'accueil au-dessus de la porte d'entree de l'usine
     _place_sign(SIGN_ACCUEIL, Vector3(0.0, 3.5, HALL_MAX_Z - 0.10),
         Vector2(1.20, 0.58), PI)
