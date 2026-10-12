@@ -1060,7 +1060,7 @@ func _configurer_avatars_reseau() -> void:
     # immediatement, et chacun signale sa propre scene prete.
     if not NetworkSession.est_hote():
         _pairs_prets[1] = true
-    _signale_pret.rpc()
+    _signale_pret.rpc(NetworkSession.nom_joueur)
 
 
 func _ajouter_avatar(id_pair: int) -> void:
