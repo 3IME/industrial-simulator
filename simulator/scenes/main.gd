@@ -451,6 +451,12 @@ func _clic_interaction(event: InputEvent) -> void:
         _entrer_wc()
     elif collider.get_meta("interaction") == "porte_classe":
         _entrer_classe()
+    elif collider.get_meta("interaction") == "oreilles_audio":
+        var bouchon = load("res://assets/sounds/bouchon.mp3")
+        if bouchon != null and _verre_player != null:
+            _verre_player.stream = bouchon
+            _verre_player.play()
+        print("Protections auditives : bouchons mis")
     elif collider.get_meta("interaction") == "switch_sprinkler":
         _basculer_sprinklers()
     elif collider.get_meta("interaction") == "alarme_incendie":
@@ -1360,6 +1366,8 @@ func _build_hall(belt_length: float) -> void:
         Vector3(PI, PI, PI), 1.0)
     _place_sign(SIGN_AUDITIVES, Vector3(2.3, 2.15, 44.88),
         Vector2(0.5, 0.5), PI)
+    _add_static_box(Vector3(2.3, 1.65, 44.85),
+        Vector3(0.30, 0.40, 0.30), "oreilles_audio")
     # Panneau d'accueil au-dessus de la porte d'entree de l'usine
     _place_sign(SIGN_ACCUEIL, Vector3(0.0, 3.5, HALL_MAX_Z - 0.10),
         Vector2(1.20, 0.58), PI)
