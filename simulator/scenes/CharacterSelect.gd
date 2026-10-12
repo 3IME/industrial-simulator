@@ -24,6 +24,16 @@ func _ready() -> void:
 	if "--capture" in OS.get_cmdline_user_args():
 		get_tree().change_scene_to_file("res://scenes/splash.tscn")
 		return
+	# Musique du menu : s'arrete d'elle-meme au changement de scene
+	# (le lecteur est un enfant de cet ecran)
+	var musique = load("res://assets/sounds/new_factory_129bpm.mp3")
+	if musique != null:
+		musique.loop = true
+		var lecteur := AudioStreamPlayer.new()
+		lecteur.stream = musique
+		lecteur.volume_db = -6.0
+		add_child(lecteur)
+		lecteur.play()
 	# Connexion des signaux de souris (survol)
 	student_card.mouse_entered.connect(_on_card_hover.bind(student_card, true))
 	student_card.mouse_exited.connect(_on_card_hover.bind(student_card, false))
