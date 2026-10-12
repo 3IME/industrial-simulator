@@ -41,6 +41,7 @@ const PROP_PENDANT_LAMP := "res://assets/props/pendant_lamp.glb"
 const PROP_FLUO_FIXTURE := "res://assets/props/fluorescent_fixture.glb"
 const PROP_SECURITY_DOOR := "res://assets/props/security_door.glb"
 const WORKER_MODEL := "res://assets/characters/worker.glb"
+const PROF_MODEL := "res://assets/characters/prof.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
 const PROP_MOTOR_COMPRESSOR := "res://assets/props/motor_compressor.glb"
 const PROP_IRON_MINER := "res://assets/props/iron_miner.glb"
@@ -135,7 +136,7 @@ static func heavy_resources() -> Array:
         "res://assets/textures/fire_01.png",
         EXTINGUISHER_MODEL, EXTINGUISHER_SIGN,
         PROP_PENDANT_LAMP, PROP_FLUO_FIXTURE, PROP_SECURITY_DOOR,
-        WORKER_MODEL, PROP_GONDOLA, PROP_IRON_MINER, PROP_BRIDGE,
+        WORKER_MODEL, PROF_MODEL, PROP_GONDOLA, PROP_IRON_MINER, PROP_BRIDGE,
         PROP_VOXEL_MACHINE, PROP_VOXEL_MACHINE_2, PROP_MODULAR_CONVEYOR,
         PROP_OFFICE_CHAIR, PROP_GAME, PROP_DUMPSTER, PROP_ELEVATOR,
     ]
@@ -1046,7 +1047,9 @@ func _configurer_avatars_reseau() -> void:
 func _ajouter_avatar(id_pair: int) -> void:
     if _avatars_joueurs.has(id_pair):
         return
-    var scene_ad: PackedScene = load(WORKER_MODEL)
+    # le pair 1 (serveur) est le professeur : modele prof.glb ;
+    # les eleves sont des ouvriers worker.glb (meme rig, memes anims)
+    var scene_ad: PackedScene = load(PROF_MODEL if id_pair == 1 else WORKER_MODEL)
     if scene_ad == null:
         return
     var avatar: Node3D = scene_ad.instantiate()
