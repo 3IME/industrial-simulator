@@ -40,7 +40,7 @@ const EXTINGUISHER_SCALE := 0.62 / 1.088
 const PROP_PENDANT_LAMP := "res://assets/props/pendant_lamp.glb"
 const PROP_FLUO_FIXTURE := "res://assets/props/fluorescent_fixture.glb"
 const PROP_SECURITY_DOOR := "res://assets/props/security_door.glb"
-const PROP_ADULT := "res://assets/props/adult_static.glb"
+const WORKER_MODEL := "res://assets/characters/worker.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
 const PROP_MOTOR_COMPRESSOR := "res://assets/props/motor_compressor.glb"
 const PROP_IRON_MINER := "res://assets/props/iron_miner.glb"
@@ -135,7 +135,7 @@ static func heavy_resources() -> Array:
         "res://assets/textures/fire_01.png",
         EXTINGUISHER_MODEL, EXTINGUISHER_SIGN,
         PROP_PENDANT_LAMP, PROP_FLUO_FIXTURE, PROP_SECURITY_DOOR,
-        PROP_ADULT, PROP_GONDOLA, PROP_IRON_MINER, PROP_BRIDGE,
+        WORKER_MODEL, PROP_GONDOLA, PROP_IRON_MINER, PROP_BRIDGE,
         PROP_VOXEL_MACHINE, PROP_VOXEL_MACHINE_2, PROP_MODULAR_CONVEYOR,
         PROP_OFFICE_CHAIR, PROP_GAME, PROP_DUMPSTER, PROP_ELEVATOR,
     ]
@@ -941,8 +941,22 @@ func _process(delta: float) -> void:
         for _id_av in _avatars_joueurs:
             var _donnee_av: Dictionary = _avatars_joueurs[_id_av]
             var _noeud_av: Node3D = _donnee_av["noeud"]
+            var _anc_pos: Vector3 = _noeud_av.position
             _noeud_av.position = _noeud_av.position.lerp(
                 _donnee_av["cible"], minf(delta * 12.0, 1.0))
+            # machine a etats : Idle / Walk / Run selon la vitesse
+            # reelle du deplacement (la salutation Wave n est pas
+            # ecrasee pendant ses 1,6 s)
+            if float(_donnee_av["vague"]) > 0.0:
+                _donnee_av["vague"] = float(_donnee_av["vague"]) - delta
+                continue
+            var _vitesse := _noeud_av.position.distance_to(_anc_pos) / maxf(delta, 0.001)
+            var _anim_cible := "Run" if _vitesse > 3.0 else "Walk" if _vitesse > 0.35 else "Idle"
+            if _anim_cible != _donnee_av["anim"]:
+                _donnee_av["anim"] = _anim_cible
+                var _animeur_av := _animateur_de(_noeud_av)
+                if _animeur_av != null:
+                    _animeur_av.play(_anim_cible)
 
     # Lutte incendie par sprinklers : l'eau maitrise les flammes
     if sprinklers != null:
@@ -1032,12 +1046,19 @@ func _configurer_avatars_reseau() -> void:
 func _ajouter_avatar(id_pair: int) -> void:
     if _avatars_joueurs.has(id_pair):
         return
-    var scene_ad: PackedScene = load(PROP_ADULT)
+    var scene_ad: PackedScene = load(WORKER_MODEL)
     if scene_ad == null:
         return
     var avatar: Node3D = scene_ad.instantiate()
     avatar.position = Vector3(3.5, 0.0, 6.5)   # pres du spawn, en attendant
     add_child(avatar)
+    var animeur := _animateur_de(avatar)
+    if animeur != null:
+        for anim_nom in ["Idle", "Walk", "Run", "Run_Back"]:
+            if animeur.has_animation(anim_nom):
+                animeur.get_animation(anim_nom).loop_mode = Animation.LOOP_LINEAR
+        animeur.play("Wave")   # salue a son arrivee (one-shot)
+    var _sol: Node3D = avatar
     var etiquette := Label3D.new()
     etiquette.text = _nom_avatar(id_pair)
     etiquette.position = Vector3(0.0, 2.1, 0.0)
@@ -1048,9 +1069,16 @@ func _ajouter_avatar(id_pair: int) -> void:
     etiquette.outline_size = 12
     avatar.add_child(etiquette)
     _avatars_joueurs[id_pair] = {"noeud": avatar,
-        "cible": avatar.position}
+        "cible": avatar.position, "anim": "Wave", "vague": 1.6,
+        "prec": avatar.position}
     avatar.set_meta("etiquette", etiquette)
     print("Avatar cree pour le pair ", id_pair)
+
+
+func _animateur_de(racine: Node) -> AnimationPlayer:
+    for enfant in racine.find_children("*", "AnimationPlayer", true, false):
+        return enfant
+    return null
 
 
 func _nom_avatar(id_pair: int) -> String:
@@ -2230,16 +2258,15 @@ func _build_props() -> void:
     # Adulte anime (salut) a cote de la porte, mur gauche.
     # Recule du mur : l'animation de salut deplace les hanches de ~30 cm
     # lateralement, trop pres il penetrerait le mur pendant le salut.
-    var adult := _place_prop(PROP_ADULT,
+    var adult := _place_prop(WORKER_MODEL,
         Vector3(HALL_MIN_X + 16.4, 0.0, 1.9), Vector3(0.0, PI / 2.0, 0.0))
     if adult != null:
         _clamp_prop_height(adult, 1.60, "adulte")
         _adult_node = adult
-        for anim_player in adult.find_children("*", "AnimationPlayer"):
-            for anim_name in anim_player.get_animation_list():
-                var anim: Animation = anim_player.get_animation(anim_name)
-                anim.loop_mode = Animation.LOOP_LINEAR
-                anim_player.play(anim_name)
+        var animeur_npc := _animateur_de(adult)
+        if animeur_npc != null and animeur_npc.has_animation("Wave"):
+            animeur_npc.get_animation("Wave").loop_mode = Animation.LOOP_LINEAR
+            animeur_npc.play("Wave")
 
     # Gondole (rayonnage) contre le mur gauche
     for z_gondole in range(10):
