@@ -60,7 +60,8 @@ func _ready() -> void:
 
 	# IP locale du professeur : affichee des qu'il choisit PROF, pour
 	# qu'il la communique aux eleves (premiere IPv4 non-boucle locale)
-	prof_ip_label.text = "Votre IP : " + NetworkSession.ip_locale()
+	var ips := NetworkSession.ips_locales()
+	prof_ip_label.text = "Votre IP : " + " / ".join(ips) 		if not ips.is_empty() else "Votre IP : introuvable"
 
 	# Animation d'entree
 	_animate_entry()
