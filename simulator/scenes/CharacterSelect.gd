@@ -206,7 +206,8 @@ func _attendre_connexion() -> bool:
 		var statut := NetworkManager.statut_connexion()
 		if statut == MultiplayerPeer.CONNECTION_CONNECTED:
 			return true
-		if statut == MultiplayerPeer.CONNECTION_FAILED 				or statut == MultiplayerPeer.CONNECTION_DISCONNECTED:
+		# en Godot 4, un echec de connexion retombe sur DISCONNECTED
+		if statut == MultiplayerPeer.CONNECTION_DISCONNECTED:
 			return false
 		await get_tree().process_frame
 		chrono += get_process_delta_time()
