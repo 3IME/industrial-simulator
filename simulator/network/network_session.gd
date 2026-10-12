@@ -14,3 +14,13 @@ func est_hote() -> bool:
 
 func est_client() -> bool:
 	return role == Role.ELEVE
+
+## Premiere IPv4 non-boucle locale de la machine (communiquee aux eleves).
+func ip_locale() -> String:
+	for addr in IP.get_local_addresses():
+		if ":" in addr:
+			continue        # IPv6 ecartee
+		if addr.begins_with("127.") or addr.begins_with("0."):
+			continue
+		return addr
+	return "introuvable"

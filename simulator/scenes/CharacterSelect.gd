@@ -60,7 +60,7 @@ func _ready() -> void:
 
 	# IP locale du professeur : affichee des qu'il choisit PROF, pour
 	# qu'il la communique aux eleves (premiere IPv4 non-boucle locale)
-	prof_ip_label.text = "Votre IP : " + _ip_locale()
+	prof_ip_label.text = "Votre IP : " + NetworkSession.ip_locale()
 
 	# Animation d'entree
 	_animate_entry()
@@ -140,17 +140,6 @@ func _on_card_click(event: InputEvent, role: String, card: PanelContainer) -> vo
 		var btn_tween = create_tween()
 		btn_tween.tween_property(confirm_button, "scale", Vector2(1.1, 1.1), 0.15)
 		btn_tween.tween_property(confirm_button, "scale", Vector2(1.0, 1.0), 0.15)
-
-# --- IP LOCALE (premiere IPv4 non-boucle locale) ---
-func _ip_locale() -> String:
-	for addr in IP.get_local_addresses():
-		if ":" in addr:
-			continue        # IPv6 ecartee
-		if addr.begins_with("127.") or addr.begins_with("0."):
-			continue
-		return addr
-	return "introuvable"
-
 
 # --- VALIDATION ---
 func _on_confirm_pressed() -> void:
