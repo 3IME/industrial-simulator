@@ -167,6 +167,32 @@ func _on_confirm_pressed() -> void:
 			return
 		NetworkSession.host_ip = ip_field.text.strip_edges()
 
+	# Prof = serveur ENet, eleve = client. Le PLC reste le seul maitre
+	# logique : le serveur relaye son etat, les clients affichent.
+	var err: Error = OK
+	if selected_role == "professeur":
+		err = NetworkManager.demarrer_serveur(NetworkSession.PORT,
+			NetworkSession.MAX_CLIENTS)
+		NetworkSession.role = NetworkSession.Role.PROF
+	else:
+		err = NetworkManager.demarrer_client(NetworkSession.host_ip,
+			NetworkSession.PORT)
+		NetworkSession.role = NetworkSession.Role.ELEVE
+	if err != OK:
+		ip_error.text = "Erreur reseau (%d) — port occupe ?" % err
+		ip_error.visible = true
+		NetworkSession.role = NetworkSession.Role.AUCUN
+		return
+
+	# Connexion effective (cote eleve) avant de charger l'usine
+	if not await _attendre_connexion():
+		NetworkManager.arreter()
+		NetworkSession.role = NetworkSession.Role.AUCUN
+		ip_error.text = "Connexion impossible — verifiez l'IP du professeur"
+		ip_error.visible = true
+		modulate.a = 1.0
+		return
+
 	print("Lancement du jeu en tant que : ", selected_role)
 
 	# Animation de sortie (fondu au noir)
@@ -175,8 +201,22 @@ func _on_confirm_pressed() -> void:
 
 	# Puis changement de scene
 	tween.tween_callback(func() -> void:
-		# Role memorise dans l'autoload NetworkSession (typage fort,
-		# accessible partout : NetworkSession.role)
-		NetworkSession.role = NetworkSession.Role.ELEVE 			if selected_role == "eleve" else NetworkSession.Role.PROF
 		get_tree().change_scene_to_file("res://scenes/splash.tscn")
 	)
+
+
+## Attent la connexion (5 s max cote eleve ; immediate cote prof qui
+## est lui-meme le serveur).
+func _attendre_connexion() -> bool:
+	if NetworkSession.est_hote():
+		return true
+	var resultat := -1
+	NetworkManager.serveur_pret.connect(
+		func() -> void: resultat = 1, CONNECT_ONE_SHOT)
+	NetworkManager.connexion_echouee.connect(
+		func(_raison: String) -> void: resultat = 0, CONNECT_ONE_SHOT)
+	var chrono := 0.0
+	while resultat < 0 and chrono < 5.0:
+		await get_tree().process_frame
+		chrono += get_process_delta_time()
+	return resultat == 1
