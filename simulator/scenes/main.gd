@@ -1054,9 +1054,11 @@ func _retirer_avatar(id_pair: int) -> void:
     print("Avatar retire pour le pair ", id_pair)
 
 
-@rpc("any_peer", "call_local", "reliable")
+@rpc("any_peer", "reliable")
 func _signale_pret() -> void:
     var id_pair := multiplayer.get_remote_sender_id()
+    if id_pair <= 0:
+        return   # appel local (call_local retire) : pas d avatar fantome
     _pairs_prets[id_pair] = true
     if not _avatars_joueurs.has(id_pair):
         _ajouter_avatar(id_pair)   # pair vu avant peer_connected (rare)
