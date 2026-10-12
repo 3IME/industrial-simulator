@@ -1174,12 +1174,13 @@ func _spawn_robot() -> void:
     _robot_view = view
     view.position = Vector3(2.6, 0, -1.6)
     view.rotation.y = -PI / 2.0    # portee du bras (+X) tournee vers la bande (+Z)
+    view.scale = Vector3.ONE * 2.0   # robot agrandi x2 (echelle reelle)
     add_child(view)
     view.setup(robot_machine)
     if lod_manager != null:
         lod_manager.register_cull(_robot_view, 130.0)
     # Enveloppe de collision approximative du bras en mouvement
-    _add_static_box(Vector3(2.6, 0.6, -1.6), Vector3(1.4, 1.2, 1.4))
+    _add_static_box(Vector3(2.6, 1.2, -1.6), Vector3(2.8, 2.4, 2.8))
 
 
 # ---------------------------------------------------------------------------
