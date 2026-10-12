@@ -30,7 +30,10 @@ var pitch := 0.0
 var zones_metal: Array[AABB] = []   # remplies par la scene (mezzanine...)
 var _profil_pas = null              # FootstepperSoundProfile
 var _pas_beton: AudioStreamRandomizer
-var _pas_metal: AudioStreamRandomizer
+var _pas_metal_marche: AudioStreamRandomizer
+var _pas_metal_course: AudioStreamRandomizer
+var _saut_beton: AudioStream
+var _saut_metal: AudioStream
 var _sur_metal := false
 var _chrono_metal := 0.0
 var _eye := EYE_HEIGHT
@@ -224,7 +227,14 @@ func _physics_process(delta: float) -> void:
                     break
             if dedans != _sur_metal:
                 _sur_metal = dedans
-                _profil_pas.sound_footstep = _pas_metal if dedans else _pas_beton
+                _profil_pas.sound_jump = _saut_metal if dedans and _saut_metal != null else _saut_beton
+        if _sur_metal:
+            var rapide := velocity.length() > 3.0
+            var voulu: AudioStreamRandomizer = _pas_metal_course if rapide else _pas_metal_marche
+            if voulu != null and _profil_pas.sound_footstep != voulu:
+                _profil_pas.sound_footstep = voulu
+        elif _pas_beton != null and _profil_pas.sound_footstep != _pas_beton:
+            _profil_pas.sound_footstep = _pas_beton
 
 ## Balancement procedural des mains, lie au deplacement reel :
 ## cadence et amplitude suivent la vitesse (marche/course/accroupi),
@@ -281,15 +291,19 @@ func _setup_footstepper() -> void:
         profile.sound_footstep = steps
     _profil_pas = profile
     _pas_beton = steps
-    var metal := AudioStreamRandomizer.new()
-    var nb_metal := 0
-    for i in range(1, 5):
-        var wm = load("res://assets/sounds/pas_metal_%d.wav" % i)
-        if wm != null:
-            metal.add_stream(nb_metal, wm)
-            nb_metal += 1
-    if nb_metal > 0:
-        _pas_metal = metal
+    # Sons metalliques de 3IME : marche, course, saut (debrayes si absents)
+    var marche_m = load("res://assets/sounds/pas_metal_marche.mp3")
+    var course_m = load("res://assets/sounds/pas_metal_course.mp3")
+    if marche_m != null:
+        _pas_metal_marche = AudioStreamRandomizer.new()
+        _pas_metal_marche.add_stream(0, marche_m)
+    if course_m != null:
+        _pas_metal_course = AudioStreamRandomizer.new()
+        _pas_metal_course.add_stream(0, course_m)
+    _saut_beton = profile.sound_jump
+    var saut_m = load("res://assets/sounds/pas_metal_saut.mp3")
+    if saut_m != null:
+        _saut_metal = saut_m
     profile.sound_jump = load(SOUNDS_DIR + "/jump.ogg")
     profile.sound_land = load(SOUNDS_DIR + "/land.ogg")
 
