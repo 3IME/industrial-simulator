@@ -216,7 +216,7 @@ func _physics_process(delta: float) -> void:
 
 
     # Bascule beton/metal selon la zone (mezzanine, caillebotis)
-    if _pas_metal != null and _profil_pas != null and not zones_metal.is_empty():
+    if _pas_metal_marche != null and _profil_pas != null and not zones_metal.is_empty():
         _chrono_metal += delta
         if _chrono_metal >= 0.15:
             _chrono_metal = 0.0
