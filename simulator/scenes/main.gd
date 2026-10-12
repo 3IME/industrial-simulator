@@ -1198,9 +1198,9 @@ func _build_hall(belt_length: float) -> void:
     # Casque de protection auditive accroche pres de la porte double,
     # centre a mi-hauteur de porte (2,13 m / 2), et son panneau
     # "protections auditives obligatoires" au-dessus
-    _place_prop(PROP_OREILLES, Vector3(2.3, 1.20, 44.85),
-        Vector3(PI, PI, 0.0), 1.0)
-    _place_sign(SIGN_AUDITIVES, Vector3(2.3, 1.95, 44.88),
+    _place_prop(PROP_OREILLES, Vector3(2.3, 1.50, 44.85),
+        Vector3(PI, PI, PI), 1.0)
+    _place_sign(SIGN_AUDITIVES, Vector3(2.3, 2.15, 44.88),
         Vector2(0.5, 0.5), PI)
     # Panneau d'accueil au-dessus de la porte d'entree de l'usine
     _place_sign(SIGN_ACCUEIL, Vector3(0.0, 3.5, HALL_MAX_Z - 0.10),
@@ -1972,10 +1972,11 @@ func _build_securite_signs() -> void:
     _placer_haas(-38.0)   # troisieme machine, 10 m derriere (nord)
     _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
     _placer_rack()   # magasin de toles KASTO 96 m, bande sud du hall
-    # Chariot (0,4 x 0,68 x 1 m) pose a l'ouest ; culling de distance
-    # automatique via _place_prop (masque au-dela de ~57 m)
-    _place_prop(PROP_CHARIOT, Vector3(-47.0, 0.0, -26.0), Vector3.ZERO, 1.0)
-    _add_static_box(Vector3(-47.0, 0.34, -26.0), Vector3(0.40, 0.68, 1.00))
+    # Chariot echelle 2 (0,8 x 1,36 x 2 m — taille reelle d'un chariot
+    # industriel) pose a l'ouest ; culling de distance automatique via
+    # _place_prop (masque au-dela de ~110 m)
+    _place_prop(PROP_CHARIOT, Vector3(-47.0, 0.0, -26.0), Vector3.ZERO, 2.0)
+    _add_static_box(Vector3(-47.0, 0.68, -26.0), Vector3(0.80, 1.36, 2.00))
     # 4 collecteurs d'acier : 3 alignes pres des Haas, 1 pres de la VS-3
     var positions_collecteurs := [
         Vector3(37.11, 0.0, -17.38),
@@ -2223,7 +2224,7 @@ func _build_classe() -> void:
     # Interrupteur de lumiere : mur EST, cote sud (proche du passage de
     # la porte. Clic -> allume/eteint les deux lumieres + son de clic.
     _place_prop("res://assets/props/light_switch.glb",
-        Vector3(cxc + 4.93, 1.15, czc + 2.2), Vector3(0.0, -PI / 2.0, 0.0), 0.125)
+        Vector3(cxc + 4.93, 1.15, czc + 2.2), Vector3(0.0, PI, 0.0), 0.125)
     _add_static_box(Vector3(cxc + 4.93, 1.15, czc + 2.2),
         Vector3(0.12, 0.16, 0.10), "interrupteur_classe")
     _interrupteur_classe_son = AudioStreamPlayer3D.new()
