@@ -1972,11 +1972,10 @@ func _build_securite_signs() -> void:
     _placer_haas(-38.0)   # troisieme machine, 10 m derriere (nord)
     _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
     _placer_rack()   # magasin de toles KASTO 96 m, bande sud du hall
-    # Chariot echelle 2 (0,8 x 1,36 x 2 m — taille reelle d'un chariot
-    # industriel) pose a l'ouest ; culling de distance automatique via
-    # _place_prop (masque au-dela de ~110 m)
-    _place_prop(PROP_CHARIOT, Vector3(-47.0, 0.0, -26.0), Vector3.ZERO, 2.0)
-    _add_static_box(Vector3(-47.0, 0.68, -26.0), Vector3(0.80, 1.36, 2.00))
+    # Chariot echelle 4 (1,6 x 2,7 x 4 m — taille d'un chariot elevateur)
+    # pose a l'ouest ; culling de distance automatique via _place_prop
+    _place_prop(PROP_CHARIOT, Vector3(-47.0, 0.0, -26.0), Vector3.ZERO, 4.0)
+    _add_static_box(Vector3(-47.0, 1.36, -26.0), Vector3(1.60, 2.72, 4.00))
     # 4 collecteurs d'acier : 3 alignes pres des Haas, 1 pres de la VS-3
     var positions_collecteurs := [
         Vector3(37.11, 0.0, -17.38),
