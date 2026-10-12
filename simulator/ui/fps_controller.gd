@@ -27,6 +27,12 @@ const FOOTSTEPPER_PROFILE := preload("res://addons/footstepper/footstepper_sound
 const SOUNDS_DIR := "res://addons/footstepper/sounds/default"
 
 var pitch := 0.0
+var zones_metal: Array[AABB] = []   # remplies par la scene (mezzanine...)
+var _profil_pas = null              # FootstepperSoundProfile
+var _pas_beton: AudioStreamRandomizer
+var _pas_metal: AudioStreamRandomizer
+var _sur_metal := false
+var _chrono_metal := 0.0
 var _eye := EYE_HEIGHT
 var _arms: Node3D = null
 var _bob := 0.0
@@ -141,6 +147,10 @@ func _unhandled_input(event: InputEvent) -> void:
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
+func set_zones_metal(zones: Array[AABB]) -> void:
+    zones_metal = zones
+
+
 func _physics_process(delta: float) -> void:
     floor_max_angle = deg_to_rad(55.0)
     floor_snap_length = 0.5  # marcher sur les rampes/escaliers
@@ -202,6 +212,20 @@ func _physics_process(delta: float) -> void:
     _animate_arms(delta, crouch)
 
 
+    # Bascule beton/metal selon la zone (mezzanine, caillebotis)
+    if _pas_metal != null and _profil_pas != null and not zones_metal.is_empty():
+        _chrono_metal += delta
+        if _chrono_metal >= 0.15:
+            _chrono_metal = 0.0
+            var dedans := false
+            for zone in zones_metal:
+                if zone.has_point(global_position):
+                    dedans = true
+                    break
+            if dedans != _sur_metal:
+                _sur_metal = dedans
+                _profil_pas.sound_footstep = _pas_metal if dedans else _pas_beton
+
 ## Balancement procedural des mains, lie au deplacement reel :
 ## cadence et amplitude suivent la vitesse (marche/course/accroupi),
 ## petit dip sur les sauts et chutes.
@@ -255,6 +279,17 @@ func _setup_footstepper() -> void:
             count += 1
     if count > 0:
         profile.sound_footstep = steps
+    _profil_pas = profile
+    _pas_beton = steps
+    var metal := AudioStreamRandomizer.new()
+    var nb_metal := 0
+    for i in range(1, 5):
+        var wm = load("res://assets/sounds/pas_metal_%d.wav" % i)
+        if wm != null:
+            metal.add_stream(nb_metal, wm)
+            nb_metal += 1
+    if nb_metal > 0:
+        _pas_metal = metal
     profile.sound_jump = load(SOUNDS_DIR + "/jump.ogg")
     profile.sound_land = load(SOUNDS_DIR + "/land.ogg")
 

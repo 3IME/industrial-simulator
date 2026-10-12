@@ -273,6 +273,13 @@ func _ready() -> void:
     _spawn_robot()
     _spawn_player()
     _configurer_avatars_reseau()
+    # Pas metalliques sur la mezzanine et la plaque de caillebotis
+    if player_node != null and player_node.has_method("set_zones_metal"):
+        var zones_metalliques: Array[AABB] = [
+            AABB(Vector3(-40.5, 2.4, -45.1), Vector3(72.0, 2.6, 3.4)),   # deck
+            AABB(Vector3(-44.6, 0.0, -17.6), Vector3(2.8, 1.8, 3.2)),    # caillebotis
+        ]
+        player_node.set_zones_metal(zones_metalliques)
 
     hud = get_node_or_null(^"HUD")
     if hud != null:
@@ -2144,6 +2151,10 @@ func _build_securite_signs() -> void:
     _placer_haas(-38.0)   # troisieme machine, 10 m derriere (nord)
     _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
     _placer_rack()   # magasin de toles KASTO 96 m, bande sud du hall
+    # Moteur electrique sorti du presentoir : pose en (55, -30), sans
+    # label, avec sa collision
+    _place_prop(PROP_ELECTRIC_MOTOR, Vector3(55.0, 0.0, -30.0), Vector3.ZERO, 1.0)
+    _add_static_box(Vector3(55.0, 0.465, -30.0), Vector3(1.14, 0.93, 0.86))
     # Chariot echelle 4 (1,6 x 2,7 x 4 m — taille d'un chariot elevateur)
     # pose a l'ouest ; culling de distance automatique via _place_prop
     _place_prop(PROP_CHARIOT, Vector3(-47.0, 0.0, -26.0), Vector3.ZERO, 4.0)
@@ -2302,8 +2313,6 @@ func _build_expo() -> void:
          "x": -36.0, "y": 0.76, "col": Vector3(1.9, 1.51, 1.33)},
         {"path": PROP_VOXEL_MACHINE, "nom": "Machine industrielle voxel 1",
          "x": -29.0, "y": 0.67, "col": Vector3(1.9, 1.35, 1.9)},
-        {"path": PROP_MODULAR_CONVEYOR, "nom": "Convoyeur modulaire",
-         "x": -15.0, "y": 0.25, "col": Vector3(1.9, 0.51, 0.65)},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -10.0), Vector3.ZERO)
@@ -3259,10 +3268,6 @@ func _build_expo2() -> void:
          "x": -56.0, "y": 0.0, "s": 1.0, "col": Vector3(0.24, 0.90, 0.24)},
         {"path": PROP_DECK_PLATE, "nom": "Plaque de caillebotis",
          "x": -43.2, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},
-        {"path": PROP_ELECTRIC_MOTOR, "nom": "Moteur electrique",
-         "x": 8.0, "y": 0.0, "s": 1.0, "col": Vector3(1.14, 0.93, 0.86)},
-        {"path": PROP_TRANSPALLET, "nom": "Transpallet",
-         "x": 46.4, "y": 0.01, "s": 1.0, "col": Vector3(0.62, 1.26, 1.71)},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -16.0),
