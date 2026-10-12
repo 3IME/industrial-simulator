@@ -451,6 +451,12 @@ func _clic_interaction(event: InputEvent) -> void:
         _entrer_wc()
     elif collider.get_meta("interaction") == "porte_classe":
         _entrer_classe()
+    elif collider.get_meta("interaction") == "chaudiere_pas_touche":
+        var avertissement = load("res://assets/sounds/ne_touche_pas.mp3")
+        if avertissement != null and _verre_player != null:
+            _verre_player.stream = avertissement
+            _verre_player.play()
+        print("CHAUDIERE : Ne touche pas !")
     elif collider.get_meta("interaction") == "oreilles_audio":
         var bouchon = load("res://assets/sounds/bouchon.mp3")
         if bouchon != null and _verre_player != null:
@@ -1953,7 +1959,7 @@ func _build_securite_signs() -> void:
     _place_prop("res://assets/props/chaudiere.glb",
         Vector3(HALL_MAX_X - 0.90, 2.0, 25.0), Vector3(0.0, PI, 0.0), 6.0)
     _add_static_box(Vector3(HALL_MAX_X - 0.90, 2.00, 25.0),
-        Vector3(1.83, 8.01, 6.00))
+        Vector3(1.83, 8.01, 6.00), "chaudiere_pas_touche")
 
     # Jeu industriel realiste : x3, face a la salle, 5 m a l'ouest de la chaufferie
     _place_prop(PROP_GAME, Vector3(51.5, 0.90, 30.0),
