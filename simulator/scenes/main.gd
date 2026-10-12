@@ -203,6 +203,9 @@ var _video_vp: SubViewport = null
 var _keypad_led_rouge: OmniLight3D = null
 var _keypad_led_verte: OmniLight3D = null
 var _verre_player: AudioStreamPlayer = null
+# --- Chantier 4 : avatars reseau (un par pair, vus de tous) ---
+var _avatars_joueurs := {}      # peer_id -> {noeud, cible: Vector3}
+var _chrono_synchro := 0.0      # emission du transform a ~15 Hz
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
 var _extinguisher_model: PackedScene = null
@@ -260,6 +263,7 @@ func _ready() -> void:
     _build_visuals()
     _spawn_robot()
     _spawn_player()
+    _configurer_avatars_reseau()
 
     hud = get_node_or_null(^"HUD")
     if hud != null:
@@ -908,6 +912,20 @@ func _process(delta: float) -> void:
         var ft := fmod(_cctv_temps * 3.0, 1.0)
         _flammes_light.light_energy = 2.0 + sin(ft * 31.4) * 0.5 + sin(ft * 7.3) * 0.8 + randf() * 0.4
 
+    # Reseau : emission de notre transform (~15 Hz) + interpolation
+    # des avatars distants vers leur derniere position recue
+    if NetworkSession.role != NetworkSession.Role.AUCUN and player_node != null:
+        _chrono_synchro += delta
+        if _chrono_synchro >= 0.066:
+            _chrono_synchro = 0.0
+            _maj_transform_distant.rpc(player_node.global_position,
+                player_node.rotation.y)
+        for _id_av in _avatars_joueurs:
+            var _donnee_av: Dictionary = _avatars_joueurs[_id_av]
+            var _noeud_av: Node3D = _donnee_av["noeud"]
+            _noeud_av.position = _noeud_av.position.lerp(
+                _donnee_av["cible"], minf(delta * 12.0, 1.0))
+
     # Lutte incendie par sprinklers : l'eau maitrise les flammes
     if sprinklers != null:
         if _alarme_active and sprinklers.arrosage_actif                 and _flammes != null and _flammes.amount > 0:
@@ -974,6 +992,59 @@ func _unhandled_key_input(event: InputEvent) -> void:
     if event is InputEventKey and event.pressed and event.keycode == KEY_B:
         if conveyor != null and conveyor.spawn_box():
             print("Boite posee sur le capteur d'entree.")
+
+
+## --- Avatars reseau : le joueur local garde sa caméra, chaque pair
+## distant est un adulte statique avec etiquette, position synchronisee
+## a ~15 Hz (RPC unreliable_ordered, interpolation a la reception).
+func _configurer_avatars_reseau() -> void:
+    if NetworkSession.role == NetworkSession.Role.AUCUN:
+        return   # solo : aucun avatar
+    multiplayer.peer_connected.connect(_ajouter_avatar)
+    multiplayer.peer_disconnected.connect(_retirer_avatar)
+    for id_pair in multiplayer.get_peers():
+        _ajouter_avatar(id_pair)
+
+
+func _ajouter_avatar(id_pair: int) -> void:
+    if _avatars_joueurs.has(id_pair):
+        return
+    var scene_ad: PackedScene = load(PROP_ADULT)
+    if scene_ad == null:
+        return
+    var avatar: Node3D = scene_ad.instantiate()
+    avatar.position = Vector3(3.5, 0.0, 6.5)   # pres du spawn, en attendant
+    add_child(avatar)
+    var etiquette := Label3D.new()
+    etiquette.text = "PROF" if id_pair == 1 else "ELEVE %d" % (id_pair - 1)
+    etiquette.position = Vector3(0.0, 2.1, 0.0)
+    etiquette.font_size = 64
+    etiquette.pixel_size = 0.008
+    etiquette.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+    etiquette.modulate = Color(0.4, 0.9, 1.0) if id_pair == 1 else Color(1.0, 0.85, 0.3)
+    etiquette.outline_size = 12
+    avatar.add_child(etiquette)
+    _avatars_joueurs[id_pair] = {"noeud": avatar,
+        "cible": avatar.position}
+    print("Avatar cree pour le pair ", id_pair)
+
+
+func _retirer_avatar(id_pair: int) -> void:
+    if not _avatars_joueurs.has(id_pair):
+        return
+    _avatars_joueurs[id_pair]["noeud"].queue_free()
+    _avatars_joueurs.erase(id_pair)
+    print("Avatar retire pour le pair ", id_pair)
+
+
+@rpc("any_peer", "unreliable_ordered")
+func _maj_transform_distant(pos: Vector3, rot_y: float) -> void:
+    var id_pair := multiplayer.get_remote_sender_id()
+    if not _avatars_joueurs.has(id_pair):
+        return   # avatar pas encore cree : position initiale perdue, tant pis
+    var donnee: Dictionary = _avatars_joueurs[id_pair]
+    donnee["cible"] = pos
+    donnee["noeud"].rotation.y = rot_y
 
 
 ## Personnage en vue subjective, hauteur d'yeux 1,60 m (fps_controller.gd).
