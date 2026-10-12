@@ -45,6 +45,15 @@ func demarrer_client(ip: String, port: int) -> Error:
 	return OK
 
 
+## Statut brut du peer (MultiplayerPeer.CONNECTION_*). Sondage sans
+## course contrairement aux signaux : en localhost la connexion peut
+## etre etablie avant meme qu'un auditeur soit branche.
+func statut_connexion() -> int:
+	if peer == null:
+		return MultiplayerPeer.CONNECTION_DISCONNECTED
+	return peer.get_connection_status()
+
+
 ## Fermeture propre (deconnexion, sortie de scene).
 func arreter() -> void:
 	if peer != null:

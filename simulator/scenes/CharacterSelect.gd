@@ -196,17 +196,18 @@ func _on_confirm_pressed() -> void:
 
 
 ## Attent la connexion (5 s max cote eleve ; immediate cote prof qui
-## est lui-meme le serveur).
+## est lui-meme le serveur). Sondage du statut du peer : sans course,
+## meme si la connexion est deja etablie (typique en localhost).
 func _attendre_connexion() -> bool:
 	if NetworkSession.est_hote():
 		return true
-	var resultat := -1
-	NetworkManager.serveur_pret.connect(
-		func() -> void: resultat = 1, CONNECT_ONE_SHOT)
-	NetworkManager.connexion_echouee.connect(
-		func(_raison: String) -> void: resultat = 0, CONNECT_ONE_SHOT)
 	var chrono := 0.0
-	while resultat < 0 and chrono < 5.0:
+	while chrono < 5.0:
+		var statut := NetworkManager.statut_connexion()
+		if statut == MultiplayerPeer.CONNECTION_CONNECTED:
+			return true
+		if statut == MultiplayerPeer.CONNECTION_FAILED 				or statut == MultiplayerPeer.CONNECTION_DISCONNECTED:
+			return false
 		await get_tree().process_frame
 		chrono += get_process_delta_time()
-	return resultat == 1
+	return false
