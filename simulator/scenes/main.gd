@@ -205,6 +205,7 @@ var _keypad_led_verte: OmniLight3D = null
 var _verre_player: AudioStreamPlayer = null
 # --- Chantier 4 : avatars reseau (un par pair, vus de tous) ---
 var _avatars_joueurs := {}      # peer_id -> {noeud, cible: Vector3}
+var _pairs_prets := {}          # peer_id -> true : scene chargee, RPC acceptes
 var _chrono_synchro := 0.0      # emission du transform a ~15 Hz
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
@@ -245,6 +246,11 @@ func _ready() -> void:
             conveyor = machine
 
     var link = factory.get("modbus")
+    if link != null and NetworkSession.role == NetworkSession.Role.ELEVE:
+        # Architecte reseau : seul le poste PROF parle au PLC ; les
+        # clients affichent l'etat diffuse (evite aussi le conflit de
+        # port 1502 quand prof et eleve tournent sur le meme PC).
+        link = null
     if link != null:
         var port: int = modbus_port if modbus_port > 0 else link.server.port
         if link.listen(port) == Error.OK:
@@ -918,8 +924,13 @@ func _process(delta: float) -> void:
         _chrono_synchro += delta
         if _chrono_synchro >= 0.066:
             _chrono_synchro = 0.0
-            _maj_transform_distant.rpc(player_node.global_position,
-                player_node.rotation.y)
+            # unicast vers chaque pair PRET : jamais de paquet vers un
+            # poste encore sur l'ecran de selection ou le splash
+            for _id_pair in _pairs_prets:
+                if _id_pair == multiplayer.get_unique_id():
+                    continue
+                _maj_transform_distant.rpc_id(_id_pair,
+                    player_node.global_position, player_node.rotation.y)
         for _id_av in _avatars_joueurs:
             var _donnee_av: Dictionary = _avatars_joueurs[_id_av]
             var _noeud_av: Node3D = _donnee_av["noeud"]
@@ -1004,6 +1015,11 @@ func _configurer_avatars_reseau() -> void:
     multiplayer.peer_disconnected.connect(_retirer_avatar)
     for id_pair in multiplayer.get_peers():
         _ajouter_avatar(id_pair)
+    # Le serveur (pair 1) est deja pret ; cote eleve on le declare
+    # immediatement, et chacun signale sa propre scene prete.
+    if not NetworkSession.est_hote():
+        _pairs_prets[1] = true
+    _signale_pret.rpc()
 
 
 func _ajouter_avatar(id_pair: int) -> void:
@@ -1034,7 +1050,16 @@ func _retirer_avatar(id_pair: int) -> void:
         return
     _avatars_joueurs[id_pair]["noeud"].queue_free()
     _avatars_joueurs.erase(id_pair)
+    _pairs_prets.erase(id_pair)
     print("Avatar retire pour le pair ", id_pair)
+
+
+@rpc("any_peer", "call_local", "reliable")
+func _signale_pret() -> void:
+    var id_pair := multiplayer.get_remote_sender_id()
+    _pairs_prets[id_pair] = true
+    if not _avatars_joueurs.has(id_pair):
+        _ajouter_avatar(id_pair)   # pair vu avant peer_connected (rare)
 
 
 @rpc("any_peer", "unreliable_ordered")
