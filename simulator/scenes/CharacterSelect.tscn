@@ -175,6 +175,19 @@ layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
+[node name="NomLabel" type="Label" parent="MainContainer/MidZone/IpZone"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Prenom :"
+
+[node name="NomField" type="LineEdit" parent="MainContainer/MidZone/IpZone"]
+custom_minimum_size = Vector2(130, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+placeholder_text = "Prenom"
+max_length = 16
+
 [node name="IpLabel" type="Label" parent="MainContainer/MidZone/IpZone"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)

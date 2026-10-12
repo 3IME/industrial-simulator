@@ -10,6 +10,7 @@ extends Control
 @onready var confirm_button: Button = $MainContainer/ConfirmButton
 @onready var ip_zone: HBoxContainer = $MainContainer/MidZone/IpZone
 @onready var ip_field: LineEdit = $MainContainer/MidZone/IpZone/IpField
+@onready var nom_field: LineEdit = $MainContainer/MidZone/IpZone/NomField
 @onready var prof_ip_label: Label = $MainContainer/MidZone/ProfIpLabel
 @onready var ip_error: Label = $MainContainer/MidZone/IpError
 
@@ -156,6 +157,7 @@ func _on_confirm_pressed() -> void:
 			erreur_tween.tween_property(ip_zone, "modulate", Color(1, 1, 1), 0.15)
 			return
 		NetworkSession.host_ip = ip_field.text.strip_edges()
+		NetworkSession.nom_joueur = nom_field.text.strip_edges()
 
 	# Prof = serveur ENet, eleve = client. Le PLC reste le seul maitre
 	# logique : le serveur relaye son etat, les clients affichent.
@@ -169,7 +171,10 @@ func _on_confirm_pressed() -> void:
 			NetworkSession.PORT)
 		NetworkSession.role = NetworkSession.Role.ELEVE
 	if err != OK:
-		ip_error.text = "Erreur reseau (%d) — port occupe ?" % err
+		if selected_role == "professeur":
+			ip_error.text = "Un poste PROFESSEUR est deja ouvert sur le reseau — un seul prof par session"
+		else:
+			ip_error.text = "Erreur reseau (%d)" % err
 		ip_error.visible = true
 		NetworkSession.role = NetworkSession.Role.AUCUN
 		return

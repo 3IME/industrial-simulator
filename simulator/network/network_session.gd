@@ -6,6 +6,7 @@ enum Role { AUCUN, PROF, ELEVE }
 
 var role: Role = Role.AUCUN
 var host_ip: String = ""
+var nom_joueur: String = ""
 const PORT := 7777
 const MAX_CLIENTS := 12
 

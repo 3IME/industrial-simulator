@@ -206,6 +206,7 @@ var _verre_player: AudioStreamPlayer = null
 # --- Chantier 4 : avatars reseau (un par pair, vus de tous) ---
 var _avatars_joueurs := {}      # peer_id -> {noeud, cible: Vector3}
 var _pairs_prets := {}          # peer_id -> true : scene chargee, RPC acceptes
+var _noms_pairs := {}           # peer_id -> prenom affiche sur l avatar
 var _chrono_synchro := 0.0      # emission du transform a ~15 Hz
 var _chrono_pret := 0.0         # reemission du signal 'pret' toutes les 5 s
 var _alarme_player: AudioStreamPlayer = null
@@ -925,7 +926,7 @@ func _process(delta: float) -> void:
         _chrono_pret += delta
         if _chrono_pret >= 5.0:
             _chrono_pret = 0.0
-            _signale_pret.rpc()   # reemis : jamais perdu si un pair
+            _signale_pret.rpc(NetworkSession.nom_joueur)   # reemis : jamais perdu si un pair
                                   # chargeait sa scene au 1er envoi
         _chrono_synchro += delta
         if _chrono_synchro >= 0.066:
@@ -1038,17 +1039,30 @@ func _ajouter_avatar(id_pair: int) -> void:
     avatar.position = Vector3(3.5, 0.0, 6.5)   # pres du spawn, en attendant
     add_child(avatar)
     var etiquette := Label3D.new()
-    etiquette.text = "PROF" if id_pair == 1 else "ELEVE %d" % (id_pair - 1)
+    etiquette.text = _nom_avatar(id_pair)
     etiquette.position = Vector3(0.0, 2.1, 0.0)
-    etiquette.font_size = 64
-    etiquette.pixel_size = 0.008
+    etiquette.font_size = 48
+    etiquette.pixel_size = 0.0045
     etiquette.billboard = BaseMaterial3D.BILLBOARD_ENABLED
     etiquette.modulate = Color(0.4, 0.9, 1.0) if id_pair == 1 else Color(1.0, 0.85, 0.3)
     etiquette.outline_size = 12
     avatar.add_child(etiquette)
     _avatars_joueurs[id_pair] = {"noeud": avatar,
         "cible": avatar.position}
+    avatar.set_meta("etiquette", etiquette)
     print("Avatar cree pour le pair ", id_pair)
+
+
+func _nom_avatar(id_pair: int) -> String:
+    if _noms_pairs.has(id_pair):
+        return _noms_pairs[id_pair]
+    return "PROF" if id_pair == 1 else "ELEVE %d" % (id_pair - 1)
+
+
+func _maj_nom_avatar(id_pair: int) -> void:
+    var noeud: Node3D = _avatars_joueurs[id_pair]["noeud"]
+    if noeud.has_meta("etiquette"):
+        (noeud.get_meta("etiquette") as Label3D).text = _nom_avatar(id_pair)
 
 
 func _retirer_avatar(id_pair: int) -> void:
@@ -1061,11 +1075,15 @@ func _retirer_avatar(id_pair: int) -> void:
 
 
 @rpc("any_peer", "reliable")
-func _signale_pret() -> void:
+func _signale_pret(nom: String) -> void:
     var id_pair := multiplayer.get_remote_sender_id()
     if id_pair <= 0:
         return   # appel local (call_local retire) : pas d avatar fantome
     _pairs_prets[id_pair] = true
+    if nom.strip_edges() != "":
+        _noms_pairs[id_pair] = nom.strip_edges()
+        if _avatars_joueurs.has(id_pair):
+            _maj_nom_avatar(id_pair)
     if not _avatars_joueurs.has(id_pair):
         _ajouter_avatar(id_pair)   # pair vu avant peer_connected (rare)
 
