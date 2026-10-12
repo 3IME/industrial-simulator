@@ -207,6 +207,7 @@ var _verre_player: AudioStreamPlayer = null
 var _avatars_joueurs := {}      # peer_id -> {noeud, cible: Vector3}
 var _pairs_prets := {}          # peer_id -> true : scene chargee, RPC acceptes
 var _chrono_synchro := 0.0      # emission du transform a ~15 Hz
+var _chrono_pret := 0.0         # reemission du signal 'pret' toutes les 5 s
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
 var _extinguisher_model: PackedScene = null
@@ -921,6 +922,11 @@ func _process(delta: float) -> void:
     # Reseau : emission de notre transform (~15 Hz) + interpolation
     # des avatars distants vers leur derniere position recue
     if NetworkSession.role != NetworkSession.Role.AUCUN and player_node != null:
+        _chrono_pret += delta
+        if _chrono_pret >= 5.0:
+            _chrono_pret = 0.0
+            _signale_pret.rpc()   # reemis : jamais perdu si un pair
+                                  # chargeait sa scene au 1er envoi
         _chrono_synchro += delta
         if _chrono_synchro >= 0.066:
             _chrono_synchro = 0.0
@@ -1078,6 +1084,11 @@ func _maj_transform_distant(pos: Vector3, rot_y: float) -> void:
 func _spawn_player() -> void:
     var player := FpsController.new()
     player.position = Vector3(3.5, 1.0, 4.5)
+    if NetworkSession.role == NetworkSession.Role.ELEVE:
+        # decalage deterministe par id : deux joueurs ne apparaissent
+        # jamais l'un DANS l'autre au point de spawn commun
+        var decal := float(multiplayer.get_unique_id() % 7)
+        player.position += Vector3(decal - 3.0, 0.0, 2.5)
     player_node = player
     add_child(player)
 
