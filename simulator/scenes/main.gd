@@ -955,6 +955,12 @@ func _process(delta: float) -> void:
             _chrono_pret = 0.0
             NetworkManager.annoncer_pret(NetworkSession.nom_joueur)   # reemis : jamais perdu si un pair
                                   # chargeait sa scene au 1er envoi
+        if "--auto-alerte" in OS.get_cmdline_user_args()                 and Time.get_ticks_msec() > 20000 and not _alarme_active:
+            print("AUTO : declenchement confinement")
+            _declencher_confinement()
+        if fmod(Time.get_ticks_msec() / 1000.0, 10.0) < delta                 and NetworkSession.role != NetworkSession.Role.AUCUN:
+            print("AUTO : avatars actifs = ", _avatars_joueurs.size(),
+                " prets = ", _pairs_prets.size())
         if "--auto-bouge" in OS.get_cmdline_user_args():
             var t_bouge := float(Time.get_ticks_msec()) / 1000.0
             player_node.position = Vector3(
@@ -1075,6 +1081,12 @@ func _configurer_avatars_reseau() -> void:
     NetworkManager.transform_recu.connect(_sur_transform_recu)
     NetworkManager.voix_recue.connect(_sur_voix_recue)
     NetworkManager.evenement_recu.connect(_sur_evenement)
+    # Rattrapage : rejouer les evenements recus pendant la construction
+    # de notre usine (l'alarme lancee par le prof avant notre arrivee)
+    var maintenant := Time.get_ticks_msec()
+    for evenement_passe in NetworkManager.derniers_evenements.duplicate():
+        if maintenant - int(evenement_passe[1]) <= NetworkManager.MEMO_EVENEMENTS_MS:
+            _sur_evenement(evenement_passe[0])
     if NetworkSession.est_hote():
         NetworkManager.noms_pairs[1] = NetworkSession.nom_joueur if NetworkSession.nom_joueur != "" else "PROF"
     else:

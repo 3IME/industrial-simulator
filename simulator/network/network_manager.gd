@@ -17,6 +17,12 @@ signal message_recu(id_expediteur: int, nom: String, texte: String, prive: bool)
 signal voix_recue(id_expediteur: int, donnees: PackedByteArray)
 signal evenement_recu(type: String)
 
+## Derniers evenements (type, ms) : un evenement peut arriver pendant
+## qu'un poste construit encore son usine — il est garde ici et rejoue
+## par la scene au moment de son abonnement (etat rattrape).
+var derniers_evenements: Array = []
+const MEMO_EVENEMENTS_MS := 120000
+
 ## Noms connus des pairs (registre de session, rempli par la scene).
 var noms_pairs := {}
 
@@ -187,6 +193,8 @@ func diffuser_evenement(type: String) -> void:
 
 @rpc("authority", "reliable")
 func _evenement(type: String) -> void:
+	print("EVENEMENT recu : ", type)
+	derniers_evenements.append([type, Time.get_ticks_msec()])
 	evenement_recu.emit(type)
 
 
