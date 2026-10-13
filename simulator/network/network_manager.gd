@@ -130,10 +130,13 @@ func _router_message(id_expediteur: int, nom: String, texte: String,
 		for id_pair in multiplayer.get_peers():
 			if id_pair != id_expediteur:
 				_diffuser_chat.rpc_id(id_pair, id_expediteur, nom, texte, false)
-		message_recu.emit(id_expediteur, nom, texte, false)
+		# pas d'emit vers soi-meme : l'UI du prof a deja fait son echo
+		# local (sinon doublon cote prof)
+		if id_expediteur != 1:
+			message_recu.emit(id_expediteur, nom, texte, false)
 	else:
 		var prive := true
-		if destinataire == 1:
+		if destinataire == 1 and id_expediteur != 1:
 			message_recu.emit(id_expediteur, nom, texte, prive)
 		elif multiplayer.get_peers().has(destinataire):
 			_diffuser_chat.rpc_id(destinataire, id_expediteur, nom, texte, prive)
