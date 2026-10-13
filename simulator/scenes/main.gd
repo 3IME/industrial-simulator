@@ -1146,7 +1146,9 @@ func _sur_transform_recu(id_pair: int, pos: Vector3, rot_y: float) -> void:
         _ajouter_avatar(id_pair)   # transform arrive avant le signal : cree
     var donnee: Dictionary = _avatars_joueurs[id_pair]
     donnee["cible"] = pos
-    donnee["noeud"].rotation.y = rot_y
+    # les modeles worker/prof regardent vers +Z, la convention Godot
+    # est -Z : demi-tour pour que l avatar regarde ou va le joueur
+    donnee["noeud"].rotation.y = rot_y + PI
 
 
 ## Personnage en vue subjective, hauteur d'yeux 1,60 m (fps_controller.gd).
