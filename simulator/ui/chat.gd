@@ -14,6 +14,8 @@ var _manager: Node = null
 
 var _racine: Control = null
 var _journal: VBoxContainer = null
+var _zone_popups: VBoxContainer = null
+var _son_pop: AudioStreamPlayer = null
 var _barre: HBoxContainer = null
 var _saisie: LineEdit = null
 var _destinataires: OptionButton = null
@@ -76,6 +78,40 @@ func maj_destinataires() -> void:
 func _sur_message(_id_expediteur: int, nom: String, texte: String, prive: bool) -> void:
 	var prefixe := "[prive] " if prive else ""
 	_ajouter_ligne("%s%s : %s" % [prefixe, nom, texte])
+	_ajouter_popup(prefixe, nom, texte)
+	if _son_pop.stream != null:
+		_son_pop.play()
+
+
+## Encadre temporaire centre-haut : nom + debut du message, bordure
+## rouge, 3,5 s puis fondu de 0,4 s.
+func _ajouter_popup(prefixe: String, nom: String, texte: String) -> void:
+	var panneau := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.05, 0.06, 0.08, 0.9)
+	style.border_color = Color(1.0, 0.22, 0.15)
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(6)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 6
+	style.content_margin_bottom = 6
+	panneau.add_theme_stylebox_override("panel", style)
+	var label := Label.new()
+	var extrait := texte.substr(0, 70)
+	if texte.length() > 70:
+		extrait += "..."
+	label.text = "%s%s : %s" % [prefixe, nom, extrait]
+	label.add_theme_font_size_override("font_size", 15)
+	label.add_theme_color_override("font_color", Color(0.95, 0.97, 1.0))
+	panneau.add_child(label)
+	_zone_popups.add_child(panneau)
+	panneau.modulate.a = 0.0
+	var tween := panneau.create_tween()
+	tween.tween_property(panneau, "modulate:a", 1.0, 0.15)
+	tween.tween_interval(3.5)
+	tween.tween_property(panneau, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(panneau.queue_free)
 
 
 func _envoyer() -> void:
@@ -150,6 +186,25 @@ func _construire_barre() -> void:
 	_barre.add_theme_constant_override("separation", 8)
 	_barre.visible = false
 	_racine.add_child(_barre)
+	# Popup MMO/Steam : centre-haut (tiers superieur, la ou le regard
+	# se pose en jeu), empilement vertical, encadre rouge
+	_zone_popups = VBoxContainer.new()
+	_zone_popups.anchor_left = 0.5
+	_zone_popups.anchor_top = 0.0
+	_zone_popups.anchor_right = 0.5
+	_zone_popups.anchor_bottom = 0.0
+	_zone_popups.offset_left = -330
+	_zone_popups.offset_top = 84
+	_zone_popups.offset_right = 330
+	_zone_popups.offset_bottom = 284
+	_zone_popups.add_theme_constant_override("separation", 6)
+	_racine.add_child(_zone_popups)
+	_son_pop = AudioStreamPlayer.new()
+	var son = load("res://assets/sounds/pop.mp3")
+	if son != null:
+		_son_pop.stream = son
+		_son_pop.volume_db = -6.0
+	add_child(_son_pop)
 
 	_destinataires = OptionButton.new()
 	_destinataires.add_theme_font_size_override("font_size", 14)
