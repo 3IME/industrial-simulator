@@ -61,6 +61,7 @@ func _ready() -> void:
     pos_label = _make_label(box, "joueur         = -")
     ip_label = _make_label(box, "ip prof        = -")
     joueurs_label = _make_label(box, "joueurs        = -")
+    _make_label(box, "protocole      = %d" % NetworkSession.PROTOCOLE, false, true)
     hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | \nB boite | M couper l'alarme | clic : souris | Echap : liberer", false, true)
     add_child(panel)
 
