@@ -159,6 +159,14 @@ func _physics_process(delta: float) -> void:
     floor_snap_length = 0.5  # marcher sur les rampes/escaliers
     if not is_on_floor():
         velocity.y -= GRAVITY * delta
+    # Saisie GUI active (chat...) : la scrutation physique ne voit pas
+    # le focus — sans cette garde, la barre d'espace fait sauter
+    # l'avatar pendant la frappe d'un message
+    if get_viewport().gui_get_focus_owner() is LineEdit:
+        velocity.x = 0.0
+        velocity.z = 0.0
+        move_and_slide()
+        return
     if Input.is_physical_key_pressed(KEY_SPACE) and is_on_floor():
         velocity.y = JUMP_VELOCITY
 
