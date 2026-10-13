@@ -1061,6 +1061,12 @@ func _configurer_avatars_reseau() -> void:
     # scenes changent des deux cotes.
     NetworkManager.pair_pret.connect(_sur_pair_pret)
     NetworkManager.transform_recu.connect(_sur_transform_recu)
+    if NetworkSession.est_hote():
+        NetworkManager.noms_pairs[1] = NetworkSession.nom_joueur if NetworkSession.nom_joueur != "" else "PROF"
+    else:
+        NetworkManager.noms_pairs[1] = "PROF"
+    var chat := preload("res://ui/chat.gd").new()
+    add_child(chat)
     # Le serveur (pair 1) est deja pret ; cote eleve on le declare
     # immediatement, et chacun signale sa propre scene prete.
     if not NetworkSession.est_hote():
@@ -1133,6 +1139,7 @@ func _sur_pair_pret(id_pair: int, nom: String) -> void:
     _pairs_prets[id_pair] = true
     if nom.strip_edges() != "":
         _noms_pairs[id_pair] = nom.strip_edges()
+        NetworkManager.noms_pairs[id_pair] = nom.strip_edges()
         if _avatars_joueurs.has(id_pair):
             _maj_nom_avatar(id_pair)
     if not _avatars_joueurs.has(id_pair):

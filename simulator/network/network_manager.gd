@@ -13,6 +13,10 @@ signal serveur_pret()
 signal connexion_echouee(raison: String)
 signal pair_pret(id: int, nom: String)
 signal transform_recu(id: int, pos: Vector3, rot_y: float)
+signal message_recu(id_expediteur: int, nom: String, texte: String, prive: bool)
+
+## Noms connus des pairs (registre de session, rempli par la scene).
+var noms_pairs := {}
 
 var peer: ENetMultiplayerPeer = null
 
@@ -93,6 +97,51 @@ func _maj_transform_distant(pos: Vector3, rot_y: float) -> void:
 	var id := multiplayer.get_remote_sender_id()
 	if id > 0:
 		transform_recu.emit(id, pos, rot_y)
+
+
+## --- Chat : tout passe par le serveur (topologie en etoile).
+## destinataire 0 = diffusion generale, sinon id du pair vise.
+## L'emetteur affiche son propre message localement (pas d'echo).
+
+func envoyer_message(texte: String, destinataire: int) -> void:
+	if peer == null:
+		return
+	var nom := NetworkSession.nom_joueur
+	if nom == "":
+		nom = "PROF" if NetworkSession.est_hote() else "ELEVE"
+	_message_chat.rpc_id(1, nom, texte, destinataire)
+
+
+func _router_message(id_expediteur: int, nom: String, texte: String,
+		destinataire: int) -> void:
+	# cote serveur uniquement : relais vers la/les cibles
+	if destinataire == 0:
+		for id_pair in multiplayer.get_peers():
+			if id_pair != id_expediteur:
+				_diffuser_chat.rpc_id(id_pair, id_expediteur, nom, texte, false)
+		message_recu.emit(id_expediteur, nom, texte, false)
+	else:
+		var prive := true
+		if destinataire == 1:
+			message_recu.emit(id_expediteur, nom, texte, prive)
+		elif multiplayer.get_peers().has(destinataire):
+			_diffuser_chat.rpc_id(destinataire, id_expediteur, nom, texte, prive)
+
+
+@rpc("any_peer", "reliable")
+func _message_chat(nom: String, texte: String, destinataire: int) -> void:
+	if not multiplayer.is_server():
+		return   # un client ne route pas : il adresse le serveur (pair 1)
+	var id_e := multiplayer.get_remote_sender_id()
+	if id_e <= 0:
+		id_e = 1   # envoi du serveur lui-meme
+	_router_message(id_e, nom, texte, destinataire)
+
+
+@rpc("any_peer", "reliable")
+func _diffuser_chat(id_expediteur: int, nom: String, texte: String,
+		prive: bool) -> void:
+	message_recu.emit(id_expediteur, nom, texte, prive)
 
 
 func _exit_tree() -> void:
