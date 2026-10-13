@@ -1136,6 +1136,9 @@ func _retirer_avatar(id_pair: int) -> void:
 
 
 func _sur_pair_pret(id_pair: int, nom: String) -> void:
+    if id_pair < 0:
+        print("!!! POSTE ", -id_pair, " : VERSION DU JEU DIFFERENTE — mettez a jour les deux postes")
+        return
     _pairs_prets[id_pair] = true
     if nom.strip_edges() != "":
         _noms_pairs[id_pair] = nom.strip_edges()

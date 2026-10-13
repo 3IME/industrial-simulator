@@ -7,6 +7,10 @@ enum Role { AUCUN, PROF, ELEVE }
 var role: Role = Role.AUCUN
 var host_ip: String = ""
 var nom_joueur: String = ""
+## Version du protocole reseau : incremente a chaque changement de
+## signature des RPC — deux versions differentes ne peuvent PAS se
+## voir (avions silencieux). Le menu l'affiche explicitement.
+const PROTOCOLE := 2
 const PORT := 7777
 const MAX_CLIENTS := 12
 

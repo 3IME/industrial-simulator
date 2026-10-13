@@ -77,7 +77,7 @@ func arreter() -> void:
 
 func annoncer_pret(nom: String) -> void:
 	if peer != null:
-		_signale_pret.rpc(nom)
+		_signale_pret.rpc(get_node("/root/NetworkSession").PROTOCOLE, nom)
 
 
 func envoyer_transform(id_pair: int, pos: Vector3, rot_y: float) -> void:
@@ -86,10 +86,16 @@ func envoyer_transform(id_pair: int, pos: Vector3, rot_y: float) -> void:
 
 
 @rpc("any_peer", "reliable")
-func _signale_pret(nom: String) -> void:
+func _signale_pret(proto: int, nom: String) -> void:
 	var id := multiplayer.get_remote_sender_id()
-	if id > 0:
-		pair_pret.emit(id, nom)
+	if id <= 0:
+		return
+	var proto_local: int = get_node("/root/NetworkSession").PROTOCOLE
+	if proto != proto_local:
+		push_error("Version reseau differente chez le pair %d (proto %d, local %d) : METTEZ A JOUR LES DEUX POSTES" % [id, proto, proto_local])
+		pair_pret.emit(-id, nom)   # id negatif : signal d'incompatibilite
+		return
+	pair_pret.emit(id, nom)
 
 
 @rpc("any_peer", "unreliable_ordered")
