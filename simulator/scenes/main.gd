@@ -293,6 +293,7 @@ func _ready() -> void:
     # _exit_tree().
     _fn_close_requested = func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
     get_tree().root.close_requested.connect(_fn_close_requested)
+    print("Protocole reseau : ", NetworkSession.PROTOCOLE)
     print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | annonces : boutons du decor (boite 5BP, alarmes) | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (M : couper)")
     if lod_manager != null:
         # Zones mutuellement exclusives : dans le bureau -> atelier masque,
@@ -948,6 +949,11 @@ func _process(delta: float) -> void:
             _chrono_pret = 0.0
             NetworkManager.annoncer_pret(NetworkSession.nom_joueur)   # reemis : jamais perdu si un pair
                                   # chargeait sa scene au 1er envoi
+        if "--auto-bouge" in OS.get_cmdline_user_args():
+            var t_bouge := float(Time.get_ticks_msec()) / 1000.0
+            player_node.position = Vector3(
+                3.5 + sin(t_bouge * 0.7) * 4.0, 1.0,
+                4.5 + cos(t_bouge * 0.5) * 3.0)
         _chrono_synchro += delta
         if _chrono_synchro >= 0.066:
             _chrono_synchro = 0.0

@@ -35,7 +35,7 @@ func _configurer_micro() -> bool:
 	AudioServer.set_bus_name(indice, "Voix")
 	AudioServer.set_bus_mute(indice, true)   # jamais d'echo local
 	_capture = AudioEffectCapture.new()
-	_capture.buffer_bytes = 1 << 16
+	_capture.buffer_length = 0.5   # tampon de capture (secondes)
 	AudioServer.add_bus_effect(indice, _capture)
 	_lecteur_micro = AudioStreamPlayer.new()
 	_lecteur_micro.stream = AudioStreamMicrophone.new()
