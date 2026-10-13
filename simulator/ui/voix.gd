@@ -59,7 +59,13 @@ func _process(delta: float) -> void:
 	_tirer_et_convertire()
 	var seuil := int(TAUX_VOX * MS_TRAME / 1000.0)
 	if _accumulateur.size() >= seuil:
-		_envoyer_bloc(seuil)
+		# plafond anti-retard : si le _process a ete affame (rafale),
+		# ne pas laisser le retard s'accumuler — garder les 250 ms
+		# les plus recentes
+		if _accumulateur.size() > TAUX_VOX / 4:
+			_accumulateur = _accumulateur.slice(
+				_accumulateur.size() - int(TAUX_VOX / 4))
+		_envoyer_bloc(_accumulateur.size())
 
 
 ## Tire les frames du bus, moyenne les canaux, sous-echantillonne

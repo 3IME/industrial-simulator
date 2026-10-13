@@ -1183,7 +1183,15 @@ func _sur_voix_recue(id_pair: int, donnees: PackedByteArray) -> void:
     for i in range(nb):
         var v := donnees.decode_s16(i * 2) / 32768.0
         trame[i] = Vector2(v, v)
-    if lecture.get_frames_available() >= nb:
+    var dispo := lecture.get_frames_available()
+    if dispo >= nb:
+        lecture.push_buffer(trame)
+    elif dispo > 0:
+        # rafale : garder les donnees les plus recentes qui tiennent
+        lecture.push_buffer(trame.slice(nb - dispo))
+    else:
+        # tampon plein (retard accumule) : resynchroniser d'un coup
+        lecture.clear_buffer()
         lecture.push_buffer(trame)
 
 
