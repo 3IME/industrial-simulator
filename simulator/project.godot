@@ -18,6 +18,10 @@ boot_splash/bg_color=Color(0.04, 0.05, 0.08, 1)
 boot_splash/show_image=false
 config/icon="res://assets/branding/logo2.svg"
 
+[audio]
+
+driver/enable_input=true
+
 [autoload]
 
 NetworkSession="*res://network/network_session.gd"

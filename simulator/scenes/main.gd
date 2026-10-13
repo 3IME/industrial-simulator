@@ -1164,7 +1164,13 @@ func _sur_pair_pret(id_pair: int, nom: String) -> void:
         _ajouter_avatar(id_pair)   # pair vu avant peer_connected (rare)
 
 
+var _premier_paquet_voix := {}
+
 func _sur_voix_recue(id_pair: int, donnees: PackedByteArray) -> void:
+    if not _premier_paquet_voix.has(id_pair):
+        _premier_paquet_voix[id_pair] = true
+        print("Voix : premiers octets recus du pair ", id_pair,
+            " (", donnees.size(), " octets)")
     if not _avatars_joueurs.has(id_pair):
         return
     var lecteur: AudioStreamPlayer3D = _avatars_joueurs[id_pair]["voix"]

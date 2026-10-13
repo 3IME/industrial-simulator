@@ -87,7 +87,18 @@ func _vider_capture() -> void:
 		_capture.get_buffer(_capture.get_frames_available())
 
 
+var _premier_bloc := true
+
+
 func _envoyer_bloc(taille: int) -> void:
+	if _premier_bloc:
+		_premier_bloc = false
+		var somme := 0.0
+		for v in _accumulateur.slice(0, taille):
+			somme += v * v
+		var rms := sqrt(somme / taille)
+		print("Voix : premier bloc emis (", taille * 2, " octets, niveau RMS ",
+			"%.4f" % rms, ")", " — SILENCE ? verifier le micro" if rms < 0.001 else "")
 	var donnees := PackedByteArray()
 	donnees.resize(taille * 2)
 	for i in range(taille):
