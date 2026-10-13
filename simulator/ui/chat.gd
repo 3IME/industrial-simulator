@@ -8,6 +8,11 @@ extends CanvasLayer
 const NB_LIGNES := 8
 const DUREE_AFFICHAGE := 12.0
 
+# acces runtime (les identifiants d'autoload ne resolvent pas a la
+# compilation dans tous les contextes — tests --script notamment)
+var _manager: Node = null
+
+var _racine: Control = null
 var _journal: VBoxContainer = null
 var _barre: HBoxContainer = null
 var _saisie: LineEdit = null
@@ -19,7 +24,9 @@ func _ready() -> void:
 	layer = 5
 	_construire_journal()
 	_construire_barre()
-	NetworkManager.message_recu.connect(_sur_message)
+	_manager = get_node_or_null("/root/NetworkManager")
+	if _manager != null:
+		_manager.message_recu.connect(_sur_message)
 
 
 func _process(delta: float) -> void:
@@ -62,7 +69,7 @@ func maj_destinataires() -> void:
 	for id_pair in multiplayer.get_peers():
 		if id_pair == id_moi:
 			continue
-		var nom := str(NetworkManager.noms_pairs.get(id_pair, "ELEVE %d" % (id_pair - 1)))
+		var nom := str(_manager.noms_pairs.get(id_pair, "ELEVE %d" % (id_pair - 1)))
 		_destinataires.add_item(nom, id_pair)
 
 
@@ -81,10 +88,12 @@ func _envoyer() -> void:
 	if indice < 0:
 		indice = 0
 	var destinataire: int = _destinataires.get_item_id(indice)
-	NetworkManager.envoyer_message(texte, destinataire)
-	var nom := NetworkSession.nom_joueur
+	if _manager != null:
+		_manager.envoyer_message(texte, destinataire)
+	var session = get_node_or_null("/root/NetworkSession")
+	var nom: String = session.nom_joueur if session != null else ""
 	if nom == "":
-		nom = "PROF" if NetworkSession.est_hote() else "ELEVE"
+		nom = "PROF" if (session != null and session.est_hote()) else "ELEVE"
 	var cible := "" if destinataire == 0 else " [a %s]" % _destinataires.get_item_text(indice)
 	_ajouter_ligne("%s%s : %s%s" % [
 		"" if destinataire == 0 else "[prive] ", nom, texte, cible])
@@ -106,23 +115,41 @@ func _ajouter_ligne(texte: String) -> void:
 
 
 func _construire_journal() -> void:
+	# Racine plein ecran : les ancres 'bas' ne resolvent pas contre un
+	# CanvasLayer directement, il faut un parent Control plein cadre
+	_racine = Control.new()
+	_racine.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_racine.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_racine)
 	_journal = VBoxContainer.new()
-	_journal.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	_journal.position = Vector2(14, -14)
-	_journal.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_journal.size = Vector2(560, 220)
+	# rectangle explicite via offsets d'ancres : bas-gauche de l'ecran,
+	# 560 x 220 px (les lignes s'empilent du haut vers le bas du cadre,
+	# la plus recente reste visible au bas)
+	_journal.anchor_left = 0.0
+	_journal.anchor_top = 1.0
+	_journal.anchor_right = 0.0
+	_journal.anchor_bottom = 1.0
+	_journal.offset_left = 14
+	_journal.offset_top = -234
+	_journal.offset_right = 574
+	_journal.offset_bottom = -14
 	_journal.add_theme_constant_override("separation", 2)
-	add_child(_journal)
+	_racine.add_child(_journal)
 
 
 func _construire_barre() -> void:
 	_barre = HBoxContainer.new()
-	_barre.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	_barre.position = Vector2(-330, -70)
-	_barre.size = Vector2(660, 40)
+	_barre.anchor_left = 0.5
+	_barre.anchor_top = 1.0
+	_barre.anchor_right = 0.5
+	_barre.anchor_bottom = 1.0
+	_barre.offset_left = -330
+	_barre.offset_top = -70
+	_barre.offset_right = 330
+	_barre.offset_bottom = -30
 	_barre.add_theme_constant_override("separation", 8)
 	_barre.visible = false
-	add_child(_barre)
+	_racine.add_child(_barre)
 
 	_destinataires = OptionButton.new()
 	_destinataires.add_theme_font_size_override("font_size", 14)
