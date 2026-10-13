@@ -504,6 +504,8 @@ func _basculer_sprinklers() -> void:
     if sprinklers == null:
         return
     sprinklers.set_arme(not sprinklers.arme)
+    NetworkManager.diffuser_evenement(
+        "sprinklers_on" if sprinklers.arme else "sprinklers_off")
     var clic_sw = load("res://assets/sounds/button-press.mp3")
     if clic_sw != null and _verre_player != null:
         _verre_player.stream = clic_sw
@@ -565,6 +567,7 @@ func _sortir_bureau() -> void:
 func _declencher_alarme(pos: Vector3) -> void:
     _alarme_active = true
     print("ALERTE : brise-vitre actionne")
+    NetworkManager.diffuser_evenement("incendie")
     var verre = load("res://assets/sounds/annonces/verre.mp3")
     if verre != null and _verre_player != null:
         _verre_player.stream = verre
@@ -600,6 +603,7 @@ func _fumee_verte(actif: bool) -> void:
 
 
 func _couper_alarme() -> void:
+    NetworkManager.diffuser_evenement("couper")
     _alarme_active = false
     _en_confinement = false
     _fumee_active = false
@@ -778,6 +782,7 @@ func _bouton_boite(index: int) -> void:
 ## Bouton d'evacuation (meme principe que le confinement) : boucle
 ## d'evacuation.mp3, coupure par la touche M.
 func _declencher_evacuation_bouton() -> void:
+    NetworkManager.diffuser_evenement("evacuation")
     _alarme_active = true
     _en_confinement = false
     print("BOUTON EVACUATION")
@@ -800,6 +805,7 @@ func _declencher_evacuation_bouton() -> void:
 
 ## Arret d'urgence : annonce de confinement en boucle (touche M).
 func _declencher_confinement() -> void:
+    NetworkManager.diffuser_evenement("confinement")
     _alarme_active = true
     _en_confinement = true
     _fumee_verte(true)
@@ -1068,6 +1074,7 @@ func _configurer_avatars_reseau() -> void:
     NetworkManager.pair_pret.connect(_sur_pair_pret)
     NetworkManager.transform_recu.connect(_sur_transform_recu)
     NetworkManager.voix_recue.connect(_sur_voix_recue)
+    NetworkManager.evenement_recu.connect(_sur_evenement)
     if NetworkSession.est_hote():
         NetworkManager.noms_pairs[1] = NetworkSession.nom_joueur if NetworkSession.nom_joueur != "" else "PROF"
     else:
@@ -1171,6 +1178,27 @@ func _sur_pair_pret(id_pair: int, nom: String) -> void:
 
 
 var _premier_paquet_voix := {}
+
+## Evenement de scenario diffuse par le PROF : rejoue localement pour
+## que les eleves voient la meme chose (lumieres rouges, fumee, sons,
+## sprinklers — chaque instance gere son rendu, ADR-013).
+func _sur_evenement(type: String) -> void:
+    if NetworkSession.est_hote():
+        return   # le prof a deja joue l'evenement localement
+    match type:
+        "incendie":
+            _declencher_alarme(Vector3(61.1, 0.2, 25.0))
+        "confinement":
+            _declencher_confinement()
+        "evacuation":
+            _declencher_evacuation_bouton()
+        "sprinklers_on":
+            sprinklers.set_arme(true)
+        "sprinklers_off":
+            sprinklers.set_arme(false)
+        "couper":
+            _couper_alarme()
+
 
 func _sur_voix_recue(id_pair: int, donnees: PackedByteArray) -> void:
     if not _premier_paquet_voix.has(id_pair):

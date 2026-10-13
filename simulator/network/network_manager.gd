@@ -15,6 +15,7 @@ signal pair_pret(id: int, nom: String)
 signal transform_recu(id: int, pos: Vector3, rot_y: float)
 signal message_recu(id_expediteur: int, nom: String, texte: String, prive: bool)
 signal voix_recue(id_expediteur: int, donnees: PackedByteArray)
+signal evenement_recu(type: String)
 
 ## Noms connus des pairs (registre de session, rempli par la scene).
 var noms_pairs := {}
@@ -173,6 +174,20 @@ func _paquet_voix(donnees: PackedByteArray) -> void:
 	var id := multiplayer.get_remote_sender_id()
 	if id > 0:
 		voix_recue.emit(id, donnees)
+
+
+## --- Evenements de scenario (chantier 6) : incendie, confinement,
+## evacuation, sprinklers, coupure. Autorite SERVEUR uniquement (le
+## prof est maitre du jeu) ; chaque client rejoue l'evenement localement.
+
+func diffuser_evenement(type: String) -> void:
+	if peer != null and multiplayer.is_server():
+		_evenement.rpc(type)
+
+
+@rpc("authority", "reliable")
+func _evenement(type: String) -> void:
+	evenement_recu.emit(type)
 
 
 func _exit_tree() -> void:
