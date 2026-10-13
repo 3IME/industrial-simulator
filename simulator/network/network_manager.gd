@@ -11,6 +11,8 @@ signal joueur_connecte(id: int)
 signal joueur_deconnecte(id: int)
 signal serveur_pret()
 signal connexion_echouee(raison: String)
+signal pair_pret(id: int, nom: String)
+signal transform_recu(id: int, pos: Vector3, rot_y: float)
 
 var peer: ENetMultiplayerPeer = null
 
@@ -61,6 +63,36 @@ func arreter() -> void:
 		peer = null
 	if multiplayer != null:
 		multiplayer.multiplayer_peer = null
+
+
+## --- Transport d'avatars : les RPC vivent sur cet autoload, PRESENT
+## DES LE LANCEMENT sur tous les postes (chemin /root/NetworkManager
+## identique partout). Les RPC sur la racine de scene 'Main' echouaient :
+## le cache de chemins du SceneMultiplayer se desynchronise quand les
+## scenes changent (menu -> splash -> usine) des deux cotes.
+
+func annoncer_pret(nom: String) -> void:
+	if peer != null:
+		_signale_pret.rpc(nom)
+
+
+func envoyer_transform(id_pair: int, pos: Vector3, rot_y: float) -> void:
+	if peer != null:
+		_maj_transform_distant.rpc_id(id_pair, pos, rot_y)
+
+
+@rpc("any_peer", "reliable")
+func _signale_pret(nom: String) -> void:
+	var id := multiplayer.get_remote_sender_id()
+	if id > 0:
+		pair_pret.emit(id, nom)
+
+
+@rpc("any_peer", "unreliable_ordered")
+func _maj_transform_distant(pos: Vector3, rot_y: float) -> void:
+	var id := multiplayer.get_remote_sender_id()
+	if id > 0:
+		transform_recu.emit(id, pos, rot_y)
 
 
 func _exit_tree() -> void:

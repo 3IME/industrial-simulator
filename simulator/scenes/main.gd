@@ -946,7 +946,7 @@ func _process(delta: float) -> void:
         _chrono_pret += delta
         if _chrono_pret >= 5.0:
             _chrono_pret = 0.0
-            _signale_pret.rpc(NetworkSession.nom_joueur)   # reemis : jamais perdu si un pair
+            NetworkManager.annoncer_pret(NetworkSession.nom_joueur)   # reemis : jamais perdu si un pair
                                   # chargeait sa scene au 1er envoi
         _chrono_synchro += delta
         if _chrono_synchro >= 0.066:
@@ -956,7 +956,7 @@ func _process(delta: float) -> void:
             for _id_pair in _pairs_prets:
                 if _id_pair == multiplayer.get_unique_id():
                     continue
-                _maj_transform_distant.rpc_id(_id_pair,
+                NetworkManager.envoyer_transform(_id_pair,
                     player_node.global_position, player_node.rotation.y)
         for _id_av in _avatars_joueurs:
             var _donnee_av: Dictionary = _avatars_joueurs[_id_av]
@@ -1056,11 +1056,16 @@ func _configurer_avatars_reseau() -> void:
     multiplayer.peer_disconnected.connect(_retirer_avatar)
     for id_pair in multiplayer.get_peers():
         _ajouter_avatar(id_pair)
+    # Transport des RPC via l'autoload NetworkManager (voir son en-tete) :
+    # le cache de chemins de Godot se desynchronise sinon quand les
+    # scenes changent des deux cotes.
+    NetworkManager.pair_pret.connect(_sur_pair_pret)
+    NetworkManager.transform_recu.connect(_sur_transform_recu)
     # Le serveur (pair 1) est deja pret ; cote eleve on le declare
     # immediatement, et chacun signale sa propre scene prete.
     if not NetworkSession.est_hote():
         _pairs_prets[1] = true
-    _signale_pret.rpc(NetworkSession.nom_joueur)
+    NetworkManager.annoncer_pret(NetworkSession.nom_joueur)
 
 
 func _ajouter_avatar(id_pair: int) -> void:
@@ -1124,25 +1129,21 @@ func _retirer_avatar(id_pair: int) -> void:
     print("Avatar retire pour le pair ", id_pair)
 
 
-@rpc("any_peer", "reliable")
-func _signale_pret(nom: String) -> void:
-    var id_pair := multiplayer.get_remote_sender_id()
-    if id_pair <= 0:
-        return   # appel local (call_local retire) : pas d avatar fantome
+func _sur_pair_pret(id_pair: int, nom: String) -> void:
     _pairs_prets[id_pair] = true
     if nom.strip_edges() != "":
         _noms_pairs[id_pair] = nom.strip_edges()
         if _avatars_joueurs.has(id_pair):
             _maj_nom_avatar(id_pair)
     if not _avatars_joueurs.has(id_pair):
+        _ajouter_avatar(id_pair)
+    if not _avatars_joueurs.has(id_pair):
         _ajouter_avatar(id_pair)   # pair vu avant peer_connected (rare)
 
 
-@rpc("any_peer", "unreliable_ordered")
-func _maj_transform_distant(pos: Vector3, rot_y: float) -> void:
-    var id_pair := multiplayer.get_remote_sender_id()
+func _sur_transform_recu(id_pair: int, pos: Vector3, rot_y: float) -> void:
     if not _avatars_joueurs.has(id_pair):
-        return   # avatar pas encore cree : position initiale perdue, tant pis
+        _ajouter_avatar(id_pair)   # transform arrive avant le signal : cree
     var donnee: Dictionary = _avatars_joueurs[id_pair]
     donnee["cible"] = pos
     donnee["noeud"].rotation.y = rot_y

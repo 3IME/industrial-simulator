@@ -24,6 +24,18 @@ func _ready() -> void:
 	if "--capture" in OS.get_cmdline_user_args():
 		get_tree().change_scene_to_file("res://scenes/splash.tscn")
 		return
+	# Mode auto (tests reseau scriptes) : --auto-prof ou
+	# --auto-eleve=<ip> selectionnent le role sans clic
+	for arg in OS.get_cmdline_user_args():
+		if arg == "--auto-prof":
+			selected_role = "professeur"
+			_on_confirm_pressed()
+			return
+		if arg.begins_with("--auto-eleve="):
+			selected_role = "eleve"
+			ip_field.text = arg.substr("--auto-eleve=".length())
+			_on_confirm_pressed()
+			return
 	# Musique du menu : s'arrete d'elle-meme au changement de scene
 	# (le lecteur est un enfant de cet ecran)
 	var musique = load("res://assets/sounds/new_factory_129bpm.mp3")
