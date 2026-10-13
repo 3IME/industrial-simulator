@@ -19,6 +19,7 @@ var fps_label: Label
 var tri_label: Label
 var pos_label: Label
 var ip_label: Label
+var joueurs_label: Label
 var hint_label: Label
 
 
@@ -59,6 +60,7 @@ func _ready() -> void:
     tri_label = _make_label(box, "triangles      = -")
     pos_label = _make_label(box, "joueur         = -")
     ip_label = _make_label(box, "ip prof        = -")
+    joueurs_label = _make_label(box, "joueurs        = -")
     hint_label = _make_label(box, "Fleches marcher | Maj courir | Ctrl se coucher | Espace saut | \nB boite | M couper l'alarme | clic : souris | Echap : liberer", false, true)
     add_child(panel)
 
@@ -97,6 +99,12 @@ func refresh() -> void:
     if joueur != null:
         pos_label.text = "joueur X %8.2f  Y %6.2f  Z %8.2f" % [
             joueur.global_position.x, joueur.global_position.y, joueur.global_position.z]
+    var max_joueurs: int = NetworkSession.MAX_CLIENTS + 1   # prof inclus
+    if NetworkSession.role != NetworkSession.Role.AUCUN:
+        joueurs_label.text = "joueurs        = %d/%d" % [
+            1 + multiplayer.get_peers().size(), max_joueurs]
+    else:
+        joueurs_label.text = "joueurs        = solo"
     if NetworkSession.role == NetworkSession.Role.PROF:
         ip_label.text = "ip prof        = %s (vous)" % NetworkSession.ip_locale()
     elif NetworkSession.role == NetworkSession.Role.ELEVE:
