@@ -109,7 +109,12 @@ func envoyer_message(texte: String, destinataire: int) -> void:
 	var nom := NetworkSession.nom_joueur
 	if nom == "":
 		nom = "PROF" if NetworkSession.est_hote() else "ELEVE"
-	_message_chat.rpc_id(1, nom, texte, destinataire)
+	if multiplayer.is_server():
+		# le prof EST le pair 1 : router localement, sans aller-retour
+		# RPC vers soi-meme (source de la latence constatee)
+		_router_message(1, nom, texte, destinataire)
+	else:
+		_message_chat.rpc_id(1, nom, texte, destinataire)
 
 
 func _router_message(id_expediteur: int, nom: String, texte: String,
