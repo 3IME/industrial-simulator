@@ -1061,12 +1061,15 @@ func _configurer_avatars_reseau() -> void:
     # scenes changent des deux cotes.
     NetworkManager.pair_pret.connect(_sur_pair_pret)
     NetworkManager.transform_recu.connect(_sur_transform_recu)
+    NetworkManager.voix_recue.connect(_sur_voix_recue)
     if NetworkSession.est_hote():
         NetworkManager.noms_pairs[1] = NetworkSession.nom_joueur if NetworkSession.nom_joueur != "" else "PROF"
     else:
         NetworkManager.noms_pairs[1] = "PROF"
     var chat := preload("res://ui/chat.gd").new()
     add_child(chat)
+    var voix := preload("res://ui/voix.gd").new()
+    add_child(voix)
     # Le serveur (pair 1) est deja pret ; cote eleve on le declare
     # immediatement, et chacun signale sa propre scene prete.
     if not NetworkSession.est_hote():
@@ -1101,9 +1104,19 @@ func _ajouter_avatar(id_pair: int) -> void:
     etiquette.modulate = Color(0.4, 0.9, 1.0) if id_pair == 1 else Color(1.0, 0.85, 0.3)
     etiquette.outline_size = 12
     avatar.add_child(etiquette)
+    # Voix spatialisee : generateur 16 kHz pousse par les paquets recus
+    var lecteur_voix := AudioStreamPlayer3D.new()
+    lecteur_voix.max_distance = 60.0
+    var generateur := AudioStreamGenerator.new()
+    generateur.mix_rate = 16000
+    generateur.buffer_length = 0.5
+    lecteur_voix.stream = generateur
+    lecteur_voix.position = Vector3(0.0, 1.55, 0.0)   # hauteur de tete
+    avatar.add_child(lecteur_voix)
+    lecteur_voix.play()
     _avatars_joueurs[id_pair] = {"noeud": avatar,
         "cible": avatar.position, "anim": "Wave", "vague": 1.6,
-        "prec": avatar.position}
+        "prec": avatar.position, "voix": lecteur_voix}
     avatar.set_meta("etiquette", etiquette)
     print("Avatar cree pour le pair ", id_pair)
 
@@ -1149,6 +1162,23 @@ func _sur_pair_pret(id_pair: int, nom: String) -> void:
         _ajouter_avatar(id_pair)
     if not _avatars_joueurs.has(id_pair):
         _ajouter_avatar(id_pair)   # pair vu avant peer_connected (rare)
+
+
+func _sur_voix_recue(id_pair: int, donnees: PackedByteArray) -> void:
+    if not _avatars_joueurs.has(id_pair):
+        return
+    var lecteur: AudioStreamPlayer3D = _avatars_joueurs[id_pair]["voix"]
+    var lecture: AudioStreamGeneratorPlayback = lecteur.get_stream_playback()
+    var nb := donnees.size() / 2
+    if nb == 0:
+        return
+    var trame := PackedVector2Array()
+    trame.resize(nb)
+    for i in range(nb):
+        var v := donnees.decode_s16(i * 2) / 32768.0
+        trame[i] = Vector2(v, v)
+    if lecture.get_frames_available() >= nb:
+        lecture.push_buffer(trame)
 
 
 func _sur_transform_recu(id_pair: int, pos: Vector3, rot_y: float) -> void:

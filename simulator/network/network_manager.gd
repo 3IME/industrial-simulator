@@ -14,6 +14,7 @@ signal connexion_echouee(raison: String)
 signal pair_pret(id: int, nom: String)
 signal transform_recu(id: int, pos: Vector3, rot_y: float)
 signal message_recu(id_expediteur: int, nom: String, texte: String, prive: bool)
+signal voix_recue(id_expediteur: int, donnees: PackedByteArray)
 
 ## Noms connus des pairs (registre de session, rempli par la scene).
 var noms_pairs := {}
@@ -156,6 +157,22 @@ func _message_chat(nom: String, texte: String, destinataire: int) -> void:
 func _diffuser_chat(id_expediteur: int, nom: String, texte: String,
 		prive: bool) -> void:
 	message_recu.emit(id_expediteur, nom, texte, prive)
+
+
+## --- Voix (PTT) : PCM 16 kHz mono 16 bits par paquets ~50 ms.
+## Diffusion a tous (un any_peer broadcast est relaye par le serveur) ;
+## le lecteur de chaque poste spatialise la voix sur l'avatar.
+
+func envoyer_voix(donnees: PackedByteArray) -> void:
+	if peer != null and not donnees.is_empty():
+		_paquet_voix.rpc(donnees)
+
+
+@rpc("any_peer", "unreliable_ordered")
+func _paquet_voix(donnees: PackedByteArray) -> void:
+	var id := multiplayer.get_remote_sender_id()
+	if id > 0:
+		voix_recue.emit(id, donnees)
 
 
 func _exit_tree() -> void:
