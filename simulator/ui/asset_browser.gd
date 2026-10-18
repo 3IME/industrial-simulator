@@ -20,6 +20,31 @@ var _fantome: MeshInstance3D = null
 var _attrapeur: Control = null
 var _monde: Node3D = null
 var _entree_courante: Dictionary = {}
+
+## Vignette draggable : clic = mode manuel, glisser = drag GUI.
+class VignetteAsset:
+	extends Button
+
+	func _ready() -> void:
+		clip_text = true
+		icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		expand_icon = true
+		custom_minimum_size = Vector2(280, 38)
+		add_theme_font_size_override("font_size", 12)
+
+	func _get_drag_data(_point: Vector2) -> Variant:
+		var navire := _trouver_navire()
+		if navire == null:
+			return null
+		return navire._get_drag_data_vignette(self, _point)
+
+	func _trouver_navire() -> Node:
+		var p := get_parent()
+		while p != null:
+			if p.has_method("drag_gui_actif"):
+				return p
+			p = p.get_parent()
+		return null
 var _file_apercus: Array = []     # vignettes en attente de miniature
 var _rendu: SubViewport = null
 var _maquette: MeshInstance3D = null
@@ -140,16 +165,16 @@ func _remplir() -> void:
 	for entree in _manifeste:
 		if filtre_texte != "" and not entree["nom"].to_lower().contains(filtre_texte):
 			continue
-		var vignette := Button.new()
+		var vignette := VignetteAsset.new()
 		vignette.text = entree["nom"]
 		vignette.clip_text = true
 		vignette.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		vignette.expand_icon = true
 		vignette.custom_minimum_size = Vector2(280, 38)
 		vignette.add_theme_font_size_override("font_size", 12)
-		var donnee: Dictionary = entree
 		vignette.pressed.connect(func() -> void:
-			_attrapeur.demarrer_manuel(donnee))
+			_attrapeur.demarrer_manuel(entree))
+		vignette.set_meta("fio", entree)
 		_liste.add_child(vignette)
 		_file_apercus.append({"vignette": vignette, "entree": entree})
 
@@ -202,6 +227,13 @@ func _construire_rendu() -> void:
 
 
 func _process(_delta: float) -> void:
+	# drag GUI en cours : le recepteur plein ecran doit etre visible
+	# pour recevoir le depot
+	if get_viewport().gui_is_dragging():
+		if not _attrapeur.visible:
+			_attrapeur.armer_drag()
+	elif _attrapeur._mode_drag:
+		_attrapeur.terminer()
 	if not _panneau.visible or _file_apercus.is_empty() or _rendu == null:
 		return
 	for _i in range(2):
@@ -306,6 +338,22 @@ func deposer(position_ecran: Vector2) -> void:
 			_monde.add_child(instance)
 			print("Asset FIO depose : ", _entree_courante["nom"])
 	annuler()
+
+
+func drag_gui_actif() -> bool:
+	return get_viewport().gui_is_dragging()
+
+
+func masquer_references() -> void:
+	_grille.visible = false
+	_fantome.visible = false
+
+
+func _get_drag_data_vignette(vignette: Control, point: Vector2) -> Variant:
+	var apercu := Label.new()
+	apercu.text = vignette.text
+	vignette.set_drag_preview(apercu)
+	return {"fio": vignette.get_meta("fio")}
 
 
 func annuler() -> void:
