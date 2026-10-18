@@ -46,11 +46,9 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _charger_manifeste() -> void:
-	var brut = JSON.parse_string(FileAccess.get_file_as_string(
-		"res://assets/imported/manifest.json"))
+	var brut = _lire_json("res://assets/imported/manifest.json")
 	var tout: Array = brut["assets"] if brut != null else []
-	var filtre = JSON.parse_string(FileAccess.get_file_as_string(
-		"res://assets/imported/assets_filter.json"))
+	var filtre = _lire_json("res://assets/imported/assets_filter.json")
 	var noire: Array = filtre["blacklist"] if filtre != null else []
 	var blanche: Array = filtre["whitelist"] if filtre != null else []
 	_manifeste = []
@@ -66,6 +64,14 @@ func _charger_manifeste() -> void:
 			garde = false
 		if garde:
 			_manifeste.append(entree)
+
+
+## JSON silencieux : fichier absent (pck incomplet, filtre non cree)
+## -> null sans erreur moteur.
+func _lire_json(chemin: String) -> Variant:
+	if not FileAccess.file_exists(chemin):
+		return null
+	return JSON.parse_string(FileAccess.get_file_as_string(chemin))
 
 
 func _construire_ui() -> void:
