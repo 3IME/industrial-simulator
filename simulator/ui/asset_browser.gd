@@ -20,6 +20,10 @@ var _fantome: MeshInstance3D = null
 var _attrapeur: Control = null
 var _monde: Node3D = null
 var _entree_courante: Dictionary = {}
+var _file_apercus: Array = []     # vignettes en attente de miniature
+var _rendu: SubViewport = null
+var _maquette: MeshInstance3D = null
+var _cache_apercus := {}          # chemin obj -> texture
 
 
 func _ready() -> void:
@@ -27,6 +31,7 @@ func _ready() -> void:
 	_monde = get_node_or_null("/root/Main")
 	_charger_manifeste()
 	_construire_ui()
+	_construire_rendu()
 	_construire_references_3d()
 	_panneau.visible = false
 
@@ -76,6 +81,8 @@ func _construire_ui() -> void:
 	_panneau = PanelContainer.new()
 	_panneau.anchor_left = 1.0
 	_panneau.anchor_right = 1.0
+	_panneau.anchor_top = 0.0
+	_panneau.anchor_bottom = 1.0
 	_panneau.offset_left = -312
 	_panneau.offset_top = 60
 	_panneau.offset_right = -6
@@ -87,7 +94,7 @@ func _construire_ui() -> void:
 	_panneau.add_child(colonne)
 
 	var titre := Label.new()
-	titre.text = "ASSETS FACTORY-IO (%d)" % _manifeste.size()
+	titre.text = "ASSETS USINE (%d)" % _manifeste.size()
 	titre.add_theme_font_size_override("font_size", 15)
 	colonne.add_child(titre)
 
@@ -123,12 +130,15 @@ func _remplir() -> void:
 		var vignette := Button.new()
 		vignette.text = entree["nom"]
 		vignette.clip_text = true
-		vignette.custom_minimum_size = Vector2(280, 30)
+		vignette.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		vignette.expand_icon = true
+		vignette.custom_minimum_size = Vector2(280, 38)
 		vignette.add_theme_font_size_override("font_size", 12)
 		var donnee: Dictionary = entree
 		vignette.pressed.connect(func() -> void:
 			_attrapeur.demarrer_manuel(donnee))
 		_liste.add_child(vignette)
+		_file_apercus.append({"vignette": vignette, "entree": entree})
 
 
 ## --- Grille papier millimetre + fantome ------------------------------
@@ -147,6 +157,72 @@ func _tex_grille() -> ImageTexture:
 					img.set_pixel(i * pas + k, j, couleur)
 					img.set_pixel(j, i * pas + k, couleur)
 	return ImageTexture.create_from_image(img)
+
+
+## Apercu 3D 96x96 : un seul SubViewport reutilise, maquette eclairée,
+## cadence de 2 rendus par frame tant que le panneau est ouvert.
+func _construire_rendu() -> void:
+	_rendu = SubViewport.new()
+	_rendu.size = Vector2i(96, 96)
+	_rendu.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(_rendu)
+	var camera := Camera3D.new()
+	camera.fov = 30.0
+	camera.position = Vector3(0, 0.6, 2.2)
+	camera.rotation_degrees = Vector3(-14, 0, 0)
+	_rendu.add_child(camera)
+	var lumiere := DirectionalLight3D.new()
+	lumiere.rotation_degrees = Vector3(-35, 30, 0)
+	lumiere.light_energy = 1.4
+	_rendu.add_child(lumiere)
+	var ambiance := WorldEnvironment.new()
+	var env := Environment.new()
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color(0.10, 0.11, 0.13)
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color(0.55, 0.57, 0.6)
+	env.ambient_light_energy = 1.0
+	ambiance.environment = env
+	_rendu.add_child(ambiance)
+	_maquette = MeshInstance3D.new()
+	_rendu.add_child(_maquette)
+
+
+func _process(_delta: float) -> void:
+	if not _panneau.visible or _file_apercus.is_empty() or _rendu == null:
+		return
+	for _i in range(2):
+		if _file_apercus.is_empty():
+			return
+		var travail: Dictionary = _file_apercus.pop_front()
+		var vignette: Button = travail["vignette"]
+		var entree: Dictionary = travail["entree"]
+		if not is_instance_valid(vignette):
+			continue
+		var chemin_obj: String = entree["obj"]
+		if _cache_apercus.has(chemin_obj):
+			vignette.icon = _cache_apercus[chemin_obj]
+			continue
+		var mesh = load("res://" + chemin_obj)
+		if mesh is Mesh:
+			_maquette.mesh = mesh
+			if entree.has("tres"):
+				var mat = load("res://" + entree["tres"])
+				if mat is Material:
+					_maquette.material_override = mat
+			# recadrer la camera sur la boite reelle du mesh
+			var boite: AABB = mesh.get_aabb()
+			var rayon := boite.size.length() * 0.5
+			var echelle := 1.4 / maxf(rayon, 0.001)
+			_maquette.scale = Vector3.ONE * echelle
+			_maquette.position = -boite.get_center() * echelle
+			await RenderingServer.frame_post_draw
+			if is_instance_valid(vignette):
+				var texture := ImageTexture.create_from_image(
+					_rendu.get_texture().get_image())
+				_cache_apercus[chemin_obj] = texture
+				vignette.icon = texture
+		_maquette.mesh = null
 
 
 func _construire_references_3d() -> void:
