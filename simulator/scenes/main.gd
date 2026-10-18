@@ -1095,6 +1095,9 @@ func _configurer_avatars_reseau() -> void:
     add_child(chat)
     var voix := preload("res://ui/voix.gd").new()
     add_child(voix)
+    # Navigateur d'assets FIO (touche J) : disponible aussi en solo
+    var navigateur := preload("res://ui/asset_browser.gd").new()
+    add_child(navigateur)
     # Le serveur (pair 1) est deja pret ; cote eleve on le declare
     # immediatement, et chacun signale sa propre scene prete.
     if not NetworkSession.est_hote():
