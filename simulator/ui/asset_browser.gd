@@ -233,9 +233,32 @@ func _construire_rendu() -> void:
 	_rendu.add_child(_maquette)
 
 
+var _diag_drag := false
+
+func _diag_dragasset() -> void:
+	# test automatique : ouvrir le panneau puis declencher un VRAI
+	# drag GUI depuis la premiere vignette (force_drag)
+	_panneau.visible = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var vignette: Control = _liste.get_child(0) if _liste.get_child_count() > 0 else null
+	if vignette == null:
+		print("DIAG : aucune vignette")
+		return
+	var donnee: Dictionary = vignette.get_meta("fio")
+	var apercu := Label.new()
+	apercu.text = vignette.text
+	vignette.force_drag({"fio": donnee}, apercu)
+	print("DIAG : force_drag lance depuis ", vignette.text)
+
+
 func _process(_delta: float) -> void:
 	# drag GUI en cours : le recepteur plein ecran doit etre visible
 	# pour recevoir le depot
+	if "--auto-dragasset" in OS.get_cmdline_user_args() and not _diag_drag:
+		_diag_drag = true
+		_diag_dragasset()
 	if get_viewport().gui_is_dragging():
 		if not _attrapeur.visible:
 			_attrapeur.armer_drag()
@@ -343,7 +366,19 @@ func deposer(position_ecran: Vector2) -> void:
 					instance.material_override = mat
 			instance.position = _position_sol(position_ecran)
 			_monde.add_child(instance)
-			print("Asset FIO depose : ", _entree_courante["nom"])
+			# collision solide : box statique alignee sur l'AABB reelle
+			# (le visuel et sa hitbox partagent le meme noeud)
+			var boite: AABB = mesh.get_aabb()
+			var corps := StaticBody3D.new()
+			corps.position = instance.position + boite.get_center()
+			var forme := CollisionShape3D.new()
+			var cube := BoxShape3D.new()
+			cube.size = boite.size
+			forme.shape = cube
+			corps.add_child(forme)
+			_monde.add_child(corps)
+			print("Asset FIO depose : ", _entree_courante["nom"],
+				" (collision ", boite.size, ")")
 	annuler()
 
 
