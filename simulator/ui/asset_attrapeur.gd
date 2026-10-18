@@ -74,5 +74,14 @@ func terminer() -> void:
 
 func _notification(quoi: int) -> void:
 	if quoi == NOTIFICATION_DRAG_END and _mode_drag:
-		# depose ailleurs ou drag annule : tout ranger
+		# La recherche de cible de depot de Godot n'atteint pas les
+		# Controls de notre CanvasLayer (can_drop_data jamais appele,
+		# constate en fenetre reelle) : on depose SOI-MEME ici, a la
+		# position reelle de la souris, sauf relachement sur le panneau.
+		var donnee: Variant = get_viewport().gui_get_drag_data()
+		var pos: Vector2 = get_viewport().get_mouse_position()
+		if donnee is Dictionary and donnee.has("fio") \
+				and not (navire as Node).sur_panneau(pos):
+			(navire as Node).forcer_entree(donnee["fio"])
+			(navire as Node).deposer(pos)
 		terminer()

@@ -250,11 +250,20 @@ func _diag_dragasset() -> void:
 	if vignette == null:
 		print("DIAG : aucune vignette")
 		return
-	var donnee: Dictionary = vignette.get_meta("fio")
-	var apercu := Label.new()
-	apercu.text = vignette.text
-	vignette.force_drag({"fio": donnee}, apercu)
-	print("DIAG : force_drag lance depuis ", vignette.text)
+	var donnee: Variant = vignette._get_drag_data(Vector2.ZERO)
+	print("DIAG : drag reel lance depuis ", vignette.text,
+		" data=", donnee != null)
+	await get_tree().create_timer(0.8).timeout
+	var mv := InputEventMouseMotion.new()
+	mv.position = Vector2(320, 180)
+	Input.parse_input_event(mv)
+	await get_tree().create_timer(0.4).timeout
+	var rel := InputEventMouseButton.new()
+	rel.button_index = MOUSE_BUTTON_LEFT
+	rel.pressed = false
+	rel.position = Vector2(320, 180)
+	Input.parse_input_event(rel)
+	print("DIAG : relachement injecte")
 
 
 func _process(_delta: float) -> void:
@@ -271,6 +280,12 @@ func _process(_delta: float) -> void:
 		if not _entree_courante.is_empty():
 			_maj_fantome(get_viewport().get_mouse_position())
 	elif _attrapeur._mode_drag:
+		# le drag vient de se terminer (relachement) : depot autonome
+		# a la position reelle de la souris — ce chemin ne depend
+		# d'aucune notification ni de la recherche de cible de Godot
+		var pos_relachement := get_viewport().get_mouse_position()
+		if not _entree_courante.is_empty() and not sur_panneau(pos_relachement):
+			deposer(pos_relachement)
 		_attrapeur.terminer()
 	if not _panneau.visible or _file_apercus.is_empty() or _rendu == null:
 		return
@@ -393,6 +408,11 @@ func deposer(position_ecran: Vector2) -> void:
 			print("Asset FIO depose : ", _entree_courante["nom"],
 				" (collision ", boite.size, ")")
 	annuler()
+
+
+func sur_panneau(position_ecran: Vector2) -> bool:
+	return _panneau.visible \
+		and _panneau.get_global_rect().has_point(position_ecran)
 
 
 func forcer_entree(entree: Dictionary) -> void:
