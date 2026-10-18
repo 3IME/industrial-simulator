@@ -67,9 +67,16 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_J:
 			_panneau.visible = not _panneau.visible
-			if not _panneau.visible:
+			if _panneau.visible:
+				# liberer la souris : sans cela les clics/glissers de
+				# vignettes n'atteignent jamais l'interface (souris
+				# capturee par le controleur FPS)
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			else:
 				annuler()
 				_attrapeur.terminer()
+				if not _attrapeur.visible:
+					Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ESCAPE and _attrapeur.visible:
 			annuler()

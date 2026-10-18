@@ -13,8 +13,16 @@ func _process(_d: float) -> bool:
 		nav._panneau.visible = true
 		print("TEST panneau ouvert, boutons=", nav._liste.get_child_count())
 		attrapeur = nav._attrapeur
+		# chemin DRAG : armer puis can_drop/drop
+		attrapeur.armer_drag()
 		var entree: Dictionary = nav._manifeste[0]
-		attrapeur.demarrer_manuel(entree)
+		var ok_drop: bool = attrapeur._can_drop_data(Vector2(576.0, 324.0), {"fio": entree})
+		print("TEST drag can_drop=", ok_drop, " grille=", nav._grille.visible, " entree=", not nav._entree_courante.is_empty())
+		var avant: int = get_root().get_child_count()
+		attrapeur._drop_data(Vector2(576.0, 324.0), {"fio": entree})
+		print("TEST drag depose (enfants racine) :", get_root().get_child_count() - avant > 0, " grille=", nav._grille.visible)
+		quit(0)
+		return true
 	if frames == 8:
 		print("TEST apres demarrage : attrapeur visible=", attrapeur.visible,
 			" grille=", nav._grille.visible, " fantome=", nav._fantome.visible,
