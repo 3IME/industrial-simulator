@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://df3j37lihb8hg"
+path="res://.godot/imported/FIO_BorderWallNorth__BorderWallNorth.obj-f44312c62536debeb21b0b3b2af1491c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/FIO_BorderWallNorth__BorderWallNorth.obj-f44312c62536debeb21b0b3b2af1491c.mesh"]
+
+source_file="res://assets/imported/FIO_BorderWallNorth__BorderWallNorth.obj"
+dest_files=["res://.godot/imported/FIO_BorderWallNorth__BorderWallNorth.obj-f44312c62536debeb21b0b3b2af1491c.mesh", "res://.godot/imported/FIO_BorderWallNorth__BorderWallNorth.obj-f44312c62536debeb21b0b3b2af1491c.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

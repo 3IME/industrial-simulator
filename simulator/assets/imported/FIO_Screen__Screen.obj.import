@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://patf11olq4rs"
+path="res://.godot/imported/FIO_Screen__Screen.obj-8734d7200fb1364017d95297b05cc175.mesh"
+
+[deps]
+
+files=["res://.godot/imported/FIO_Screen__Screen.obj-8734d7200fb1364017d95297b05cc175.mesh"]
+
+source_file="res://assets/imported/FIO_Screen__Screen.obj"
+dest_files=["res://.godot/imported/FIO_Screen__Screen.obj-8734d7200fb1364017d95297b05cc175.mesh", "res://.godot/imported/FIO_Screen__Screen.obj-8734d7200fb1364017d95297b05cc175.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

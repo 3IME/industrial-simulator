@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b01do2h4cd7sn"
+path="res://.godot/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub9.obj-d66066d183efafc5f0712a16e5b4e23d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub9.obj-d66066d183efafc5f0712a16e5b4e23d.mesh"]
+
+source_file="res://assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub9.obj"
+dest_files=["res://.godot/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub9.obj-d66066d183efafc5f0712a16e5b4e23d.mesh", "res://.godot/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub9.obj-d66066d183efafc5f0712a16e5b4e23d.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

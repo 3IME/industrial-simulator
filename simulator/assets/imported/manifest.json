@@ -1,0 +1,3198 @@
+{
+ "stats": {
+  "obj": 370,
+  "texturés": 242,
+  "vierges": 23,
+  "sans_materiau": 105
+ },
+ "assets": [
+  {
+   "nom": "Aligner1__Aligner1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Aligner1__Aligner1.obj",
+   "statut": "texturé",
+   "materiau": "Aligners_Inst_Color",
+   "albedo": "assets/imported/FIO_AlignersD.png",
+   "normale": "assets/imported/FIO_AlignersN.png",
+   "tres": "assets/imported/FIO_Aligner1__Aligner1.tres"
+  },
+  {
+   "nom": "Aligner3__Aligner3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Aligner3__Aligner3.obj",
+   "statut": "texturé",
+   "materiau": "Aligners_Inst_Color",
+   "albedo": "assets/imported/FIO_AlignersD.png",
+   "normale": "assets/imported/FIO_AlignersN.png",
+   "tres": "assets/imported/FIO_Aligner3__Aligner3.tres"
+  },
+  {
+   "nom": "Aligner__Aligner",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Aligner__Aligner.obj",
+   "statut": "texturé",
+   "materiau": "Aligners_Inst_Color",
+   "albedo": "assets/imported/FIO_AlignersD.png",
+   "normale": "assets/imported/FIO_AlignersN.png",
+   "tres": "assets/imported/FIO_Aligner__Aligner.tres"
+  },
+  {
+   "nom": "Arm_0__Arm",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Arm_0__Arm.obj",
+   "statut": "texturé",
+   "materiau": "PivotArmSorterBelt_Inst_ST",
+   "albedo": "assets/imported/FIO_PivotArmSorterBeltD.png",
+   "normale": "assets/imported/FIO_PivotArmSorterBeltN.png",
+   "tres": "assets/imported/FIO_Arm_0__Arm.tres"
+  },
+  {
+   "nom": "Arm__Arm",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Arm__Arm.obj",
+   "statut": "texturé",
+   "materiau": "PivotArmSorterBelt_Inst_ST",
+   "albedo": "assets/imported/FIO_PivotArmSorterBeltD.png",
+   "normale": "assets/imported/FIO_PivotArmSorterBeltN.png",
+   "tres": "assets/imported/FIO_Arm__Arm.tres"
+  },
+  {
+   "nom": "Arm__Arm_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Arm__Arm_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PivotArmSorter",
+   "albedo": "assets/imported/FIO_PivotArmSorterD.png",
+   "normale": "assets/imported/FIO_PivotArmSorterN.png",
+   "tres": "assets/imported/FIO_Arm__Arm_sub1.tres"
+  },
+  {
+   "nom": "Arm__Arm_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Arm__Arm_sub2.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_Arm__Arm_sub2.tres"
+  },
+  {
+   "nom": "Base_RawBlock__Base_RawBlock",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Base_RawBlock__Base_RawBlock.obj",
+   "statut": "texturé",
+   "materiau": "RawMaterialMetal_Inst",
+   "albedo": "assets/imported/FIO_RawMaterialD_Metal.png",
+   "normale": "assets/imported/FIO_RawMaterialN_Metal.png",
+   "tres": "assets/imported/FIO_Base_RawBlock__Base_RawBlock.tres"
+  },
+  {
+   "nom": "BeamsBottom01__BeamsBottom01",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeamsBottom01__BeamsBottom01.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BeamsBottom02__BeamsBottom02",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeamsBottom02__BeamsBottom02.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BeltConveyor2M__BeltConveyor2M",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor2M__BeltConveyor2M.obj",
+   "statut": "texturé",
+   "materiau": "Encoder",
+   "albedo": "assets/imported/FIO_Encoder_D.png",
+   "normale": "assets/imported/FIO_Encoder_N.png",
+   "tres": "assets/imported/FIO_BeltConveyor2M__BeltConveyor2M.tres"
+  },
+  {
+   "nom": "BeltConveyor2M__BeltConveyor2M_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor2M__BeltConveyor2M_sub1.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "BeltConveyor2M__BeltConveyor2M_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor2M__BeltConveyor2M_sub2.obj",
+   "statut": "texturé",
+   "materiau": "BeltConveyorStruct_Occl_Inst",
+   "albedo": "assets/imported/FIO_BeltConveyorD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_BeltConveyor2M__BeltConveyor2M_sub2.tres"
+  },
+  {
+   "nom": "BeltConveyor2M__BeltConveyor2M_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor2M__BeltConveyor2M_sub3.obj",
+   "statut": "texturé",
+   "materiau": "ConveyorBelt_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorBeltD_tile.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_BeltConveyor2M__BeltConveyor2M_sub3.tres"
+  },
+  {
+   "nom": "BeltConveyor4M__BeltConveyor4M",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor4M__BeltConveyor4M.obj",
+   "statut": "texturé",
+   "materiau": "Encoder",
+   "albedo": "assets/imported/FIO_Encoder_D.png",
+   "normale": "assets/imported/FIO_Encoder_N.png",
+   "tres": "assets/imported/FIO_BeltConveyor4M__BeltConveyor4M.tres"
+  },
+  {
+   "nom": "BeltConveyor4M__BeltConveyor4M_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor4M__BeltConveyor4M_sub1.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "BeltConveyor4M__BeltConveyor4M_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor4M__BeltConveyor4M_sub2.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_BeltConveyor4M__BeltConveyor4M_sub2.tres"
+  },
+  {
+   "nom": "BeltConveyor4M__BeltConveyor4M_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor4M__BeltConveyor4M_sub3.obj",
+   "statut": "texturé",
+   "materiau": "BeltConveyorStruct_Occl_Inst",
+   "albedo": "assets/imported/FIO_BeltConveyorD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_BeltConveyor4M__BeltConveyor4M_sub3.tres"
+  },
+  {
+   "nom": "BeltConveyor6M__BeltConveyor6M",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor6M__BeltConveyor6M.obj",
+   "statut": "texturé",
+   "materiau": "Encoder",
+   "albedo": "assets/imported/FIO_Encoder_D.png",
+   "normale": "assets/imported/FIO_Encoder_N.png",
+   "tres": "assets/imported/FIO_BeltConveyor6M__BeltConveyor6M.tres"
+  },
+  {
+   "nom": "BeltConveyor6M__BeltConveyor6M_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor6M__BeltConveyor6M_sub1.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "BeltConveyor6M__BeltConveyor6M_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor6M__BeltConveyor6M_sub2.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_BeltConveyor6M__BeltConveyor6M_sub2.tres"
+  },
+  {
+   "nom": "BeltConveyor6M__BeltConveyor6M_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyor6M__BeltConveyor6M_sub3.obj",
+   "statut": "texturé",
+   "materiau": "ConveyorBelt_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorBeltD_tile.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_BeltConveyor6M__BeltConveyor6M_sub3.tres"
+  },
+  {
+   "nom": "BeltConveyorInclined__BeltConveyorInclined",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyorInclined__BeltConveyorInclined.obj",
+   "statut": "texturé",
+   "materiau": "Encoder",
+   "albedo": "assets/imported/FIO_Encoder_D.png",
+   "normale": "assets/imported/FIO_Encoder_N.png",
+   "tres": "assets/imported/FIO_BeltConveyorInclined__BeltConveyorInclined.tres"
+  },
+  {
+   "nom": "BeltConveyorInclined__BeltConveyorInclined_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyorInclined__BeltConveyorInclined_sub1.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "BeltConveyorInclined__BeltConveyorInclined_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyorInclined__BeltConveyorInclined_sub2.obj",
+   "statut": "texturé",
+   "materiau": "BeltConveyorStruct",
+   "albedo": "assets/imported/FIO_BeltConveyorD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_BeltConveyorInclined__BeltConveyorInclined_sub2.tres"
+  },
+  {
+   "nom": "BeltConveyorInclined__BeltConveyorInclined_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltConveyorInclined__BeltConveyorInclined_sub3.obj",
+   "statut": "texturé",
+   "materiau": "BeltConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineBeltD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_BeltConveyorInclined__BeltConveyorInclined_sub3.tres"
+  },
+  {
+   "nom": "BeltSupport__BeltSupport",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BeltSupport__BeltSupport.obj",
+   "statut": "texturé",
+   "materiau": "Bracket_Inst_Color",
+   "albedo": "assets/imported/FIO_BracketD.png",
+   "normale": "assets/imported/FIO_BracketN.png",
+   "tres": "assets/imported/FIO_BeltSupport__BeltSupport.tres"
+  },
+  {
+   "nom": "Billboard__Billboard",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Billboard__Billboard.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Billboard__Billboard_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Billboard__Billboard_sub1.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderCornerSouth__BorderCornerSouth",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderCornerSouth__BorderCornerSouth.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderCoverBeams_0__BorderCoverBeams",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderCoverBeams_0__BorderCoverBeams.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderCoverBeams_1__BorderCoverBeams",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderCoverBeams_1__BorderCoverBeams.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderCoverBeams__BorderCoverBeams",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderCoverBeams__BorderCoverBeams.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderCoverTopBeams__BorderCoverTopBeams",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderCoverTopBeams__BorderCoverTopBeams.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderDoors__BorderDoors",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderDoors__BorderDoors.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderFloor (2)__BorderFloor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderFloor (2)__BorderFloor.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderFloorCorner__BorderFloorCorner",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderFloorCorner__BorderFloorCorner.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderRoofStructure__BorderRoofStructure",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderRoofStructure__BorderRoofStructure.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderTop (2)__BorderTop",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderTop (2)__BorderTop.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderTopCorner__BorderTopCorner",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderTopCorner__BorderTopCorner.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderWallEast_0__BorderWallEast",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderWallEast_0__BorderWallEast.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderWallEast_1__BorderWallEast",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderWallEast_1__BorderWallEast.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderWallEast__BorderWallEast",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderWallEast__BorderWallEast.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderWallNorth__BorderWallNorth",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderWallNorth__BorderWallNorth.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderWallSouth__BorderWallSouth",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderWallSouth__BorderWallSouth.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderWallWest_0__BorderWallWest",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderWallWest_0__BorderWallWest.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderWallWest_1__BorderWallWest",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderWallWest_1__BorderWallWest.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BorderWallWest__BorderWallWest",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BorderWallWest__BorderWallWest.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "BoxRectangularBig__BoxRectangularBig",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BoxRectangularBig__BoxRectangularBig.obj",
+   "statut": "texturé",
+   "materiau": "BoxM_Inst",
+   "albedo": "assets/imported/FIO_BoxMD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_BoxRectangularBig__BoxRectangularBig.tres"
+  },
+  {
+   "nom": "BoxRectangularSmall__BoxRectangularSmall",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BoxRectangularSmall__BoxRectangularSmall.obj",
+   "statut": "texturé",
+   "materiau": "BoxS_Inst",
+   "albedo": "assets/imported/FIO_BoxSD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_BoxRectangularSmall__BoxRectangularSmall.tres"
+  },
+  {
+   "nom": "BoxSquare__BoxSquare",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_BoxSquare__BoxSquare.obj",
+   "statut": "texturé",
+   "materiau": "BoxL_Inst",
+   "albedo": "assets/imported/FIO_BoxLD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_BoxSquare__BoxSquare.tres"
+  },
+  {
+   "nom": "Bracket_0__Bracket",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Bracket_0__Bracket.obj",
+   "statut": "texturé",
+   "materiau": "Selector_type1",
+   "albedo": "assets/imported/FIO_SelectorD_type1.png",
+   "normale": "assets/imported/FIO_SelectorN.png",
+   "tres": "assets/imported/FIO_Bracket_0__Bracket.tres"
+  },
+  {
+   "nom": "Bracket_1__Bracket",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Bracket_1__Bracket.obj",
+   "statut": "texturé",
+   "materiau": "Selector_type1",
+   "albedo": "assets/imported/FIO_SelectorD_type1.png",
+   "normale": "assets/imported/FIO_SelectorN.png",
+   "tres": "assets/imported/FIO_Bracket_1__Bracket.tres"
+  },
+  {
+   "nom": "Bracket__Bracket",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Bracket__Bracket.obj",
+   "statut": "texturé",
+   "materiau": "Selector_type1",
+   "albedo": "assets/imported/FIO_SelectorD_type1.png",
+   "normale": "assets/imported/FIO_SelectorN.png",
+   "tres": "assets/imported/FIO_Bracket__Bracket.tres"
+  },
+  {
+   "nom": "Button_0__Button",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Button_0__Button.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Button_0__Button.tres"
+  },
+  {
+   "nom": "Button_2__Button",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Button_2__Button.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Button_2__Button.tres"
+  },
+  {
+   "nom": "Button__Button",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Button__Button.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Button__Button.tres"
+  },
+  {
+   "nom": "CCW_0__CCW",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CCW_0__CCW.obj",
+   "statut": "texturé",
+   "materiau": "CurvedBeltConveyorStruct_Occl",
+   "albedo": "assets/imported/FIO_BeltConveyorD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_CCW_0__CCW.tres"
+  },
+  {
+   "nom": "CCW__CCW",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CCW__CCW.obj",
+   "statut": "texturé",
+   "materiau": "CurvedBeltConveyorStruct_Occl",
+   "albedo": "assets/imported/FIO_BeltConveyorD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_CCW__CCW.tres"
+  },
+  {
+   "nom": "CNC_Door__CNC_Door",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CNC_Door__CNC_Door.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_CNC_Door__CNC_Door.tres"
+  },
+  {
+   "nom": "CNC_Door__CNC_Door_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CNC_Door__CNC_Door_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_CNC_Door__CNC_Door_sub1.tres"
+  },
+  {
+   "nom": "CW_0__CW",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CW_0__CW.obj",
+   "statut": "texturé",
+   "materiau": "CurvedBeltConveyorStruct_Occl",
+   "albedo": "assets/imported/FIO_BeltConveyorD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_CW_0__CW.tres"
+  },
+  {
+   "nom": "CW__CW",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CW__CW.obj",
+   "statut": "texturé",
+   "materiau": "CurvedBeltConveyorStruct_Occl",
+   "albedo": "assets/imported/FIO_BeltConveyorD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_CW__CW.tres"
+  },
+  {
+   "nom": "CapacitiveSensor__CapacitiveSensor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CapacitiveSensor__CapacitiveSensor.obj",
+   "statut": "texturé",
+   "materiau": "CapacitiveSensor_Inst_EColor",
+   "albedo": "assets/imported/FIO_CapacitiveSensorD.png",
+   "normale": "assets/imported/FIO_CapacitiveSensorN.png",
+   "tres": "assets/imported/FIO_CapacitiveSensor__CapacitiveSensor.tres"
+  },
+  {
+   "nom": "Cart__Cart",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Cart__Cart.obj",
+   "statut": "texturé",
+   "materiau": "StackerCraneStructure01_Occl",
+   "albedo": "assets/imported/FIO_StackerCrane01D.png",
+   "normale": "assets/imported/FIO_StackerCrane01N.png",
+   "tres": "assets/imported/FIO_Cart__Cart.tres"
+  },
+  {
+   "nom": "Cart__Cart_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Cart__Cart_sub1.obj",
+   "statut": "texturé",
+   "materiau": "StackerCraneStructure02_Occl",
+   "albedo": "assets/imported/FIO_StackerCrane02D.png",
+   "normale": "assets/imported/FIO_StackerCrane02N.png",
+   "tres": "assets/imported/FIO_Cart__Cart_sub1.tres"
+  },
+  {
+   "nom": "Cart__Cart_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Cart__Cart_sub2.obj",
+   "statut": "texturé",
+   "materiau": "RetroReflectiveMirror",
+   "albedo": "assets/imported/FIO_RetroReflectiveMirrorD.png",
+   "normale": "assets/imported/FIO_RetroReflectiveMirrorN.png",
+   "tres": "assets/imported/FIO_Cart__Cart_sub2.tres"
+  },
+  {
+   "nom": "Cart__Cart_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Cart__Cart_sub3.obj",
+   "statut": "texturé",
+   "materiau": "StackerCraneStructure02_Occl",
+   "albedo": "assets/imported/FIO_StackerCrane02D.png",
+   "normale": "assets/imported/FIO_StackerCrane02N.png",
+   "tres": "assets/imported/FIO_Cart__Cart_sub3.tres"
+  },
+  {
+   "nom": "Cart__Cart_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Cart__Cart_sub4.obj",
+   "statut": "texturé",
+   "materiau": "StackerCraneStructure01_Occl",
+   "albedo": "assets/imported/FIO_StackerCrane01D.png",
+   "normale": "assets/imported/FIO_StackerCrane01N.png",
+   "tres": "assets/imported/FIO_Cart__Cart_sub4.tres"
+  },
+  {
+   "nom": "Cart__Cart_sub5",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Cart__Cart_sub5.obj",
+   "statut": "texturé",
+   "materiau": "StackerCraneChain_Inst_ST",
+   "albedo": "assets/imported/FIO_ElevatorChainD.png",
+   "normale": "assets/imported/FIO_ElevatorChainN.png",
+   "tres": "assets/imported/FIO_Cart__Cart_sub5.tres"
+  },
+  {
+   "nom": "Cart__Cart_sub6",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Cart__Cart_sub6.obj",
+   "statut": "texturé",
+   "materiau": "LaserSensor",
+   "albedo": "assets/imported/FIO_LaserSensorD.png",
+   "normale": "assets/imported/FIO_LaserSensorN.png",
+   "tres": "assets/imported/FIO_Cart__Cart_sub6.tres"
+  },
+  {
+   "nom": "ChainDiverterBase___ChainDiverterBase",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChainDiverterBase___ChainDiverterBase.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "ChainDiverterBase___ChainDiverterBase_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChainDiverterBase___ChainDiverterBase_sub1.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "ChainDiverterBase___ChainDiverterBase_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChainDiverterBase___ChainDiverterBase_sub2.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "ChainDiverterLifter__ChainDiverterLifter",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChainDiverterLifter__ChainDiverterLifter.obj",
+   "statut": "texturé",
+   "materiau": "ChainTransferMotor",
+   "albedo": "assets/imported/FIO_ConveyorMotorD2.png",
+   "normale": "assets/imported/FIO_ConveyorMotorN.png",
+   "tres": "assets/imported/FIO_ChainDiverterLifter__ChainDiverterLifter.tres"
+  },
+  {
+   "nom": "ChainDiverterLifter__ChainDiverterLifter_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChainDiverterLifter__ChainDiverterLifter_sub1.obj",
+   "statut": "texturé",
+   "materiau": "ChainTransferChain_Inst_ST",
+   "albedo": "assets/imported/FIO_ElevatorChainD.png",
+   "normale": "assets/imported/FIO_ElevatorChainN.png",
+   "tres": "assets/imported/FIO_ChainDiverterLifter__ChainDiverterLifter_sub1.tres"
+  },
+  {
+   "nom": "ChainDiverterLifter__ChainDiverterLifter_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChainDiverterLifter__ChainDiverterLifter_sub2.obj",
+   "statut": "texturé",
+   "materiau": "ChainDiverter_Occl",
+   "albedo": "assets/imported/FIO_ChainTransferD.png",
+   "normale": "assets/imported/FIO_ChainTransferN.png",
+   "tres": "assets/imported/FIO_ChainDiverterLifter__ChainDiverterLifter_sub2.tres"
+  },
+  {
+   "nom": "ChuteConveyor_0__ChuteConveyor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChuteConveyor_0__ChuteConveyor.obj",
+   "statut": "texturé",
+   "materiau": "ChuteConveyorSlide_Occl",
+   "albedo": "assets/imported/FIO_ChuteConveyorBeltLowD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_ChuteConveyor_0__ChuteConveyor.tres"
+  },
+  {
+   "nom": "ChuteConveyor_0__ChuteConveyor_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChuteConveyor_0__ChuteConveyor_sub1.obj",
+   "statut": "texturé",
+   "materiau": "ChuteConveyorLow",
+   "albedo": "assets/imported/FIO_ChuteConveyorLowD.png",
+   "normale": "assets/imported/FIO_ChuteConveyorLowN.png",
+   "tres": "assets/imported/FIO_ChuteConveyor_0__ChuteConveyor_sub1.tres"
+  },
+  {
+   "nom": "ChuteConveyor__ChuteConveyor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChuteConveyor__ChuteConveyor.obj",
+   "statut": "texturé",
+   "materiau": "ChuteConveyorSlide_Occl",
+   "albedo": "assets/imported/FIO_ChuteConveyorBeltLowD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_ChuteConveyor__ChuteConveyor.tres"
+  },
+  {
+   "nom": "ChuteConveyor__ChuteConveyor_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ChuteConveyor__ChuteConveyor_sub1.obj",
+   "statut": "texturé",
+   "materiau": "ChuteConveyorLow",
+   "albedo": "assets/imported/FIO_ChuteConveyorLowD.png",
+   "normale": "assets/imported/FIO_ChuteConveyorLowN.png",
+   "tres": "assets/imported/FIO_ChuteConveyor__ChuteConveyor_sub1.tres"
+  },
+  {
+   "nom": "Claw__Claw",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Claw__Claw.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Claw__Claw.tres"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub1.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub10",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub10.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub11",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub11.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub12",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub12.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub13",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub13.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub14",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub14.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub15",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub15.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub16",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub16.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub17",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub17.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub18",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub18.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub19",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub19.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub2.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub20",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub20.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub21",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub21.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub22",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub22.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub23",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub23.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub24",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub24.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub25",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub25.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub26",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub26.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub27",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub27.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub28",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub28.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub29",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub29.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub3.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub30",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub30.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub31",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub31.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub32",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub32.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub33",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub33.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub34",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub34.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub35",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub35.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub36",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub36.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub37",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub37.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub4.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub5",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub5.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub6",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub6.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub7",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub7.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub8",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub8.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 2___Combined_sub9",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 2___Combined_sub9.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub1.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub10",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub10.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub11",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub11.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub12",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub12.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub13",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub13.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub14",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub14.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub15",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub15.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub16",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub16.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub17",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub17.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub18",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub18.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub19",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub19.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub2.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub20",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub20.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub21",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub21.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub22",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub22.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub23",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub23.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub24",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub24.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub25",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub25.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub26",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub26.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub27",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub27.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub28",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub28.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub29",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub29.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub3.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub30",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub30.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub31",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub31.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub32",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub32.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub33",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub33.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub34",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub34.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub35",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub35.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub36",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub36.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub37",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub37.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub38",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub38.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub39",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub39.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub4.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub5",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub5.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub6",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub6.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub7",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub7.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub8",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub8.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Combined Mesh (root_ scene) 4___Combined_sub9",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Combined Mesh (root_ scene) 4___Combined_sub9.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "ConveyorRoller6M__ConveyorRoller6M",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorRoller6M__ConveyorRoller6M.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorStruct",
+   "albedo": "assets/imported/FIO_ConveyorRollerD.png",
+   "normale": "assets/imported/FIO_ConveyorRollerN.png",
+   "tres": "assets/imported/FIO_ConveyorRoller6M__ConveyorRoller6M.tres"
+  },
+  {
+   "nom": "ConveyorRoller6M__ConveyorRoller6M_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorRoller6M__ConveyorRoller6M_sub1.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_ConveyorRoller6M__ConveyorRoller6M_sub1.tres"
+  },
+  {
+   "nom": "ConveyorRoller6M__ConveyorRoller6M_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorRoller6M__ConveyorRoller6M_sub2.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_ConveyorRoller6M__ConveyorRoller6M_sub2.tres"
+  },
+  {
+   "nom": "ConveyorRoller6M__ConveyorRoller6M_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorRoller6M__ConveyorRoller6M_sub3.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_ConveyorRoller6M__ConveyorRoller6M_sub3.tres"
+  },
+  {
+   "nom": "ConveyorScaleBelt__ConveyorScaleBelt",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorScaleBelt__ConveyorScaleBelt.obj",
+   "statut": "texturé",
+   "materiau": "ConveyorScale",
+   "albedo": "assets/imported/FIO_BeltConveyorScaleD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_ConveyorScaleBelt__ConveyorScaleBelt.tres"
+  },
+  {
+   "nom": "ConveyorScaleBelt__ConveyorScaleBelt_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorScaleBelt__ConveyorScaleBelt_sub1.obj",
+   "statut": "texturé",
+   "materiau": "ConveyorBelt_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorBeltD_tile.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_ConveyorScaleBelt__ConveyorScaleBelt_sub1.tres"
+  },
+  {
+   "nom": "ConveyorScaleStruct__ConveyorScaleStruct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorScaleStruct__ConveyorScaleStruct.obj",
+   "statut": "texturé",
+   "materiau": "ConveyorScale",
+   "albedo": "assets/imported/FIO_BeltConveyorScaleD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_ConveyorScaleStruct__ConveyorScaleStruct.tres"
+  },
+  {
+   "nom": "ConveyorScaleStruct__ConveyorScaleStruct_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorScaleStruct__ConveyorScaleStruct_sub1.obj",
+   "statut": "texturé",
+   "materiau": "ConveyorBelt_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorBeltD_tile.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_ConveyorScaleStruct__ConveyorScaleStruct_sub1.tres"
+  },
+  {
+   "nom": "ConveyorScaleStruct__ConveyorScaleStruct_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ConveyorScaleStruct__ConveyorScaleStruct_sub2.obj",
+   "statut": "texturé",
+   "materiau": "ConveyorScaleStruct",
+   "albedo": "assets/imported/FIO_ConveyorScaleD.png",
+   "normale": "assets/imported/FIO_ConveyorScaleN.png",
+   "tres": "assets/imported/FIO_ConveyorScaleStruct__ConveyorScaleStruct_sub2.tres"
+  },
+  {
+   "nom": "CurvedBeltConveyor__CurvedBeltConveyor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor.obj",
+   "statut": "texturé",
+   "materiau": "CurvedBeltConveyorStruct_Occl",
+   "albedo": "assets/imported/FIO_BeltConveyorD.png",
+   "normale": "assets/imported/FIO_BeltConveyorN.png",
+   "tres": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor.tres"
+  },
+  {
+   "nom": "CurvedBeltConveyor__CurvedBeltConveyor_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor_sub1.obj",
+   "statut": "texturé",
+   "materiau": "CurvedBeltConveyorStructOut",
+   "albedo": "assets/imported/FIO_StraightSpurConveyorD.png",
+   "normale": "assets/imported/FIO_StraightSpurConveyorN.png",
+   "tres": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor_sub1.tres"
+  },
+  {
+   "nom": "CurvedBeltConveyor__CurvedBeltConveyor_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor_sub2.obj",
+   "statut": "texturé",
+   "materiau": "ConveyorBelt_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorBeltD_tile.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor_sub2.tres"
+  },
+  {
+   "nom": "CurvedBeltConveyor__CurvedBeltConveyor_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor_sub3.obj",
+   "statut": "texturé",
+   "materiau": "BeltConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineBeltD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor_sub3.tres"
+  },
+  {
+   "nom": "CurvedBeltConveyor__CurvedBeltConveyor_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor_sub4.obj",
+   "statut": "texturé",
+   "materiau": "Aligners",
+   "albedo": "assets/imported/FIO_AlignersD.png",
+   "normale": "assets/imported/FIO_AlignersN.png",
+   "tres": "assets/imported/FIO_CurvedBeltConveyor__CurvedBeltConveyor_sub4.tres"
+  },
+  {
+   "nom": "CurvedConveyor__CurvedConveyor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedConveyor__CurvedConveyor.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_CurvedConveyor__CurvedConveyor.tres"
+  },
+  {
+   "nom": "CurvedConveyor__CurvedConveyor_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedConveyor__CurvedConveyor_sub1.obj",
+   "statut": "texturé",
+   "materiau": "CurvedRollerConveyorStruct",
+   "albedo": "assets/imported/FIO_ConveyorCurvedRollerD.png",
+   "normale": "assets/imported/FIO_ConveyorRollerN.png",
+   "tres": "assets/imported/FIO_CurvedConveyor__CurvedConveyor_sub1.tres"
+  },
+  {
+   "nom": "CurvedConveyor__CurvedConveyor_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedConveyor__CurvedConveyor_sub2.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_CurvedConveyor__CurvedConveyor_sub2.tres"
+  },
+  {
+   "nom": "CurvedConveyor__CurvedConveyor_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedConveyor__CurvedConveyor_sub3.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorGuiderail",
+   "albedo": "assets/imported/FIO_Guiderail_D.png",
+   "normale": "assets/imported/FIO_EvelatorGuiderailN.png",
+   "tres": "assets/imported/FIO_CurvedConveyor__CurvedConveyor_sub3.tres"
+  },
+  {
+   "nom": "CurvedConveyor__CurvedConveyor_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_CurvedConveyor__CurvedConveyor_sub4.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_CurvedConveyor__CurvedConveyor_sub4.tres"
+  },
+  {
+   "nom": "Default__Default",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Default__Default.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "DigitalDisplay__DigitalDisplay",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_DigitalDisplay__DigitalDisplay.obj",
+   "statut": "texturé",
+   "materiau": "DigitalDisplay",
+   "albedo": "assets/imported/FIO_DigitalDisplayD.png",
+   "normale": "assets/imported/FIO_DigitalDisplayN.png",
+   "tres": "assets/imported/FIO_DigitalDisplay__DigitalDisplay.tres"
+  },
+  {
+   "nom": "DigitalDisplay__DigitalDisplay_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_DigitalDisplay__DigitalDisplay_sub1.obj",
+   "statut": "texturé",
+   "materiau": "DigitalDisplayGlass",
+   "albedo": "assets/imported/FIO_DigitalDisplayD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_DigitalDisplay__DigitalDisplay_sub1.tres"
+  },
+  {
+   "nom": "ElectricSwitchBoard__ElectricSwitchBoard",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ElectricSwitchBoard__ElectricSwitchBoard.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_ElectricSwitchBoard__ElectricSwitchBoard.tres"
+  },
+  {
+   "nom": "ElectricSwitchBoard__ElectricSwitchBoard_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ElectricSwitchBoard__ElectricSwitchBoard_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_ElectricSwitchBoard__ElectricSwitchBoard_sub1.tres"
+  },
+  {
+   "nom": "EmitterCubes__EmitterCubes",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_EmitterCubes__EmitterCubes.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Emitter__Emitter",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Emitter__Emitter.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "EmptyPlatform__EmptyPlatform",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_EmptyPlatform__EmptyPlatform.obj",
+   "statut": "texturé",
+   "materiau": "Platforms_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformsBaseD.png",
+   "normale": "assets/imported/FIO_PlatformsBaseS.png",
+   "tres": "assets/imported/FIO_EmptyPlatform__EmptyPlatform.tres"
+  },
+  {
+   "nom": "EmptyPlatform__EmptyPlatform_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_EmptyPlatform__EmptyPlatform_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PlatformGrid",
+   "albedo": "assets/imported/FIO_PlatformsGridD.png",
+   "normale": "assets/imported/FIO_PlatformsGridN.png",
+   "tres": "assets/imported/FIO_EmptyPlatform__EmptyPlatform_sub1.tres"
+  },
+  {
+   "nom": "EngineBlock__EngineBlock",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_EngineBlock__EngineBlock.obj",
+   "statut": "texturé",
+   "materiau": "EngineBlock",
+   "albedo": "assets/imported/FIO_EngineBox_D.png",
+   "normale": "assets/imported/FIO_EngineBox_N.png",
+   "tres": "assets/imported/FIO_EngineBlock__EngineBlock.tres"
+  },
+  {
+   "nom": "EngineHead__EngineHead",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_EngineHead__EngineHead.obj",
+   "statut": "texturé",
+   "materiau": "EngineHead",
+   "albedo": "assets/imported/FIO_EngineHead_D.png",
+   "normale": "assets/imported/FIO_EngineHead_N.png",
+   "tres": "assets/imported/FIO_EngineHead__EngineHead.tres"
+  },
+  {
+   "nom": "Fence__Fence",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Fence__Fence.tres"
+  },
+  {
+   "nom": "Fence__Fence_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Fence__Fence_sub1.tres"
+  },
+  {
+   "nom": "Fence__Fence_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence_sub2.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Fence__Fence_sub2.tres"
+  },
+  {
+   "nom": "Fence__Fence_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence_sub3.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Fence__Fence_sub3.tres"
+  },
+  {
+   "nom": "Fence__Fence_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence_sub4.obj",
+   "statut": "texturé",
+   "materiau": "ElectricSwitchBoard",
+   "albedo": "assets/imported/FIO_ElectricSwitchBoardD.png",
+   "normale": "assets/imported/FIO_ElectricSwitchBoardN.png",
+   "tres": "assets/imported/FIO_Fence__Fence_sub4.tres"
+  },
+  {
+   "nom": "Fence__Fence_sub5",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence_sub5.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_Fence__Fence_sub5.tres"
+  },
+  {
+   "nom": "Fence__Fence_sub6",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence_sub6.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Fence__Fence_sub7",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence_sub7.obj",
+   "statut": "texturé",
+   "materiau": "Label_Inst",
+   "albedo": "assets/imported/FIO_LabelD.png",
+   "normale": "assets/imported/FIO_LabelN.png",
+   "tres": "assets/imported/FIO_Fence__Fence_sub7.tres"
+  },
+  {
+   "nom": "Fence__Fence_sub8",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Fence__Fence_sub8.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "HalfHandrail__HalfHandrail",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_HalfHandrail__HalfHandrail.obj",
+   "statut": "texturé",
+   "materiau": "Handrail_Inst_Color",
+   "albedo": "assets/imported/FIO_HandrailD.png",
+   "normale": "assets/imported/FIO_HandrailN.png",
+   "tres": "assets/imported/FIO_HalfHandrail__HalfHandrail.tres"
+  },
+  {
+   "nom": "HalfHandrail__HalfHandrail_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_HalfHandrail__HalfHandrail_sub1.obj",
+   "statut": "texturé",
+   "materiau": "Handrail",
+   "albedo": "assets/imported/FIO_HandrailD.png",
+   "normale": "assets/imported/FIO_HandrailN.png",
+   "tres": "assets/imported/FIO_HalfHandrail__HalfHandrail_sub1.tres"
+  },
+  {
+   "nom": "HalfPlate1__HalfPlate1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_HalfPlate1__HalfPlate1.obj",
+   "statut": "texturé",
+   "materiau": "Palletizer2",
+   "albedo": "assets/imported/FIO_Palletizer2D.png",
+   "normale": "assets/imported/FIO_Palletizer2N.png",
+   "tres": "assets/imported/FIO_HalfPlate1__HalfPlate1.tres"
+  },
+  {
+   "nom": "HalfPlate2__HalfPlate2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_HalfPlate2__HalfPlate2.obj",
+   "statut": "texturé",
+   "materiau": "Palletizer2",
+   "albedo": "assets/imported/FIO_Palletizer2D.png",
+   "normale": "assets/imported/FIO_Palletizer2N.png",
+   "tres": "assets/imported/FIO_HalfPlate2__HalfPlate2.tres"
+  },
+  {
+   "nom": "Handrail_0__Handrail",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Handrail_0__Handrail.obj",
+   "statut": "texturé",
+   "materiau": "Handrail_Inst_Color",
+   "albedo": "assets/imported/FIO_HandrailD.png",
+   "normale": "assets/imported/FIO_HandrailN.png",
+   "tres": "assets/imported/FIO_Handrail_0__Handrail.tres"
+  },
+  {
+   "nom": "Handrail_0__Handrail_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Handrail_0__Handrail_sub1.obj",
+   "statut": "texturé",
+   "materiau": "Handrail",
+   "albedo": "assets/imported/FIO_HandrailD.png",
+   "normale": "assets/imported/FIO_HandrailN.png",
+   "tres": "assets/imported/FIO_Handrail_0__Handrail_sub1.tres"
+  },
+  {
+   "nom": "Handrail__Handrail",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Handrail__Handrail.obj",
+   "statut": "texturé",
+   "materiau": "Handrail_Inst_Color",
+   "albedo": "assets/imported/FIO_HandrailD.png",
+   "normale": "assets/imported/FIO_HandrailN.png",
+   "tres": "assets/imported/FIO_Handrail__Handrail.tres"
+  },
+  {
+   "nom": "Handrail__Handrail_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Handrail__Handrail_sub1.obj",
+   "statut": "texturé",
+   "materiau": "Handrail",
+   "albedo": "assets/imported/FIO_HandrailD.png",
+   "normale": "assets/imported/FIO_HandrailN.png",
+   "tres": "assets/imported/FIO_Handrail__Handrail_sub1.tres"
+  },
+  {
+   "nom": "Hoist__Hoist",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Hoist__Hoist.obj",
+   "statut": "texturé",
+   "materiau": "Palletizer2",
+   "albedo": "assets/imported/FIO_Palletizer2D.png",
+   "normale": "assets/imported/FIO_Palletizer2N.png",
+   "tres": "assets/imported/FIO_Hoist__Hoist.tres"
+  },
+  {
+   "nom": "Hoist__Hoist_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Hoist__Hoist_sub1.obj",
+   "statut": "texturé",
+   "materiau": "ChainTransferChain_Inst_ST",
+   "albedo": "assets/imported/FIO_ElevatorChainD.png",
+   "normale": "assets/imported/FIO_ElevatorChainN.png",
+   "tres": "assets/imported/FIO_Hoist__Hoist_sub1.tres"
+  },
+  {
+   "nom": "Hoist__Hoist_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Hoist__Hoist_sub2.obj",
+   "statut": "texturé",
+   "materiau": "Palletizer3",
+   "albedo": "assets/imported/FIO_Palletizer3D.png",
+   "normale": "assets/imported/FIO_Palletizer3N.png",
+   "tres": "assets/imported/FIO_Hoist__Hoist_sub2.tres"
+  },
+  {
+   "nom": "Holder_Blades_0__Holder_Blades",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Holder_Blades_0__Holder_Blades.obj",
+   "statut": "texturé",
+   "materiau": "PositioningBars",
+   "albedo": "assets/imported/FIO_PositioningBarsD.png",
+   "normale": "assets/imported/FIO_PositioningBarsN.png",
+   "tres": "assets/imported/FIO_Holder_Blades_0__Holder_Blades.tres"
+  },
+  {
+   "nom": "Holder_Blades__Holder_Blades",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Holder_Blades__Holder_Blades.obj",
+   "statut": "texturé",
+   "materiau": "PositioningBars",
+   "albedo": "assets/imported/FIO_PositioningBarsD.png",
+   "normale": "assets/imported/FIO_PositioningBarsN.png",
+   "tres": "assets/imported/FIO_Holder_Blades__Holder_Blades.tres"
+  },
+  {
+   "nom": "Holder_Clamp_0__Holder_Clamp",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Holder_Clamp_0__Holder_Clamp.obj",
+   "statut": "texturé",
+   "materiau": "PositioningBars",
+   "albedo": "assets/imported/FIO_PositioningBarsD.png",
+   "normale": "assets/imported/FIO_PositioningBarsN.png",
+   "tres": "assets/imported/FIO_Holder_Clamp_0__Holder_Clamp.tres"
+  },
+  {
+   "nom": "Holder_Clamp__Holder_Clamp",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Holder_Clamp__Holder_Clamp.obj",
+   "statut": "texturé",
+   "materiau": "PositioningBars",
+   "albedo": "assets/imported/FIO_PositioningBarsD.png",
+   "normale": "assets/imported/FIO_PositioningBarsN.png",
+   "tres": "assets/imported/FIO_Holder_Clamp__Holder_Clamp.tres"
+  },
+  {
+   "nom": "Holder_Struct_0__Holder_Struct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Holder_Struct_0__Holder_Struct.obj",
+   "statut": "texturé",
+   "materiau": "PositioningBars",
+   "albedo": "assets/imported/FIO_PositioningBarsD.png",
+   "normale": "assets/imported/FIO_PositioningBarsN.png",
+   "tres": "assets/imported/FIO_Holder_Struct_0__Holder_Struct.tres"
+  },
+  {
+   "nom": "Holder_Struct_0__Holder_Struct_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Holder_Struct_0__Holder_Struct_sub1.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Holder_Struct__Holder_Struct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Holder_Struct__Holder_Struct.obj",
+   "statut": "texturé",
+   "materiau": "PositioningBars",
+   "albedo": "assets/imported/FIO_PositioningBarsD.png",
+   "normale": "assets/imported/FIO_PositioningBarsN.png",
+   "tres": "assets/imported/FIO_Holder_Struct__Holder_Struct.tres"
+  },
+  {
+   "nom": "Holder_Struct__Holder_Struct_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Holder_Struct__Holder_Struct_sub1.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "InductiveSensor__InductiveSensor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_InductiveSensor__InductiveSensor.obj",
+   "statut": "texturé",
+   "materiau": "InductiveSensor_Inst_EColor",
+   "albedo": "assets/imported/FIO_InductiveSensorD.png",
+   "normale": "assets/imported/FIO_InductiveSensorN.png",
+   "tres": "assets/imported/FIO_InductiveSensor__InductiveSensor.tres"
+  },
+  {
+   "nom": "Label__Label",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Label__Label.obj",
+   "statut": "texturé",
+   "materiau": "LightIndicator_Inst_EColor",
+   "albedo": "assets/imported/FIO_LightIndicatorD.png",
+   "normale": "assets/imported/FIO_LightIndicatorN.png",
+   "tres": "assets/imported/FIO_Label__Label.tres"
+  },
+  {
+   "nom": "LargePlatform__LargePlatform",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LargePlatform__LargePlatform.obj",
+   "statut": "texturé",
+   "materiau": "PlatformGrid",
+   "albedo": "assets/imported/FIO_PlatformsGridD.png",
+   "normale": "assets/imported/FIO_PlatformsGridN.png",
+   "tres": "assets/imported/FIO_LargePlatform__LargePlatform.tres"
+  },
+  {
+   "nom": "LargePlatform__LargePlatform_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LargePlatform__LargePlatform_sub1.obj",
+   "statut": "texturé",
+   "materiau": "Platforms_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformsBaseD.png",
+   "normale": "assets/imported/FIO_PlatformsBaseS.png",
+   "tres": "assets/imported/FIO_LargePlatform__LargePlatform_sub1.tres"
+  },
+  {
+   "nom": "LevelMeter__LevelMeter",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LevelMeter__LevelMeter.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "LightIndicator__LightIndicator",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LightIndicator__LightIndicator.obj",
+   "statut": "texturé",
+   "materiau": "LightIndicator_Inst_EColor",
+   "albedo": "assets/imported/FIO_LightIndicatorD.png",
+   "normale": "assets/imported/FIO_LightIndicatorN.png",
+   "tres": "assets/imported/FIO_LightIndicator__LightIndicator.tres"
+  },
+  {
+   "nom": "LightIndicator__LightIndicator_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LightIndicator__LightIndicator_sub1.obj",
+   "statut": "texturé",
+   "materiau": "LightIndicatorGlass",
+   "albedo": "assets/imported/FIO_LightIndicatorD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_LightIndicator__LightIndicator_sub1.tres"
+  },
+  {
+   "nom": "LiquidFluid__LiquidFluid",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LiquidFluid__LiquidFluid.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "LoadingConveyor__LoadingConveyor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LoadingConveyor__LoadingConveyor.obj",
+   "statut": "texturé",
+   "materiau": "LoadingConveyor_Occl",
+   "albedo": "assets/imported/FIO_LoadingConveyorD.png",
+   "normale": "assets/imported/FIO_ConveyorRollerN.png",
+   "tres": "assets/imported/FIO_LoadingConveyor__LoadingConveyor.tres"
+  },
+  {
+   "nom": "LoadingConveyor__LoadingConveyor_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LoadingConveyor__LoadingConveyor_sub1.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_LoadingConveyor__LoadingConveyor_sub1.tres"
+  },
+  {
+   "nom": "LoadingConveyor__LoadingConveyor_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LoadingConveyor__LoadingConveyor_sub2.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_LoadingConveyor__LoadingConveyor_sub2.tres"
+  },
+  {
+   "nom": "LoadingConveyor__LoadingConveyor_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_LoadingConveyor__LoadingConveyor_sub3.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_LoadingConveyor__LoadingConveyor_sub3.tres"
+  },
+  {
+   "nom": "Mesh__Mesh",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Mesh__Mesh.obj",
+   "statut": "texturé",
+   "materiau": "PalletizingBox_Inst",
+   "albedo": "assets/imported/FIO_PalletizingBoxD.png",
+   "normale": "assets/imported/FIO_PalletizingBoxN.png",
+   "tres": "assets/imported/FIO_Mesh__Mesh.tres"
+  },
+  {
+   "nom": "MetalBracket__MetalBracket",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_MetalBracket__MetalBracket.obj",
+   "statut": "texturé",
+   "materiau": "MetalBracket_Inst_Color",
+   "albedo": "assets/imported/FIO_MetalBracketD.png",
+   "normale": "assets/imported/FIO_MetalBracketN.png",
+   "tres": "assets/imported/FIO_MetalBracket__MetalBracket.tres"
+  },
+  {
+   "nom": "MiddleForks__MiddleForks",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_MiddleForks__MiddleForks.obj",
+   "statut": "texturé",
+   "materiau": "StackerCraneStructure01_Occl",
+   "albedo": "assets/imported/FIO_StackerCrane01D.png",
+   "normale": "assets/imported/FIO_StackerCrane01N.png",
+   "tres": "assets/imported/FIO_MiddleForks__MiddleForks.tres"
+  },
+  {
+   "nom": "NewPickNPlace_Gripper_Main__NewPickNPlace_Gripper_Main",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_NewPickNPlace_Gripper_Main__NewPickNPlace_Gripper_Main.obj",
+   "statut": "texturé",
+   "materiau": "TwoAxisPickNPlace",
+   "albedo": "assets/imported/FIO_TwoAxisPickNPlaceD.png",
+   "normale": "assets/imported/FIO_TwoAxisPickNPlaceN.png",
+   "tres": "assets/imported/FIO_NewPickNPlace_Gripper_Main__NewPickNPlace_Gripper_Main.tres"
+  },
+  {
+   "nom": "NewPickNPlace_Struct_Top__NewPickNPlace_Struct_Top",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_NewPickNPlace_Struct_Top__NewPickNPlace_Struct_Top.obj",
+   "statut": "texturé",
+   "materiau": "TwoAxisPickNPlace",
+   "albedo": "assets/imported/FIO_TwoAxisPickNPlaceD.png",
+   "normale": "assets/imported/FIO_TwoAxisPickNPlaceN.png",
+   "tres": "assets/imported/FIO_NewPickNPlace_Struct_Top__NewPickNPlace_Struct_Top.tres"
+  },
+  {
+   "nom": "NewPickNPlace_Struct_Top__NewPickNPlace_Struct_Top_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_NewPickNPlace_Struct_Top__NewPickNPlace_Struct_Top_sub1.obj",
+   "statut": "texturé",
+   "materiau": "TwoAxisPickNPlace",
+   "albedo": "assets/imported/FIO_TwoAxisPickNPlaceD.png",
+   "normale": "assets/imported/FIO_TwoAxisPickNPlaceN.png",
+   "tres": "assets/imported/FIO_NewPickNPlace_Struct_Top__NewPickNPlace_Struct_Top_sub1.tres"
+  },
+  {
+   "nom": "NewPickNPlace_Struct__NewPickNPlace_Struct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_NewPickNPlace_Struct__NewPickNPlace_Struct.obj",
+   "statut": "texturé",
+   "materiau": "TwoAxisPickNPlace",
+   "albedo": "assets/imported/FIO_TwoAxisPickNPlaceD.png",
+   "normale": "assets/imported/FIO_TwoAxisPickNPlaceN.png",
+   "tres": "assets/imported/FIO_NewPickNPlace_Struct__NewPickNPlace_Struct.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform.obj",
+   "statut": "texturé",
+   "materiau": "Elevator",
+   "albedo": "assets/imported/FIO_Elevator_D.png",
+   "normale": "assets/imported/FIO_Elevator_N.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub1.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub1.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub2.obj",
+   "statut": "texturé",
+   "materiau": "ElevatorGuiderail",
+   "albedo": "assets/imported/FIO_ElevatorGuiderailD.png",
+   "normale": "assets/imported/FIO_EvelatorGuiderailN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub2.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub3.obj",
+   "statut": "texturé",
+   "materiau": "ElevatorConveyor",
+   "albedo": "assets/imported/FIO_ElevatorConveyorD.png",
+   "normale": "assets/imported/FIO_ConveyorRollerN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub3.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub4.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub4.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub5",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub5.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub5.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub6",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub6.obj",
+   "statut": "texturé",
+   "materiau": "RetroReflectiveMirror",
+   "albedo": "assets/imported/FIO_RetroReflectiveMirrorD.png",
+   "normale": "assets/imported/FIO_RetroReflectiveMirrorN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub6.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub7",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub7.obj",
+   "statut": "texturé",
+   "materiau": "RetroReflectivePhotoelectricSensor_Inst_EColor",
+   "albedo": "assets/imported/FIO_RetroReflectivePhotoelectricSensorD.png",
+   "normale": "assets/imported/FIO_RetroReflectivePhotoelectricSensorN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub7.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub8",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub8.obj",
+   "statut": "texturé",
+   "materiau": "RetroReflectivePhotoelectricSensor_Inst_EColor",
+   "albedo": "assets/imported/FIO_RetroReflectivePhotoelectricSensorD.png",
+   "normale": "assets/imported/FIO_RetroReflectivePhotoelectricSensorN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub8.tres"
+  },
+  {
+   "nom": "PalletElevatorPlatform__PalletElevatorPlatform_sub9",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub9.obj",
+   "statut": "texturé",
+   "materiau": "RetroReflectivePhotoelectricSensor_Inst_EColor",
+   "albedo": "assets/imported/FIO_RetroReflectivePhotoelectricSensorD.png",
+   "normale": "assets/imported/FIO_RetroReflectivePhotoelectricSensorN.png",
+   "tres": "assets/imported/FIO_PalletElevatorPlatform__PalletElevatorPlatform_sub9.tres"
+  },
+  {
+   "nom": "PalletElevatorStruct__PalletElevatorStruct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorStruct__PalletElevatorStruct.obj",
+   "statut": "texturé",
+   "materiau": "Elevator",
+   "albedo": "assets/imported/FIO_Elevator_D.png",
+   "normale": "assets/imported/FIO_Elevator_N.png",
+   "tres": "assets/imported/FIO_PalletElevatorStruct__PalletElevatorStruct.tres"
+  },
+  {
+   "nom": "PalletElevatorStruct__PalletElevatorStruct_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorStruct__PalletElevatorStruct_sub1.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_PalletElevatorStruct__PalletElevatorStruct_sub1.tres"
+  },
+  {
+   "nom": "PalletElevatorStruct__PalletElevatorStruct_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorStruct__PalletElevatorStruct_sub2.obj",
+   "statut": "texturé",
+   "materiau": "ElevatorGuiderail",
+   "albedo": "assets/imported/FIO_ElevatorGuiderailD.png",
+   "normale": "assets/imported/FIO_EvelatorGuiderailN.png",
+   "tres": "assets/imported/FIO_PalletElevatorStruct__PalletElevatorStruct_sub2.tres"
+  },
+  {
+   "nom": "PalletElevatorStruct__PalletElevatorStruct_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PalletElevatorStruct__PalletElevatorStruct_sub3.obj",
+   "statut": "texturé",
+   "materiau": "ElevatorConveyor",
+   "albedo": "assets/imported/FIO_ElevatorConveyorD.png",
+   "normale": "assets/imported/FIO_ConveyorRollerN.png",
+   "tres": "assets/imported/FIO_PalletElevatorStruct__PalletElevatorStruct_sub3.tres"
+  },
+  {
+   "nom": "PhotoElectricSensor__PhotoElectricSensor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PhotoElectricSensor__PhotoElectricSensor.obj",
+   "statut": "texturé",
+   "materiau": "DiffusePhotoelectricSensor_Inst_EColor",
+   "albedo": "assets/imported/FIO_DiffusePhotoelectricSensorD.png",
+   "normale": "assets/imported/FIO_DiffusePhotoelectricSensorN.png",
+   "tres": "assets/imported/FIO_PhotoElectricSensor__PhotoElectricSensor.tres"
+  },
+  {
+   "nom": "PickNPlaceHead__PickNPlaceHead",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PickNPlaceHead__PickNPlaceHead.obj",
+   "statut": "texturé",
+   "materiau": "PickNPlacePicker",
+   "albedo": "assets/imported/FIO_PickNPlacePickerD.png",
+   "normale": "assets/imported/FIO_PickNPlacePickerN.png",
+   "tres": "assets/imported/FIO_PickNPlaceHead__PickNPlaceHead.tres"
+  },
+  {
+   "nom": "PickNPlacePicker__PickNPlacePicker",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PickNPlacePicker__PickNPlacePicker.obj",
+   "statut": "texturé",
+   "materiau": "PickNPlacePicker",
+   "albedo": "assets/imported/FIO_PickNPlacePickerD.png",
+   "normale": "assets/imported/FIO_PickNPlacePickerN.png",
+   "tres": "assets/imported/FIO_PickNPlacePicker__PickNPlacePicker.tres"
+  },
+  {
+   "nom": "PickNPlacePicker__PickNPlacePicker_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PickNPlacePicker__PickNPlacePicker_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PickNPlacePicker",
+   "albedo": "assets/imported/FIO_PickNPlacePickerD.png",
+   "normale": "assets/imported/FIO_PickNPlacePickerN.png",
+   "tres": "assets/imported/FIO_PickNPlacePicker__PickNPlacePicker_sub1.tres"
+  },
+  {
+   "nom": "PickNPlaceStructure__PickNPlaceStructure",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PickNPlaceStructure__PickNPlaceStructure.obj",
+   "statut": "texturé",
+   "materiau": "PickNPlacePicker",
+   "albedo": "assets/imported/FIO_PickNPlacePickerD.png",
+   "normale": "assets/imported/FIO_PickNPlacePickerN.png",
+   "tres": "assets/imported/FIO_PickNPlaceStructure__PickNPlaceStructure.tres"
+  },
+  {
+   "nom": "PickNPlaceStructure__PickNPlaceStructure_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PickNPlaceStructure__PickNPlaceStructure_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PickNPlacePicker",
+   "albedo": "assets/imported/FIO_PickNPlacePickerD.png",
+   "normale": "assets/imported/FIO_PickNPlacePickerN.png",
+   "tres": "assets/imported/FIO_PickNPlaceStructure__PickNPlaceStructure_sub1.tres"
+  },
+  {
+   "nom": "PickNPlaceStructure__PickNPlaceStructure_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PickNPlaceStructure__PickNPlaceStructure_sub2.obj",
+   "statut": "texturé",
+   "materiau": "PickNPlacePicker",
+   "albedo": "assets/imported/FIO_PickNPlacePickerD.png",
+   "normale": "assets/imported/FIO_PickNPlacePickerN.png",
+   "tres": "assets/imported/FIO_PickNPlaceStructure__PickNPlaceStructure_sub2.tres"
+  },
+  {
+   "nom": "PlatformPillar__PlatformPillar",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PlatformPillar__PlatformPillar.obj",
+   "statut": "texturé",
+   "materiau": "PlatformPillar_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformPillarD.png",
+   "normale": "assets/imported/FIO_PlatformPillarN.png",
+   "tres": "assets/imported/FIO_PlatformPillar__PlatformPillar.tres"
+  },
+  {
+   "nom": "PlatformS__PlatformS",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PlatformS__PlatformS.obj",
+   "statut": "texturé",
+   "materiau": "Platforms_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformsBaseD.png",
+   "normale": "assets/imported/FIO_PlatformsBaseS.png",
+   "tres": "assets/imported/FIO_PlatformS__PlatformS.tres"
+  },
+  {
+   "nom": "PlatformS__PlatformS_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PlatformS__PlatformS_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PlatformGrid",
+   "albedo": "assets/imported/FIO_PlatformsGridD.png",
+   "normale": "assets/imported/FIO_PlatformsGridN.png",
+   "tres": "assets/imported/FIO_PlatformS__PlatformS_sub1.tres"
+  },
+  {
+   "nom": "Platform_0__Platform",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Platform_0__Platform.obj",
+   "statut": "texturé",
+   "materiau": "Platforms_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformsBaseD.png",
+   "normale": "assets/imported/FIO_PlatformsBaseS.png",
+   "tres": "assets/imported/FIO_Platform_0__Platform.tres"
+  },
+  {
+   "nom": "Platform_0__Platform_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Platform_0__Platform_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PlatformGrid",
+   "albedo": "assets/imported/FIO_PlatformsGridD.png",
+   "normale": "assets/imported/FIO_PlatformsGridN.png",
+   "tres": "assets/imported/FIO_Platform_0__Platform_sub1.tres"
+  },
+  {
+   "nom": "Platform_0__Platform_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Platform_0__Platform_sub2.obj",
+   "statut": "texturé",
+   "materiau": "Platforms_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformsBaseD.png",
+   "normale": "assets/imported/FIO_PlatformsBaseS.png",
+   "tres": "assets/imported/FIO_Platform_0__Platform_sub2.tres"
+  },
+  {
+   "nom": "Platform_0__Platform_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Platform_0__Platform_sub3.obj",
+   "statut": "texturé",
+   "materiau": "Platforms_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformsBaseD.png",
+   "normale": "assets/imported/FIO_PlatformsBaseS.png",
+   "tres": "assets/imported/FIO_Platform_0__Platform_sub3.tres"
+  },
+  {
+   "nom": "Platform__Platform",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Platform__Platform.obj",
+   "statut": "texturé",
+   "materiau": "Platforms_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformsBaseD.png",
+   "normale": "assets/imported/FIO_PlatformsBaseS.png",
+   "tres": "assets/imported/FIO_Platform__Platform.tres"
+  },
+  {
+   "nom": "Platform__Platform_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Platform__Platform_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PlatformGrid",
+   "albedo": "assets/imported/FIO_PlatformsGridD.png",
+   "normale": "assets/imported/FIO_PlatformsGridN.png",
+   "tres": "assets/imported/FIO_Platform__Platform_sub1.tres"
+  },
+  {
+   "nom": "PushBoard__PushBoard",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PushBoard__PushBoard.obj",
+   "statut": "texturé",
+   "materiau": "Pusher",
+   "albedo": "assets/imported/FIO_PusherD.png",
+   "normale": "assets/imported/FIO_PusherN.png",
+   "tres": "assets/imported/FIO_PushBoard__PushBoard.tres"
+  },
+  {
+   "nom": "PusherBar__PusherBar",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_PusherBar__PusherBar.obj",
+   "statut": "texturé",
+   "materiau": "Palletizer2",
+   "albedo": "assets/imported/FIO_Palletizer2D.png",
+   "normale": "assets/imported/FIO_Palletizer2N.png",
+   "tres": "assets/imported/FIO_PusherBar__PusherBar.tres"
+  },
+  {
+   "nom": "RFID_Range_Lines__RFID_Range_Lines",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RFID_Range_Lines__RFID_Range_Lines.obj",
+   "statut": "texturé",
+   "materiau": "RFID_Inst_EColor",
+   "albedo": "assets/imported/FIO_RFID_D.png",
+   "normale": "assets/imported/FIO_RFID_N.png",
+   "tres": "assets/imported/FIO_RFID_Range_Lines__RFID_Range_Lines.tres"
+  },
+  {
+   "nom": "RFID_Transponder2__RFID_Transponder2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RFID_Transponder2__RFID_Transponder2.obj",
+   "statut": "texturé",
+   "materiau": "PalletizingBox_Inst",
+   "albedo": "assets/imported/FIO_PalletizingBoxD.png",
+   "normale": "assets/imported/FIO_PalletizingBoxN.png",
+   "tres": "assets/imported/FIO_RFID_Transponder2__RFID_Transponder2.tres"
+  },
+  {
+   "nom": "RFID_Transponder__RFID_Transponder",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RFID_Transponder__RFID_Transponder.obj",
+   "statut": "texturé",
+   "materiau": "StackableBox_Inst",
+   "albedo": "assets/imported/FIO_StackableBoxD.png",
+   "normale": "assets/imported/FIO_StackableBoxN.png",
+   "tres": "assets/imported/FIO_RFID_Transponder__RFID_Transponder.tres"
+  },
+  {
+   "nom": "Rack__Rack",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Rack__Rack.obj",
+   "statut": "texturé",
+   "materiau": "Rack",
+   "albedo": "assets/imported/FIO_RackD.png",
+   "normale": "assets/imported/FIO_RackN.png",
+   "tres": "assets/imported/FIO_Rack__Rack.tres"
+  },
+  {
+   "nom": "RetroReflectiveMirror__RetroReflectiveMirror",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RetroReflectiveMirror__RetroReflectiveMirror.obj",
+   "statut": "texturé",
+   "materiau": "RetroReflectiveMirror",
+   "albedo": "assets/imported/FIO_RetroReflectiveMirrorD.png",
+   "normale": "assets/imported/FIO_RetroReflectiveMirrorN.png",
+   "tres": "assets/imported/FIO_RetroReflectiveMirror__RetroReflectiveMirror.tres"
+  },
+  {
+   "nom": "RobotArm_Arm__RobotArm_Arm",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Arm__RobotArm_Arm.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Arm__RobotArm_Arm.tres"
+  },
+  {
+   "nom": "RobotArm_Arm__RobotArm_Arm_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Arm__RobotArm_Arm_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Arm__RobotArm_Arm_sub1.tres"
+  },
+  {
+   "nom": "RobotArm_Base__RobotArm_Base",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Base__RobotArm_Base.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Base__RobotArm_Base.tres"
+  },
+  {
+   "nom": "RobotArm_Base__RobotArm_Base_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Base__RobotArm_Base_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Base__RobotArm_Base_sub1.tres"
+  },
+  {
+   "nom": "RobotArm_Hidraulic__RobotArm_Hidraulic",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Hidraulic__RobotArm_Hidraulic.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Hidraulic__RobotArm_Hidraulic.tres"
+  },
+  {
+   "nom": "RobotArm_Hidraulic__RobotArm_Hidraulic_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Hidraulic__RobotArm_Hidraulic_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Hidraulic__RobotArm_Hidraulic_sub1.tres"
+  },
+  {
+   "nom": "RobotArm_Hips__RobotArm_Hips",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Hips__RobotArm_Hips.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Hips__RobotArm_Hips.tres"
+  },
+  {
+   "nom": "RobotArm_Hips__RobotArm_Hips_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Hips__RobotArm_Hips_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Hips__RobotArm_Hips_sub1.tres"
+  },
+  {
+   "nom": "RobotArm_Hips__RobotArm_Hips_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_Hips__RobotArm_Hips_sub2.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_Hips__RobotArm_Hips_sub2.tres"
+  },
+  {
+   "nom": "RobotArm_ScopeHead__RobotArm_ScopeHead",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_ScopeHead__RobotArm_ScopeHead.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_ScopeHead__RobotArm_ScopeHead.tres"
+  },
+  {
+   "nom": "RobotArm_ScopeHead__RobotArm_ScopeHead_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RobotArm_ScopeHead__RobotArm_ScopeHead_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_RobotArm_ScopeHead__RobotArm_ScopeHead_sub1.tres"
+  },
+  {
+   "nom": "Roll__Roll",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Roll__Roll.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_Roll__Roll.tres"
+  },
+  {
+   "nom": "RollerConveyor2M__RollerConveyor2M",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RollerConveyor2M__RollerConveyor2M.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorStruct",
+   "albedo": "assets/imported/FIO_ConveyorRollerD.png",
+   "normale": "assets/imported/FIO_ConveyorRollerN.png",
+   "tres": "assets/imported/FIO_RollerConveyor2M__RollerConveyor2M.tres"
+  },
+  {
+   "nom": "RollerConveyor2M__RollerConveyor2M_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RollerConveyor2M__RollerConveyor2M_sub1.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_RollerConveyor2M__RollerConveyor2M_sub1.tres"
+  },
+  {
+   "nom": "RollerConveyor2M__RollerConveyor2M_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RollerConveyor2M__RollerConveyor2M_sub2.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_RollerConveyor2M__RollerConveyor2M_sub2.tres"
+  },
+  {
+   "nom": "RollerConveyor2M__RollerConveyor2M_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RollerConveyor2M__RollerConveyor2M_sub3.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_RollerConveyor2M__RollerConveyor2M_sub3.tres"
+  },
+  {
+   "nom": "RollerConveyor4M__RollerConveyor4M",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RollerConveyor4M__RollerConveyor4M.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorStruct",
+   "albedo": "assets/imported/FIO_ConveyorRollerD.png",
+   "normale": "assets/imported/FIO_ConveyorRollerN.png",
+   "tres": "assets/imported/FIO_RollerConveyor4M__RollerConveyor4M.tres"
+  },
+  {
+   "nom": "RollerConveyor4M__RollerConveyor4M_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RollerConveyor4M__RollerConveyor4M_sub1.obj",
+   "statut": "texturé",
+   "materiau": "IndustrialSigns",
+   "albedo": "assets/imported/FIO_IndustrialSignsD.png",
+   "normale": "assets/imported/FIO_IndustrialSignsN.png",
+   "tres": "assets/imported/FIO_RollerConveyor4M__RollerConveyor4M_sub1.tres"
+  },
+  {
+   "nom": "RollerConveyor4M__RollerConveyor4M_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RollerConveyor4M__RollerConveyor4M_sub2.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_RollerConveyor4M__RollerConveyor4M_sub2.tres"
+  },
+  {
+   "nom": "RollerConveyor4M__RollerConveyor4M_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_RollerConveyor4M__RollerConveyor4M_sub3.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_RollerConveyor4M__RollerConveyor4M_sub3.tres"
+  },
+  {
+   "nom": "Rotor__Rotor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Rotor__Rotor.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_Rotor__Rotor.tres"
+  },
+  {
+   "nom": "Rotor__Rotor_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Rotor__Rotor_sub1.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_Rotor__Rotor_sub1.tres"
+  },
+  {
+   "nom": "Rotor__Rotor_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Rotor__Rotor_sub2.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_Rotor__Rotor_sub2.tres"
+  },
+  {
+   "nom": "Rotor__Rotor_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Rotor__Rotor_sub3.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_Rotor__Rotor_sub3.tres"
+  },
+  {
+   "nom": "SafeGuardL__SafeGuardL",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeGuardL__SafeGuardL.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuardLGrid",
+   "albedo": "assets/imported/FIO_FenceGridD.png",
+   "normale": "assets/imported/FIO_FenceGridN.png",
+   "tres": "assets/imported/FIO_SafeGuardL__SafeGuardL.tres"
+  },
+  {
+   "nom": "SafeGuardL__SafeGuardL_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeGuardL__SafeGuardL_sub1.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard",
+   "albedo": "assets/imported/FIO_SafeGuardLockD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafeGuardL__SafeGuardL_sub1.tres"
+  },
+  {
+   "nom": "SafeGuardL__SafeGuardL_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeGuardL__SafeGuardL_sub2.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard_Inst_Color",
+   "albedo": "assets/imported/FIO_SafeGuardD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafeGuardL__SafeGuardL_sub2.tres"
+  },
+  {
+   "nom": "SafeGuard__SafeGuard",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeGuard__SafeGuard.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuardGrid",
+   "albedo": "assets/imported/FIO_FenceGridD.png",
+   "normale": "assets/imported/FIO_FenceGridN.png",
+   "tres": "assets/imported/FIO_SafeGuard__SafeGuard.tres"
+  },
+  {
+   "nom": "SafeGuard__SafeGuard_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeGuard__SafeGuard_sub1.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard",
+   "albedo": "assets/imported/FIO_SafeGuardLockD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafeGuard__SafeGuard_sub1.tres"
+  },
+  {
+   "nom": "SafeGuard__SafeGuard_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeGuard__SafeGuard_sub2.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard_Inst_Color",
+   "albedo": "assets/imported/FIO_SafeGuardD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafeGuard__SafeGuard_sub2.tres"
+  },
+  {
+   "nom": "SafegauardInterlock_Door__SafegauardInterlock_Door",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafegauardInterlock_Door__SafegauardInterlock_Door.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard",
+   "albedo": "assets/imported/FIO_SafeGuardLockD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafegauardInterlock_Door__SafegauardInterlock_Door.tres"
+  },
+  {
+   "nom": "SafegauardInterlock_Door__SafegauardInterlock_Door_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafegauardInterlock_Door__SafegauardInterlock_Door_sub1.obj",
+   "statut": "texturé",
+   "materiau": "Interlock",
+   "albedo": "assets/imported/FIO_Interlock_D.png",
+   "normale": "assets/imported/FIO_Interlock_N.png",
+   "tres": "assets/imported/FIO_SafegauardInterlock_Door__SafegauardInterlock_Door_sub1.tres"
+  },
+  {
+   "nom": "SafegauardInterlock_Door__SafegauardInterlock_Door_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafegauardInterlock_Door__SafegauardInterlock_Door_sub2.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuardDoorGrid",
+   "albedo": "assets/imported/FIO_FenceGridD.png",
+   "normale": "assets/imported/FIO_FenceGridN.png",
+   "tres": "assets/imported/FIO_SafegauardInterlock_Door__SafegauardInterlock_Door_sub2.tres"
+  },
+  {
+   "nom": "SafeguardI__SafeguardI",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeguardI__SafeguardI.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard",
+   "albedo": "assets/imported/FIO_SafeGuardLockD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafeguardI__SafeguardI.tres"
+  },
+  {
+   "nom": "SafeguardI__SafeguardI_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeguardI__SafeguardI_sub1.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard_Inst_Color",
+   "albedo": "assets/imported/FIO_SafeGuardD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafeguardI__SafeguardI_sub1.tres"
+  },
+  {
+   "nom": "SafeguardI__SafeguardI_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeguardI__SafeguardI_sub2.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuardLGrid",
+   "albedo": "assets/imported/FIO_FenceGridD.png",
+   "normale": "assets/imported/FIO_FenceGridN.png",
+   "tres": "assets/imported/FIO_SafeguardI__SafeguardI_sub2.tres"
+  },
+  {
+   "nom": "SafeguardInterlock_Frame__SafeguardInterlock_Frame",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeguardInterlock_Frame__SafeguardInterlock_Frame.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard",
+   "albedo": "assets/imported/FIO_SafeGuardLockD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafeguardInterlock_Frame__SafeguardInterlock_Frame.tres"
+  },
+  {
+   "nom": "SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub1.obj",
+   "statut": "texturé",
+   "materiau": "Interlock",
+   "albedo": "assets/imported/FIO_Interlock_D.png",
+   "normale": "assets/imported/FIO_Interlock_N.png",
+   "tres": "assets/imported/FIO_SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub1.tres"
+  },
+  {
+   "nom": "SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub2.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuardDoorGrid",
+   "albedo": "assets/imported/FIO_FenceGridD.png",
+   "normale": "assets/imported/FIO_FenceGridN.png",
+   "tres": "assets/imported/FIO_SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub2.tres"
+  },
+  {
+   "nom": "SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub3.obj",
+   "statut": "texturé",
+   "materiau": "SafeGuard_Inst_Color",
+   "albedo": "assets/imported/FIO_SafeGuardD.png",
+   "normale": "assets/imported/FIO_SafeGuardN.png",
+   "tres": "assets/imported/FIO_SafeguardInterlock_Frame__SafeguardInterlock_Frame_sub3.tres"
+  },
+  {
+   "nom": "Screen__Screen",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Screen__Screen.obj",
+   "statut": "texturé",
+   "materiau": "DigitalDisplay",
+   "albedo": "assets/imported/FIO_DigitalDisplayD.png",
+   "normale": "assets/imported/FIO_DigitalDisplayN.png",
+   "tres": "assets/imported/FIO_Screen__Screen.tres"
+  },
+  {
+   "nom": "ShadowPlane__ShadowPlane",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_ShadowPlane__ShadowPlane.obj",
+   "statut": "sans_materiau"
+  },
+  {
+   "nom": "Siren__Siren",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Siren__Siren.obj",
+   "statut": "texturé",
+   "materiau": "Siren_Occl_Inst_EColor",
+   "albedo": "assets/imported/FIO_SirenD.png",
+   "normale": "assets/imported/FIO_SirenN.png",
+   "tres": "assets/imported/FIO_Siren__Siren.tres"
+  },
+  {
+   "nom": "StackLight__StackLight",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StackLight__StackLight.obj",
+   "statut": "texturé",
+   "materiau": "StackLight_Inst_EColor",
+   "albedo": "assets/imported/FIO_StackLightD.png",
+   "normale": "assets/imported/FIO_StackLightN.png",
+   "tres": "assets/imported/FIO_StackLight__StackLight.tres"
+  },
+  {
+   "nom": "StackLight__StackLight_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StackLight__StackLight_sub1.obj",
+   "statut": "texturé",
+   "materiau": "StackLight_Inst_EColor",
+   "albedo": "assets/imported/FIO_StackLightD.png",
+   "normale": "assets/imported/FIO_StackLightN.png",
+   "tres": "assets/imported/FIO_StackLight__StackLight_sub1.tres"
+  },
+  {
+   "nom": "StackLight__StackLight_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StackLight__StackLight_sub2.obj",
+   "statut": "texturé",
+   "materiau": "StackLight_Inst_EColor",
+   "albedo": "assets/imported/FIO_StackLightD.png",
+   "normale": "assets/imported/FIO_StackLightN.png",
+   "tres": "assets/imported/FIO_StackLight__StackLight_sub2.tres"
+  },
+  {
+   "nom": "StackLight__StackLight_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StackLight__StackLight_sub3.obj",
+   "statut": "texturé",
+   "materiau": "StackLight_Inst_EColor",
+   "albedo": "assets/imported/FIO_StackLightD.png",
+   "normale": "assets/imported/FIO_StackLightN.png",
+   "tres": "assets/imported/FIO_StackLight__StackLight_sub3.tres"
+  },
+  {
+   "nom": "StackLight__StackLight_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StackLight__StackLight_sub4.obj",
+   "statut": "texturé",
+   "materiau": "StackLightGlass",
+   "albedo": "assets/imported/FIO_StackLightD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_StackLight__StackLight_sub4.tres"
+  },
+  {
+   "nom": "StairsBase__StairsBase",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StairsBase__StairsBase.obj",
+   "statut": "texturé",
+   "materiau": "PlatformSupportStairs_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformSupportD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_StairsBase__StairsBase.tres"
+  },
+  {
+   "nom": "StairsBase__StairsBase_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StairsBase__StairsBase_sub1.obj",
+   "statut": "texturé",
+   "materiau": "Platforms_Inst_Color",
+   "albedo": "assets/imported/FIO_PlatformsBaseD.png",
+   "normale": "assets/imported/FIO_PlatformsBaseS.png",
+   "tres": "assets/imported/FIO_StairsBase__StairsBase_sub1.tres"
+  },
+  {
+   "nom": "StairsBase__StairsBase_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StairsBase__StairsBase_sub2.obj",
+   "statut": "texturé",
+   "materiau": "PlatformGrid",
+   "albedo": "assets/imported/FIO_PlatformsGridD.png",
+   "normale": "assets/imported/FIO_PlatformsGridN.png",
+   "tres": "assets/imported/FIO_StairsBase__StairsBase_sub2.tres"
+  },
+  {
+   "nom": "StairsHandrail__StairsHandrail",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StairsHandrail__StairsHandrail.obj",
+   "statut": "texturé",
+   "materiau": "Handrail_Inst_Color",
+   "albedo": "assets/imported/FIO_HandrailD.png",
+   "normale": "assets/imported/FIO_HandrailN.png",
+   "tres": "assets/imported/FIO_StairsHandrail__StairsHandrail.tres"
+  },
+  {
+   "nom": "StairsHandrail__StairsHandrail_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StairsHandrail__StairsHandrail_sub1.obj",
+   "statut": "texturé",
+   "materiau": "Handrail",
+   "albedo": "assets/imported/FIO_HandrailD.png",
+   "normale": "assets/imported/FIO_HandrailN.png",
+   "tres": "assets/imported/FIO_StairsHandrail__StairsHandrail_sub1.tres"
+  },
+  {
+   "nom": "Sticker__Sticker",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Sticker__Sticker.obj",
+   "statut": "texturé",
+   "materiau": "PushButton_Inst_EColor",
+   "albedo": "assets/imported/FIO_PushButtonD.png",
+   "normale": "assets/imported/FIO_PushButtonN.png",
+   "tres": "assets/imported/FIO_Sticker__Sticker.tres"
+  },
+  {
+   "nom": "StopBladeBlade__StopBladeBlade",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StopBladeBlade__StopBladeBlade.obj",
+   "statut": "texturé",
+   "materiau": "StopBlade",
+   "albedo": "assets/imported/FIO_StopBladeD.png",
+   "normale": "assets/imported/FIO_StopBladeN.png",
+   "tres": "assets/imported/FIO_StopBladeBlade__StopBladeBlade.tres"
+  },
+  {
+   "nom": "Stopper__Stopper",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Stopper__Stopper.obj",
+   "statut": "texturé",
+   "materiau": "RollerStop",
+   "albedo": "assets/imported/FIO_RollerStopD.png",
+   "normale": "assets/imported/FIO_RollerStopN.png",
+   "tres": "assets/imported/FIO_Stopper__Stopper.tres"
+  },
+  {
+   "nom": "Stopper__Stopper_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Stopper__Stopper_sub1.obj",
+   "statut": "texturé",
+   "materiau": "RollerStopRoll",
+   "albedo": "assets/imported/FIO_RollerStopRollD.png",
+   "normale": "assets/imported/FIO_RollerStopRollN.png",
+   "tres": "assets/imported/FIO_Stopper__Stopper_sub1.tres"
+  },
+  {
+   "nom": "StraightSpurConveyor__StraightSpurConveyor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StraightSpurConveyor__StraightSpurConveyor.obj",
+   "statut": "texturé",
+   "materiau": "StraightSpurConveyor_Occl",
+   "albedo": "assets/imported/FIO_StraightSpurConveyorD.png",
+   "normale": "assets/imported/FIO_StraightSpurConveyorN.png",
+   "tres": "assets/imported/FIO_StraightSpurConveyor__StraightSpurConveyor.tres"
+  },
+  {
+   "nom": "StraightSpurConveyor__StraightSpurConveyor_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StraightSpurConveyor__StraightSpurConveyor_sub1.obj",
+   "statut": "texturé",
+   "materiau": "BeltConveyorEngine",
+   "albedo": "assets/imported/FIO_ConveyorEngineBeltD.png",
+   "normale": "assets/imported/FIO_ConveyorEngineN.png",
+   "tres": "assets/imported/FIO_StraightSpurConveyor__StraightSpurConveyor_sub1.tres"
+  },
+  {
+   "nom": "StraightSpurConveyor__StraightSpurConveyor_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StraightSpurConveyor__StraightSpurConveyor_sub2.obj",
+   "statut": "texturé",
+   "materiau": "StraightSpurConveyorBelt_Occl_Inst_ST",
+   "albedo": "assets/imported/FIO_ConveyorBeltD_tile.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_StraightSpurConveyor__StraightSpurConveyor_sub2.tres"
+  },
+  {
+   "nom": "StraightSpurConveyor__StraightSpurConveyor_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_StraightSpurConveyor__StraightSpurConveyor_sub3.obj",
+   "statut": "texturé",
+   "materiau": "Aligners",
+   "albedo": "assets/imported/FIO_AlignersD.png",
+   "normale": "assets/imported/FIO_AlignersN.png",
+   "tres": "assets/imported/FIO_StraightSpurConveyor__StraightSpurConveyor_sub3.tres"
+  },
+  {
+   "nom": "Struct_0__Struct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_0__Struct.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct_0__Struct.tres"
+  },
+  {
+   "nom": "Struct_0__Struct_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_0__Struct_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct_0__Struct_sub1.tres"
+  },
+  {
+   "nom": "Struct_1__Struct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_1__Struct.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct_1__Struct.tres"
+  },
+  {
+   "nom": "Struct_1__Struct_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_1__Struct_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct_1__Struct_sub1.tres"
+  },
+  {
+   "nom": "Struct_2__Struct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_2__Struct.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct_2__Struct.tres"
+  },
+  {
+   "nom": "Struct_2__Struct_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_2__Struct_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct_2__Struct_sub1.tres"
+  },
+  {
+   "nom": "Struct_2__Struct_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_2__Struct_sub2.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Struct_2__Struct_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_2__Struct_sub3.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct_2__Struct_sub3.tres"
+  },
+  {
+   "nom": "Struct_2__Struct_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_2__Struct_sub4.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct_2__Struct_sub4.tres"
+  },
+  {
+   "nom": "Struct_2__Struct_sub5",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct_2__Struct_sub5.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Struct__Struct",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct__Struct.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct__Struct.tres"
+  },
+  {
+   "nom": "Struct__Struct_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Struct__Struct_sub1.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_Struct__Struct_sub1.tres"
+  },
+  {
+   "nom": "Structure_0__Structure",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Structure_0__Structure.obj",
+   "statut": "texturé",
+   "materiau": "RollerStop",
+   "albedo": "assets/imported/FIO_RollerStopD.png",
+   "normale": "assets/imported/FIO_RollerStopN.png",
+   "tres": "assets/imported/FIO_Structure_0__Structure.tres"
+  },
+  {
+   "nom": "Structure_0__Structure_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Structure_0__Structure_sub1.obj",
+   "statut": "texturé",
+   "materiau": "RollerStopRoll",
+   "albedo": "assets/imported/FIO_RollerStopRollD.png",
+   "normale": "assets/imported/FIO_RollerStopRollN.png",
+   "tres": "assets/imported/FIO_Structure_0__Structure_sub1.tres"
+  },
+  {
+   "nom": "Structure_0__Structure_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Structure_0__Structure_sub2.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Structure__Structure",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Structure__Structure.obj",
+   "statut": "texturé",
+   "materiau": "RollerStop",
+   "albedo": "assets/imported/FIO_RollerStopD.png",
+   "normale": "assets/imported/FIO_RollerStopN.png",
+   "tres": "assets/imported/FIO_Structure__Structure.tres"
+  },
+  {
+   "nom": "Support__Support",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Support__Support.obj",
+   "statut": "texturé",
+   "materiau": "Aligners_Inst_Color",
+   "albedo": "assets/imported/FIO_AlignersD.png",
+   "normale": "assets/imported/FIO_AlignersN.png",
+   "tres": "assets/imported/FIO_Support__Support.tres"
+  },
+  {
+   "nom": "Tank__Tank",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Tank__Tank.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Tank__Tank_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Tank__Tank_sub1.obj",
+   "statut": "texturé",
+   "materiau": "TankLiquidFall",
+   "albedo": "assets/imported/FIO_TankLiquidD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_Tank__Tank_sub1.tres"
+  },
+  {
+   "nom": "Tank__Tank_sub2",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Tank__Tank_sub2.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Tank__Tank_sub3",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Tank__Tank_sub3.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Tank__Tank_sub4",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Tank__Tank_sub4.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "TurnTableStructure__TurnTableStructure",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_TurnTableStructure__TurnTableStructure.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_TurnTableStructure__TurnTableStructure.tres"
+  },
+  {
+   "nom": "TurnTableStructure__TurnTableStructure_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_TurnTableStructure__TurnTableStructure_sub1.obj",
+   "statut": "texturé",
+   "materiau": "RollerConveyorRolls_Inst",
+   "albedo": "assets/imported/FIO_ConveyorRollsD.png",
+   "normale": "assets/imported/FIO_ConveyorRollsN.png",
+   "tres": "assets/imported/FIO_TurnTableStructure__TurnTableStructure_sub1.tres"
+  },
+  {
+   "nom": "Valve__Valve",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Valve__Valve.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "Valve__Valve_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Valve__Valve_sub1.obj",
+   "statut": "texturé",
+   "materiau": "TankLiquidFall",
+   "albedo": "assets/imported/FIO_TankLiquidD.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_Valve__Valve_sub1.tres"
+  },
+  {
+   "nom": "VisionSensor__VisionSensor",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_VisionSensor__VisionSensor.obj",
+   "statut": "texturé",
+   "materiau": "LightBeamVision",
+   "albedo": "assets/imported/FIO_Lightbeam_Cloud_Alpha.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_VisionSensor__VisionSensor.tres"
+  },
+  {
+   "nom": "VisionSensor__VisionSensor_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_VisionSensor__VisionSensor_sub1.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "WarningLightReflector__WarningLightReflector",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_WarningLightReflector__WarningLightReflector.obj",
+   "statut": "texturé",
+   "materiau": "WarningLight_Inst_EColor",
+   "albedo": "assets/imported/FIO_WarningLightD.png",
+   "normale": "assets/imported/FIO_WarningLightN.png",
+   "tres": "assets/imported/FIO_WarningLightReflector__WarningLightReflector.tres"
+  },
+  {
+   "nom": "WarningLight__WarningLight",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_WarningLight__WarningLight.obj",
+   "statut": "texturé",
+   "materiau": "WarningLight_Inst_EColor",
+   "albedo": "assets/imported/FIO_WarningLightD.png",
+   "normale": "assets/imported/FIO_WarningLightN.png",
+   "tres": "assets/imported/FIO_WarningLight__WarningLight.tres"
+  },
+  {
+   "nom": "WarningLight__WarningLight_sub1",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_WarningLight__WarningLight_sub1.obj",
+   "statut": "vierge (materiau sans texture)"
+  },
+  {
+   "nom": "WheelSupport__WheelSupport",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_WheelSupport__WheelSupport.obj",
+   "statut": "texturé",
+   "materiau": "PopUpWheelSorterWheel_Inst",
+   "albedo": "assets/imported/FIO_PopUpWheelSorterWheelsD.png",
+   "normale": "assets/imported/FIO_PopUpWheelSorterWheelsN.png",
+   "tres": "assets/imported/FIO_WheelSupport__WheelSupport.tres"
+  },
+  {
+   "nom": "Wheel__Wheel",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_Wheel__Wheel.obj",
+   "statut": "texturé",
+   "materiau": "Aligners_Inst_Color",
+   "albedo": "assets/imported/FIO_AlignersD.png",
+   "normale": "assets/imported/FIO_AlignersN.png",
+   "tres": "assets/imported/FIO_Wheel__Wheel.tres"
+  },
+  {
+   "nom": "lightbeam_0_0__lightbeam_0",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_lightbeam_0_0__lightbeam_0.obj",
+   "statut": "texturé",
+   "materiau": "LightBeamVision",
+   "albedo": "assets/imported/FIO_Lightbeam_Cloud_Alpha.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_lightbeam_0_0__lightbeam_0.tres"
+  },
+  {
+   "nom": "lightbeam_0__lightbeam_0",
+   "type": "mesh",
+   "obj": "assets/imported/FIO_lightbeam_0__lightbeam_0.obj",
+   "statut": "texturé",
+   "materiau": "LightBeamVision",
+   "albedo": "assets/imported/FIO_Lightbeam_Cloud_Alpha.png",
+   "normale": null,
+   "tres": "assets/imported/FIO_lightbeam_0__lightbeam_0.tres"
+  }
+ ]
+}

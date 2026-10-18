@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://33exrvo66l78"
+path="res://.godot/imported/FIO_EmptyPlatform__EmptyPlatform.obj-838b9fe664aa59a1ad2e926a5a6f9abc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/FIO_EmptyPlatform__EmptyPlatform.obj-838b9fe664aa59a1ad2e926a5a6f9abc.mesh"]
+
+source_file="res://assets/imported/FIO_EmptyPlatform__EmptyPlatform.obj"
+dest_files=["res://.godot/imported/FIO_EmptyPlatform__EmptyPlatform.obj-838b9fe664aa59a1ad2e926a5a6f9abc.mesh", "res://.godot/imported/FIO_EmptyPlatform__EmptyPlatform.obj-838b9fe664aa59a1ad2e926a5a6f9abc.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

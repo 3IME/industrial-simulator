@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bfsja3rcftnx4"
+path="res://.godot/imported/FIO_Base_RawBlock__Base_RawBlock.obj-8d02ae51802bac0b3a0ce6dc9f68a46f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/FIO_Base_RawBlock__Base_RawBlock.obj-8d02ae51802bac0b3a0ce6dc9f68a46f.mesh"]
+
+source_file="res://assets/imported/FIO_Base_RawBlock__Base_RawBlock.obj"
+dest_files=["res://.godot/imported/FIO_Base_RawBlock__Base_RawBlock.obj-8d02ae51802bac0b3a0ce6dc9f68a46f.mesh", "res://.godot/imported/FIO_Base_RawBlock__Base_RawBlock.obj-8d02ae51802bac0b3a0ce6dc9f68a46f.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
