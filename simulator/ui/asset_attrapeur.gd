@@ -43,6 +43,7 @@ func _can_drop_data(_point: Vector2, donnee: Variant) -> bool:
 
 func _drop_data(_point: Vector2, donnee: Variant) -> void:
 	if donnee is Dictionary and donnee.has("fio"):
+		(navire as Node).forcer_entree(donnee["fio"])
 		(navire as Node).deposer(_point)
 	terminer()
 

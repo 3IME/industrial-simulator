@@ -79,9 +79,13 @@ func _unhandled_input(event: InputEvent) -> void:
 					Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ESCAPE and _attrapeur.visible:
-			annuler()
-			_attrapeur.terminer()
-			get_viewport().set_input_as_handled()
+			if get_viewport().gui_is_dragging():
+				pass   # drag natif en cours : NOTIFICATION_DRAG_END
+				       # rangera proprement, ne pas recapturer la souris
+			else:
+				annuler()
+				_attrapeur.terminer()
+				get_viewport().set_input_as_handled()
 
 
 func _charger_manifeste() -> void:
@@ -262,6 +266,10 @@ func _process(_delta: float) -> void:
 	if get_viewport().gui_is_dragging():
 		if not _attrapeur.visible:
 			_attrapeur.armer_drag()
+		# suivi garanti du fantome pendant TOUT le vol, meme si
+		# _can_drop_data n'est pas sollicite par le drag natif
+		if not _entree_courante.is_empty():
+			_maj_fantome(get_viewport().get_mouse_position())
 	elif _attrapeur._mode_drag:
 		_attrapeur.terminer()
 	if not _panneau.visible or _file_apercus.is_empty() or _rendu == null:
@@ -347,6 +355,11 @@ func montrer_references(entree: Dictionary, position_ecran: Vector2) -> void:
 	var mesh = load("res://" + entree["obj"])
 	if mesh is Mesh:
 		_fantome.mesh = mesh
+	_maj_fantome(position_ecran)
+
+
+## Positionne grille + fantome sous la position ecran donnee.
+func _maj_fantome(position_ecran: Vector2) -> void:
 	var point := _position_sol(position_ecran)
 	_grille.position = point + Vector3(0, 0.02, 0)
 	_fantome.position = point
@@ -382,6 +395,10 @@ func deposer(position_ecran: Vector2) -> void:
 	annuler()
 
 
+func forcer_entree(entree: Dictionary) -> void:
+	_entree_courante = entree
+
+
 func drag_gui_actif() -> bool:
 	return get_viewport().gui_is_dragging()
 
@@ -391,11 +408,17 @@ func masquer_references() -> void:
 	_fantome.visible = false
 
 
-func _get_drag_data_vignette(vignette: Control, point: Vector2) -> Variant:
+func _get_drag_data_vignette(vignette: Control, _point: Vector2) -> Variant:
+	var entree: Dictionary = vignette.get_meta("fio")
+	_entree_courante = entree
+	var mesh = load("res://" + entree["obj"])
+	if mesh is Mesh:
+		_fantome.mesh = mesh
+	_maj_fantome(get_viewport().get_mouse_position())
 	var apercu := Label.new()
 	apercu.text = vignette.text
 	vignette.set_drag_preview(apercu)
-	return {"fio": vignette.get_meta("fio")}
+	return {"fio": entree}
 
 
 func annuler() -> void:
