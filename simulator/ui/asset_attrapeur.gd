@@ -9,6 +9,7 @@ extends Control
 var navire: Node = null
 var _donnee: Dictionary = {}
 var _mode_drag := false
+var _depot_fait := false
 
 
 func _ready() -> void:
@@ -66,6 +67,7 @@ func _gui_input(event: InputEvent) -> void:
 func terminer() -> void:
 	_donnee = {}
 	_mode_drag = false
+	_depot_fait = false
 	visible = false
 	(navire as Node).masquer_references()
 	if not (navire as Node).drag_gui_actif():
@@ -73,13 +75,13 @@ func terminer() -> void:
 
 
 func _notification(quoi: int) -> void:
-	if quoi == NOTIFICATION_DRAG_END and _mode_drag:
+	if quoi == NOTIFICATION_DRAG_END and _mode_drag and not _depot_fait:
 		# La recherche de cible de depot de Godot n'atteint pas les
-		# Controls de notre CanvasLayer (can_drop_data jamais appele,
-		# constate en fenetre reelle) : on depose SOI-MEME ici, a la
-		# position reelle de la souris, sauf relachement sur le panneau.
+		# Controls de notre CanvasLayer : depot autonome ici, a la
+		# DERNIERE position connue (fiable), sauf sur le panneau.
+		_depot_fait = true
 		var donnee: Variant = get_viewport().gui_get_drag_data()
-		var pos: Vector2 = get_viewport().get_mouse_position()
+		var pos: Vector2 = (navire as Node).derniere_pos_souris()
 		if donnee is Dictionary and donnee.has("fio") \
 				and not (navire as Node).sur_panneau(pos):
 			(navire as Node).forcer_entree(donnee["fio"])

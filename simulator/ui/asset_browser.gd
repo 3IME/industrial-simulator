@@ -20,6 +20,7 @@ var _fantome: MeshInstance3D = null
 var _attrapeur: Control = null
 var _monde: Node3D = null
 var _entree_courante: Dictionary = {}
+var _derniere_pos_souris := Vector2.ZERO
 
 ## Vignette draggable : clic = mode manuel, glisser = drag GUI.
 class VignetteAsset:
@@ -273,19 +274,20 @@ func _process(_delta: float) -> void:
 		_diag_drag = true
 		_diag_dragasset()
 	if get_viewport().gui_is_dragging():
+		_derniere_pos_souris = get_viewport().get_mouse_position()
 		if not _attrapeur.visible:
 			_attrapeur.armer_drag()
 		# suivi garanti du fantome pendant TOUT le vol, meme si
 		# _can_drop_data n'est pas sollicite par le drag natif
 		if not _entree_courante.is_empty():
-			_maj_fantome(get_viewport().get_mouse_position())
+			_maj_fantome(_derniere_pos_souris)
 	elif _attrapeur._mode_drag:
-		# le drag vient de se terminer (relachement) : depot autonome
-		# a la position reelle de la souris — ce chemin ne depend
-		# d'aucune notification ni de la recherche de cible de Godot
-		var pos_relachement := get_viewport().get_mouse_position()
-		if not _entree_courante.is_empty() and not sur_panneau(pos_relachement):
-			deposer(pos_relachement)
+		# le drag vient de se terminer : depot autonome a la DERNIERE
+		# position connue (get_mouse_position peut etre remis a zero
+		# par Godot au moment ou le drag natif se termine)
+		if not _entree_courante.is_empty() \
+				and not sur_panneau(_derniere_pos_souris):
+			deposer(_derniere_pos_souris)
 		_attrapeur.terminer()
 	if not _panneau.visible or _file_apercus.is_empty() or _rendu == null:
 		return
@@ -385,6 +387,13 @@ func _maj_fantome(position_ecran: Vector2) -> void:
 func deposer(position_ecran: Vector2) -> void:
 	if not _entree_courante.is_empty() and _monde != null:
 		var mesh = load("res://" + _entree_courante["obj"])
+		var point_dep := _position_sol(position_ecran)
+		if point_dep == Vector3.ZERO:
+			# raycast rate (souris hors sol/ciel) : ne JAMAIS deposer
+			# d'objet invisible a l'origine
+			print("FIO : raycast rate a ", position_ecran, " — depot ignore")
+			annuler()
+			return
 		if mesh is Mesh:
 			var instance := MeshInstance3D.new()
 			instance.mesh = mesh
@@ -392,13 +401,13 @@ func deposer(position_ecran: Vector2) -> void:
 				var mat = load("res://" + _entree_courante["tres"])
 				if mat is Material:
 					instance.material_override = mat
-			instance.position = _position_sol(position_ecran)
+			instance.position = point_dep
 			_monde.add_child(instance)
 			# collision solide : box statique alignee sur l'AABB reelle
 			# (le visuel et sa hitbox partagent le meme noeud)
 			var boite: AABB = mesh.get_aabb()
 			var corps := StaticBody3D.new()
-			corps.position = instance.position + boite.get_center()
+			corps.position = point_dep + boite.get_center()
 			var forme := CollisionShape3D.new()
 			var cube := BoxShape3D.new()
 			cube.size = boite.size
@@ -413,6 +422,10 @@ func deposer(position_ecran: Vector2) -> void:
 func sur_panneau(position_ecran: Vector2) -> bool:
 	return _panneau.visible \
 		and _panneau.get_global_rect().has_point(position_ecran)
+
+
+func derniere_pos_souris() -> Vector2:
+	return _derniere_pos_souris
 
 
 func forcer_entree(entree: Dictionary) -> void:
