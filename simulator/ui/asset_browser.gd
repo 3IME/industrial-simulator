@@ -29,6 +29,8 @@ var _cache_apercus := {}          # chemin obj -> texture
 func _ready() -> void:
 	layer = 4
 	_monde = get_node_or_null("/root/Main")
+	if _monde == null:
+		_monde = get_tree().current_scene
 	_charger_manifeste()
 	_construire_ui()
 	_construire_rendu()
@@ -37,12 +39,17 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo \
-			and event.keycode == KEY_J:
-		_panneau.visible = not _panneau.visible
-		if not _panneau.visible:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_J:
+			_panneau.visible = not _panneau.visible
+			if not _panneau.visible:
+				annuler()
+				_attrapeur.terminer()
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_ESCAPE and _attrapeur.visible:
 			annuler()
-		get_viewport().set_input_as_handled()
+			_attrapeur.terminer()
+			get_viewport().set_input_as_handled()
 
 
 func _charger_manifeste() -> void:
