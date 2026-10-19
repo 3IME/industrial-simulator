@@ -281,14 +281,21 @@ func _process(_delta: float) -> void:
 		# _can_drop_data n'est pas sollicite par le drag natif
 		if not _entree_courante.is_empty():
 			_maj_fantome(_derniere_pos_souris)
-	elif _attrapeur._mode_drag:
+	elif _attrapeur._mode_drag or not _entree_courante.is_empty():
 		# le drag vient de se terminer : depot autonome a la DERNIERE
 		# position connue (get_mouse_position peut etre remis a zero
 		# par Godot au moment ou le drag natif se termine)
 		if not _entree_courante.is_empty() \
 				and not sur_panneau(_derniere_pos_souris):
 			deposer(_derniere_pos_souris)
+		else:
+			annuler()
 		_attrapeur.terminer()
+	elif _grille.visible or _fantome.visible:
+		# RAMASSE-MIETTES : hors drag et hors mode manuel, aucune
+		# reference ne doit rester affichee — auto-guerison a la
+		# frame suivante quel que soit le chemin qui a oublie
+		annuler()
 	if not _panneau.visible or _file_apercus.is_empty() or _rendu == null:
 		return
 	for _i in range(2):
