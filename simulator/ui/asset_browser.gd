@@ -389,11 +389,28 @@ func deposer(position_ecran: Vector2) -> void:
 		var mesh = load("res://" + _entree_courante["obj"])
 		var point_dep := _position_sol(position_ecran)
 		if point_dep == Vector3.ZERO:
-			# raycast rate (souris hors sol/ciel) : ne JAMAIS deposer
-			# d'objet invisible a l'origine
-			print("FIO : raycast rate a ", position_ecran, " — depot ignore")
-			annuler()
-			return
+			# raycast rate (rayon rasant, HUD, zone sans collision) :
+			# REPLI au plan du sol (y=0) plutot que refuser — sinon le
+			# depot 'disparaissait' silencieusement (retour 3IME)
+			var cam_dep := get_viewport().get_camera_3d()
+			if cam_dep == null or _monde == null:
+				annuler()
+				return
+			var origine_r := cam_dep.project_ray_origin(position_ecran)
+			var direction_r := cam_dep.project_ray_normal(position_ecran)
+			if absf(direction_r.y) < 0.001:
+				annuler()
+				return   # rayon parallele au sol : rien d'utilisable
+			var t_r := -origine_r.y / direction_r.y
+			if t_r <= 0.0 or t_r > 250.0:
+				annuler()
+				return
+			var p_r := origine_r + direction_r * t_r
+			point_dep = Vector3(
+				clampf(snappedf(p_r.x, PAS_AIMANT), -57.0, 61.0),
+				0.01,
+				clampf(snappedf(p_r.z, PAS_AIMANT), -44.0, 44.0))
+			print("FIO : raycast rate — repli au sol en ", point_dep)
 		if mesh is Mesh:
 			var instance := MeshInstance3D.new()
 			instance.mesh = mesh
