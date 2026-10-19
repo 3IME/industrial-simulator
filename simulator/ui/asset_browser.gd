@@ -335,13 +335,18 @@ func _process(_delta: float) -> void:
 func _construire_references_3d() -> void:
 	_grille = MeshInstance3D.new()
 	var plan := PlaneMesh.new()
-	plan.size = Vector2(TUILE, TUILE)
+	# GRILLE FIXE : tout le sol de l'usine (hall 120 x 90 m), la
+	# texture de 4 m se repete (uv1_scale) — petits carreaux 20 cm,
+	# traits epais 1 m. Seul l'OBJET se deplace dessus.
+	plan.size = Vector2(120.0, 90.0)
 	var mat := StandardMaterial3D.new()
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.albedo_texture = _tex_grille()
+	mat.uv1_scale = Vector3(120.0 / TUILE, 90.0 / TUILE, 1.0)
 	plan.material = mat
 	_grille.mesh = plan
+	_grille.position = Vector3(2.0, 0.02, 0.0)   # centre du hall
 	_grille.visible = false
 
 	_fantome = MeshInstance3D.new()
@@ -382,10 +387,11 @@ func montrer_references(entree: Dictionary, position_ecran: Vector2) -> void:
 	_maj_fantome(position_ecran)
 
 
-## Positionne grille + fantome sous la position ecran donnee.
+## Positionne le fantome sous la position ecran donnee, snapped aux
+## intersections des carreaux (20 cm). La grille, fixe, est juste
+## montree pendant le placement.
 func _maj_fantome(position_ecran: Vector2) -> void:
 	var point := _position_sol(position_ecran)
-	_grille.position = point + Vector3(0, 0.02, 0)
 	_fantome.position = point
 	_grille.visible = true
 	_fantome.visible = true
