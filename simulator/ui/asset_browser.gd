@@ -481,11 +481,13 @@ func deposer(position_ecran: Vector2) -> void:
 			mi.mesh = ressource
 			instance = mi
 		if instance != null:
+			# attacher AVANT de mesurer : global_transform invalide
+			# hors arbre (erreur 'is_inside_tree' + boite fausse)
+			_monde.add_child(instance)
+			instance.rotation.y = _angle_fantome
 			var boite: AABB = _boite_de(instance)
 			instance.position = Vector3(point_dep.x,
 				point_dep.y - boite.position.y, point_dep.z)
-			instance.rotation.y = _angle_fantome
-			_monde.add_child(instance)
 			var corps := StaticBody3D.new()
 			corps.position = instance.position + boite.get_center()
 			corps.rotation.y = _angle_fantome
