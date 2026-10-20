@@ -515,6 +515,75 @@ func deposer(position_ecran: Vector2) -> void:
 	annuler()
 
 
+func _sur_evenement_souris(event: InputEvent) -> void:
+	# clic droit : selectionner / deselectionner un objet depose
+	# (visee au centre quand la souris est capturee)
+	if event is InputEventMouseButton and event.pressed \
+			and event.button_index == MOUSE_BUTTON_RIGHT \
+			and not get_viewport().gui_is_dragging():
+		_selectionner_sous_viseur()
+		get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton and event.pressed \
+			and (event.button_index == MOUSE_BUTTON_WHEEL_UP \
+			or event.button_index == MOUSE_BUTTON_WHEEL_DOWN) \
+			and _selection >= 0:
+		var pas := 0.1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -0.1
+		var sel_m: Dictionary = _deposes[_selection]
+		sel_m["mesh"].position.y = maxf(sel_m["mesh"].position.y + pas, 0.01)
+		sel_m["corps"].position.y = maxf(sel_m["corps"].position.y + pas, 0.01)
+		sel_m["surbrillance"].position.y = sel_m["mesh"].position.y
+		get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed \
+			and event.keycode == KEY_DELETE and _selection >= 0:
+		supprimer_selection()
+		get_viewport().set_input_as_handled()
+
+
+func _selectionner_sous_viseur() -> void:
+	var camera := get_viewport().get_camera_3d()
+	if camera == null or _monde == null:
+		return
+	var pos_ecran := get_viewport().get_mouse_position() \
+		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED \
+		else get_viewport().get_visible_rect().size / 2.0
+	var origine := camera.project_ray_origin(pos_ecran)
+	var direction := camera.project_ray_normal(pos_ecran)
+	var requete := PhysicsRayQueryParameters3D.create(
+		origine, origine + direction * 200.0)
+	var impact: Dictionary = _monde.get_world_3d().direct_space_state \
+		.intersect_ray(requete)
+	deselectionner()
+	if impact.is_empty() or not impact.collider.has_meta("fio_indice"):
+		return
+	_selection = int(impact.collider.get_meta("fio_indice"))
+	if _selection >= _deposes.size() or _deposes[_selection].is_empty():
+		_selection = -1
+		return
+	_deposes[_selection]["surbrillance"].visible = true
+	print("FIO selection : ", _deposes[_selection]["nom"],
+		" (R : rotation, molette : hauteur, SUPPR : supprimer)")
+
+
+func deselectionner() -> void:
+	if _selection >= 0 and _selection < _deposes.size() \
+			and not _deposes[_selection].is_empty():
+		_deposes[_selection]["surbrillance"].visible = false
+	_selection = -1
+
+
+func supprimer_selection() -> void:
+	if _selection < 0 or _selection >= _deposes.size() \
+			or _deposes[_selection].is_empty():
+		return
+	var sel_s: Dictionary = _deposes[_selection]
+	print("FIO supprime : ", sel_s["nom"])
+	sel_s["mesh"].queue_free()
+	sel_s["corps"].queue_free()
+	sel_s["surbrillance"].queue_free()
+	_deposes[_selection] = {}
+	_selection = -1
+
+
 func sur_panneau(position_ecran: Vector2) -> bool:
 	return _panneau.visible \
 		and _panneau.get_global_rect().has_point(position_ecran)
