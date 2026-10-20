@@ -21,6 +21,9 @@ var _attrapeur: Control = null
 var _monde: Node3D = null
 var _entree_courante: Dictionary = {}
 var _derniere_pos_souris := Vector2.ZERO
+var _angle_fantome := 0.0            # rotation du fantome (R, pas 45)
+var _deposes: Array = []             # [{mesh, corps, surbrillance}]
+var _selection := -1                 # indice dans _deposes (-1 : aucun)
 
 ## Vignette draggable : clic = mode manuel, glisser = drag GUI.
 class VignetteAsset:
@@ -65,6 +68,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	_sur_evenement_souris(event)
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_J:
 			_panneau.visible = not _panneau.visible
@@ -78,6 +82,15 @@ func _unhandled_input(event: InputEvent) -> void:
 				_attrapeur.terminer()
 				if not _attrapeur.visible:
 					Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_R:
+			if _attrapeur.visible and not _entree_courante.is_empty():
+				_angle_fantome = fmod(_angle_fantome + PI / 4.0, TAU)
+				_fantome.rotation.y = _angle_fantome
+			elif _selection >= 0:
+				var sel_r: Dictionary = _deposes[_selection]
+				sel_r["mesh"].rotation.y += PI / 12.0   # 15 degres
+				sel_r["corps"].rotation.y = sel_r["mesh"].rotation.y
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ESCAPE and _attrapeur.visible:
 			if get_viewport().gui_is_dragging():
@@ -432,21 +445,108 @@ func deposer(position_ecran: Vector2) -> void:
 				if mat is Material:
 					instance.material_override = mat
 			instance.position = point_dep
+			instance.rotation.y = _angle_fantome
 			_monde.add_child(instance)
 			# collision solide : box statique alignee sur l'AABB reelle
-			# (le visuel et sa hitbox partagent le meme noeud)
 			var boite: AABB = mesh.get_aabb()
 			var corps := StaticBody3D.new()
 			corps.position = point_dep + boite.get_center()
+			corps.rotation.y = _angle_fantome
 			var forme := CollisionShape3D.new()
 			var cube := BoxShape3D.new()
 			cube.size = boite.size
 			forme.shape = cube
 			corps.add_child(forme)
+			corps.set_meta("fio_indice", _deposes.size())
 			_monde.add_child(corps)
+			# surbrillance jaune (selection), masquee par defaut
+			var cadre := MeshInstance3D.new()
+			var cube_sel := BoxMesh.new()
+			cube_sel.size = boite.size + Vector3(0.06, 0.06, 0.06)
+			var mat_sel := StandardMaterial3D.new()
+			mat_sel.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mat_sel.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			mat_sel.albedo_color = Color(1.0, 0.85, 0.1, 0.35)
+			cube_sel.material = mat_sel
+			cadre.mesh = cube_sel
+			cadre.position = point_dep + boite.get_center()
+			cadre.rotation.y = _angle_fantome
+			cadre.visible = false
+			_monde.add_child(cadre)
+			_deposes.append({"mesh": instance, "corps": corps,
+				"surbrillance": cadre, "nom": _entree_courante["nom"]})
 			print("Asset FIO depose : ", _entree_courante["nom"],
-				" (collision ", boite.size, ")")
+				" en ", point_dep, " (collision ", boite.size, ")")
 	annuler()
+
+
+func _sur_evenement_souris(event: InputEvent) -> void:
+	# clic droit : selectionner / deselectionner un objet FIO depose
+	# (visee au centre quand la souris est capturee)
+	if event is InputEventMouseButton and event.pressed \
+			and event.button_index == MOUSE_BUTTON_RIGHT \
+			and not get_viewport().gui_is_dragging():
+		_selectionner_sous_viseur()
+		get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton and event.pressed \
+			and (event.button_index == MOUSE_BUTTON_WHEEL_UP \
+			or event.button_index == MOUSE_BUTTON_WHEEL_DOWN) \
+			and _selection >= 0:
+		var pas := 0.1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -0.1
+		var sel_m: Dictionary = _deposes[_selection]
+		sel_m["mesh"].position.y = maxf(
+			sel_m["mesh"].position.y + pas, 0.01)
+		sel_m["corps"].position.y = maxf(
+			sel_m["corps"].position.y + pas, 0.01)
+		sel_m["surbrillance"].position.y = sel_m["mesh"].position.y
+		get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed \
+			and event.keycode == KEY_DELETE and _selection >= 0:
+		supprimer_selection()
+		get_viewport().set_input_as_handled()
+
+
+func _selectionner_sous_viseur() -> void:
+	var camera := get_viewport().get_camera_3d()
+	if camera == null or _monde == null:
+		return
+	var pos_ecran := get_viewport().get_mouse_position() \
+		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED \
+		else get_viewport().get_visible_rect().size / 2.0
+	var origine := camera.project_ray_origin(pos_ecran)
+	var direction := camera.project_ray_normal(pos_ecran)
+	var requete := PhysicsRayQueryParameters3D.create(
+		origine, origine + direction * 200.0)
+	var impact: Dictionary = _monde.get_world_3d().direct_space_state \
+		.intersect_ray(requete)
+	deselectionner()
+	if impact.is_empty() or not impact.collider.has_meta("fio_indice"):
+		return
+	_selection = int(impact.collider.get_meta("fio_indice"))
+	if _selection >= _deposes.size():
+		_selection = -1
+		return
+	_deposes[_selection]["surbrillance"].visible = true
+	print("FIO selection : ", _deposes[_selection]["nom"],
+		" (R : rotation, molette : hauteur, SUPPR : supprimer)")
+
+
+func deselectionner() -> void:
+	if _selection >= 0 and _selection < _deposes.size():
+		_deposes[_selection]["surbrillance"].visible = false
+	_selection = -1
+
+
+func supprimer_selection() -> void:
+	if _selection < 0 or _selection >= _deposes.size():
+		return
+	var sel_s: Dictionary = _deposes[_selection]
+	print("FIO supprime : ", sel_s["nom"])
+	sel_s["mesh"].queue_free()
+	sel_s["corps"].queue_free()
+	sel_s["surbrillance"].queue_free()
+	_deposes[_selection] = {}   # marqueur vide : les indices restent stables
+	_selection = -1
 
 
 func sur_panneau(position_ecran: Vector2) -> bool:
@@ -486,5 +586,7 @@ func _get_drag_data_vignette(vignette: Control, _point: Vector2) -> Variant:
 
 func annuler() -> void:
 	_entree_courante = {}
+	_angle_fantome = 0.0
+	_fantome.rotation.y = 0.0
 	_grille.visible = false
 	_fantome.visible = false
