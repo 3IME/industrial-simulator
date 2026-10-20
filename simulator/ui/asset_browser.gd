@@ -328,10 +328,10 @@ func _process(_delta: float) -> void:
 		else:
 			annuler()
 		_attrapeur.terminer()
-	elif _grille.visible or _fantome.visible:
-		# RAMASSE-MIETTES : hors drag et hors mode manuel, aucune
-		# reference ne doit rester affichee — auto-guerison a la
-		# frame suivante quel que soit le chemin qui a oublie
+	elif _selection < 0 and (_grille.visible or _fantome.visible):
+		# RAMASSE-MIETTES : hors drag, hors mode manuel ET hors
+		# SELECTION (la grille reste affichee tant qu un objet est
+		# selectionne en jaune) — auto-guerison a la frame suivante
 		annuler()
 	if not _panneau.visible or _file_apercus.is_empty() or _rendu == null:
 		return
