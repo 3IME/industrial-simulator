@@ -268,9 +268,36 @@ func _ready() -> void:
         belt_length = conveyor.length
     lod_manager = LodManager.new()
     add_child(lod_manager)
+    # Rideau de chargement : la construction procedurale (100+ load
+    # synchrones) bloquait l'affichage -> ecran gris apres le splash.
+    # Un voile sombre + etape en cours, la main rendue au moteur entre
+    # chaque gros build (le label reste anime).
+    var couche_rideau := CanvasLayer.new()
+    couche_rideau.layer = 100
+    var rideau := ColorRect.new()
+    rideau.color = Color(0.02, 0.02, 0.05)
+    rideau.set_anchors_preset(Control.PRESET_FULL_RECT)
+    var etiquette_charge := Label.new()
+    etiquette_charge.text = "Construction de l'usine..."
+    etiquette_charge.set_anchors_preset(Control.PRESET_CENTER)
+    etiquette_charge.add_theme_font_size_override("font_size", 26)
+    etiquette_charge.add_theme_color_override("font_color", Color(0.85, 0.9, 1.0))
+    rideau.add_child(etiquette_charge)
+    couche_rideau.add_child(rideau)
+    add_child(couche_rideau)
+    await get_tree().process_frame
+
+    etiquette_charge.text = "Hall, murs et mezzanine..."
+    await get_tree().process_frame
     _build_hall(belt_length)
+    await get_tree().process_frame
+    etiquette_charge.text = "Convoyeur et robot..."
+    await get_tree().process_frame
     _build_visuals()
     _spawn_robot()
+    await get_tree().process_frame
+    etiquette_charge.text = "Personnage et reseau..."
+    await get_tree().process_frame
     _spawn_player()
     _configurer_avatars_reseau()
     # Navigateur d'assets (touche J) : disponible EN SOLO aussi
@@ -339,6 +366,13 @@ func _ready() -> void:
     _annonce_player = AudioStreamPlayer.new()
     _annonce_player.volume_db = -4.0
     add_child(_annonce_player)
+    # retirer le rideau en fondu (une frame pour laisser l'usine se
+    # dessiner une premiere fois dessous)
+    await get_tree().process_frame
+    var fondu_rideau := create_tween()
+    fondu_rideau.tween_property(rideau, "modulate:a", 0.0, 0.5)
+    fondu_rideau.tween_callback(couche_rideau.queue_free)
+
     if capture_mode:
         _capture_and_quit()
 
