@@ -273,7 +273,9 @@ func _ready() -> void:
     var couche_rideau := CanvasLayer.new()
     couche_rideau.layer = 100
     var rideau := ColorRect.new()
-    rideau.color = Color(0.02, 0.02, 0.05)
+    # voile TRANSLUCIDE : l'usine se construit VISIBLE derriere le
+    # label (pas d'ecran noir 'au milieu de nulle part')
+    rideau.color = Color(0.02, 0.02, 0.05, 0.35)
     rideau.set_anchors_preset(Control.PRESET_FULL_RECT)
     var etiquette_charge := Label.new()
     etiquette_charge.text = "Construction de l'usine..."
