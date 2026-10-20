@@ -2296,6 +2296,10 @@ func _build_securite_signs() -> void:
     for zc_haas_plaque in [-18.0, -28.0, -38.0]:
         _place_prop(PROP_DECK_PLATE,
             Vector3(39.0, 0.0, zc_haas_plaque + 1.17 + 1.5), Vector3.ZERO, 1.0)
+    # ... et devant la VS-3 (4e machine, collision z -31,35..-24,65) :
+    # plaque collee a sa face sud
+    _place_prop(PROP_DECK_PLATE,
+        Vector3(29.0, 0.0, -24.65 + 1.5), Vector3.ZERO, 1.0)
     _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
     _placer_rack()   # magasin de toles KASTO 96 m, bande sud du hall
     # Moteur electrique sorti du presentoir : pose en (55, -30), sans
