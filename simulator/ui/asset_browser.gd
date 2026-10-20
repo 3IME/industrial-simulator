@@ -22,6 +22,7 @@ var _monde: Node3D = null
 var _entree_courante: Dictionary = {}
 var _derniere_pos_souris := Vector2.ZERO
 var _angle_fantome := 0.0            # rotation du fantome (R, pas 45)
+var _fantome_cle := ""               # chemin du fantome charge
 var _deposes: Array = []             # [{mesh, corps, surbrillance}]
 var _selection := -1                 # indice dans _deposes (-1 : aucun)
 
@@ -247,7 +248,7 @@ func _construire_rendu() -> void:
 	env.ambient_light_energy = 1.0
 	ambiance.environment = env
 	_rendu.add_child(ambiance)
-	_maquette = MeshInstance3D.new()
+	_maquette = Node3D.new()
 	_rendu.add_child(_maquette)
 
 
@@ -323,15 +324,18 @@ func _process(_delta: float) -> void:
 		if _cache_apercus.has(chemin_obj):
 			vignette.icon = _cache_apercus[chemin_obj]
 			continue
-		var mesh = load("res://" + chemin_obj)
-		if mesh is Mesh:
-			_maquette.mesh = mesh
-			if entree.has("tres"):
-				var mat = load("res://" + entree["tres"])
-				if mat is Material:
-					_maquette.material_override = mat
-			# recadrer la camera sur la boite reelle du mesh
-			var boite: AABB = mesh.get_aabb()
+		for enfant_p in _maquette.get_children():
+			enfant_p.queue_free()
+		var ressource_p = load("res://" + chemin_obj)
+		var echantillon: Node3D = null
+		if ressource_p is PackedScene:
+			echantillon = ressource_p.instantiate()
+			_maquette.add_child(echantillon)
+		elif ressource_p is Mesh:
+			_maquette.mesh = ressource_p
+			echantillon = _maquette
+		if echantillon != null:
+			var boite: AABB = _boite_de(echantillon)
 			var rayon := boite.size.length() * 0.5
 			var echelle := 1.4 / maxf(rayon, 0.001)
 			_maquette.scale = Vector3.ONE * echelle
@@ -342,7 +346,8 @@ func _process(_delta: float) -> void:
 					_rendu.get_texture().get_image())
 				_cache_apercus[chemin_obj] = texture
 				vignette.icon = texture
-		_maquette.mesh = null
+		if _maquette.get_child_count() == 0:
+			_maquette.mesh = null
 
 
 func _construire_references_3d() -> void:
@@ -362,11 +367,7 @@ func _construire_references_3d() -> void:
 	_grille.position = Vector3(2.0, 0.02, 0.0)   # centre du hall
 	_grille.visible = false
 
-	_fantome = MeshInstance3D.new()
-	var mat_f := StandardMaterial3D.new()
-	mat_f.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat_f.albedo_color = Color(0.85, 0.9, 1.0, 0.5)
-	_fantome.material_override = mat_f
+	_fantome = Node3D.new()
 	_fantome.visible = false
 
 	if _monde != null:
@@ -394,10 +395,45 @@ func _position_sol(position_ecran: Vector2) -> Vector3:
 
 func montrer_references(entree: Dictionary, position_ecran: Vector2) -> void:
 	_entree_courante = entree
-	var mesh = load("res://" + entree["obj"])
-	if mesh is Mesh:
-		_fantome.mesh = mesh
+	_charger_fantome(entree)
 	_maj_fantome(position_ecran)
+
+
+## Charge la ressource du fantome (Mesh ou PackedScene) une fois par
+## objet (cle = chemin) ; le fantome est un Node3D porteur.
+func _charger_fantome(entree: Dictionary) -> void:
+	var chemin: String = entree["obj"]
+	if _fantome_cle == chemin:
+		return
+	_fantome_cle = chemin
+	for enfant in _fantome.get_children():
+		enfant.queue_free()
+	var ressource = load("res://" + chemin)
+	if ressource is PackedScene:
+		_fantome.add_child(ressource.instantiate())
+	elif ressource is Mesh:
+		var mi := MeshInstance3D.new()
+		mi.mesh = ressource
+		_fantome.add_child(mi)
+
+
+## AABB locale d'un noeud (ses meshes, echelle/rotation incluses).
+func _boite_de(noeud: Node3D) -> AABB:
+	var acc := AABB()
+	var premier := true
+	for m in noeud.find_children("*", "MeshInstance3D", true, false):
+		if m.mesh == null:
+			continue
+		var b: AABB = m.global_transform * m.mesh.get_aabb()
+		if premier:
+			acc = b
+			premier = false
+		else:
+			acc = acc.merge(b)
+	if premier:
+		return AABB(Vector3(-0.25, -0.25, -0.25), Vector3(0.5, 0.5, 0.5))
+	acc.position -= noeud.global_transform.origin
+	return acc
 
 
 ## Positionne le fantome sous la position ecran donnee, snapped aux
@@ -405,28 +441,27 @@ func montrer_references(entree: Dictionary, position_ecran: Vector2) -> void:
 ## montree pendant le placement.
 func _maj_fantome(position_ecran: Vector2) -> void:
 	var point := _position_sol(position_ecran)
-	_fantome.position = point
+	_fantome.position = Vector3(point.x,
+		point.y - _boite_de(_fantome).position.y, point.z)
 	_grille.visible = true
 	_fantome.visible = true
 
 
 func deposer(position_ecran: Vector2) -> void:
 	if not _entree_courante.is_empty() and _monde != null:
-		var mesh = load("res://" + _entree_courante["obj"])
+		var ressource = load("res://" + _entree_courante["obj"])
 		var point_dep := _position_sol(position_ecran)
 		if point_dep == Vector3.ZERO:
-			# raycast rate (rayon rasant, HUD, zone sans collision) :
-			# REPLI au plan du sol (y=0) plutot que refuser — sinon le
-			# depot 'disparaissait' silencieusement (retour 3IME)
+			# raycast rate (rayon rasant, HUD) : REPLI au plan du sol
 			var cam_dep := get_viewport().get_camera_3d()
-			if cam_dep == null or _monde == null:
+			if cam_dep == null:
 				annuler()
 				return
 			var origine_r := cam_dep.project_ray_origin(position_ecran)
 			var direction_r := cam_dep.project_ray_normal(position_ecran)
 			if absf(direction_r.y) < 0.001:
 				annuler()
-				return   # rayon parallele au sol : rien d'utilisable
+				return
 			var t_r := -origine_r.y / direction_r.y
 			if t_r <= 0.0 or t_r > 250.0:
 				annuler()
@@ -437,20 +472,21 @@ func deposer(position_ecran: Vector2) -> void:
 				0.01,
 				clampf(snappedf(p_r.z, PAS_AIMANT), -44.0, 44.0))
 			print("FIO : raycast rate — repli au sol en ", point_dep)
-		if mesh is Mesh:
-			var instance := MeshInstance3D.new()
-			instance.mesh = mesh
-			if _entree_courante.has("tres"):
-				var mat = load("res://" + _entree_courante["tres"])
-				if mat is Material:
-					instance.material_override = mat
-			instance.position = point_dep
+		var instance: Node3D = null
+		if ressource is PackedScene:
+			instance = ressource.instantiate()
+		elif ressource is Mesh:
+			var mi := MeshInstance3D.new()
+			mi.mesh = ressource
+			instance = mi
+		if instance != null:
+			var boite: AABB = _boite_de(instance)
+			instance.position = Vector3(point_dep.x,
+				point_dep.y - boite.position.y, point_dep.z)
 			instance.rotation.y = _angle_fantome
 			_monde.add_child(instance)
-			# collision solide : box statique alignee sur l'AABB reelle
-			var boite: AABB = mesh.get_aabb()
 			var corps := StaticBody3D.new()
-			corps.position = point_dep + boite.get_center()
+			corps.position = instance.position + boite.get_center()
 			corps.rotation.y = _angle_fantome
 			var forme := CollisionShape3D.new()
 			var cube := BoxShape3D.new()
@@ -459,7 +495,6 @@ func deposer(position_ecran: Vector2) -> void:
 			corps.add_child(forme)
 			corps.set_meta("fio_indice", _deposes.size())
 			_monde.add_child(corps)
-			# surbrillance jaune (selection), masquee par defaut
 			var cadre := MeshInstance3D.new()
 			var cube_sel := BoxMesh.new()
 			cube_sel.size = boite.size + Vector3(0.06, 0.06, 0.06)
@@ -469,84 +504,15 @@ func deposer(position_ecran: Vector2) -> void:
 			mat_sel.albedo_color = Color(1.0, 0.85, 0.1, 0.35)
 			cube_sel.material = mat_sel
 			cadre.mesh = cube_sel
-			cadre.position = point_dep + boite.get_center()
+			cadre.position = instance.position + boite.get_center()
 			cadre.rotation.y = _angle_fantome
 			cadre.visible = false
 			_monde.add_child(cadre)
 			_deposes.append({"mesh": instance, "corps": corps,
 				"surbrillance": cadre, "nom": _entree_courante["nom"]})
-			print("Asset FIO depose : ", _entree_courante["nom"],
-				" en ", point_dep, " (collision ", boite.size, ")")
+			print("Asset depose : ", _entree_courante["nom"],
+				" en ", instance.position, " (collision ", boite.size, ")")
 	annuler()
-
-
-func _sur_evenement_souris(event: InputEvent) -> void:
-	# clic droit : selectionner / deselectionner un objet FIO depose
-	# (visee au centre quand la souris est capturee)
-	if event is InputEventMouseButton and event.pressed \
-			and event.button_index == MOUSE_BUTTON_RIGHT \
-			and not get_viewport().gui_is_dragging():
-		_selectionner_sous_viseur()
-		get_viewport().set_input_as_handled()
-	elif event is InputEventMouseButton and event.pressed \
-			and (event.button_index == MOUSE_BUTTON_WHEEL_UP \
-			or event.button_index == MOUSE_BUTTON_WHEEL_DOWN) \
-			and _selection >= 0:
-		var pas := 0.1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -0.1
-		var sel_m: Dictionary = _deposes[_selection]
-		sel_m["mesh"].position.y = maxf(
-			sel_m["mesh"].position.y + pas, 0.01)
-		sel_m["corps"].position.y = maxf(
-			sel_m["corps"].position.y + pas, 0.01)
-		sel_m["surbrillance"].position.y = sel_m["mesh"].position.y
-		get_viewport().set_input_as_handled()
-	elif event is InputEventKey and event.pressed \
-			and event.keycode == KEY_DELETE and _selection >= 0:
-		supprimer_selection()
-		get_viewport().set_input_as_handled()
-
-
-func _selectionner_sous_viseur() -> void:
-	var camera := get_viewport().get_camera_3d()
-	if camera == null or _monde == null:
-		return
-	var pos_ecran := get_viewport().get_mouse_position() \
-		if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED \
-		else get_viewport().get_visible_rect().size / 2.0
-	var origine := camera.project_ray_origin(pos_ecran)
-	var direction := camera.project_ray_normal(pos_ecran)
-	var requete := PhysicsRayQueryParameters3D.create(
-		origine, origine + direction * 200.0)
-	var impact: Dictionary = _monde.get_world_3d().direct_space_state \
-		.intersect_ray(requete)
-	deselectionner()
-	if impact.is_empty() or not impact.collider.has_meta("fio_indice"):
-		return
-	_selection = int(impact.collider.get_meta("fio_indice"))
-	if _selection >= _deposes.size():
-		_selection = -1
-		return
-	_deposes[_selection]["surbrillance"].visible = true
-	print("FIO selection : ", _deposes[_selection]["nom"],
-		" (R : rotation, molette : hauteur, SUPPR : supprimer)")
-
-
-func deselectionner() -> void:
-	if _selection >= 0 and _selection < _deposes.size():
-		_deposes[_selection]["surbrillance"].visible = false
-	_selection = -1
-
-
-func supprimer_selection() -> void:
-	if _selection < 0 or _selection >= _deposes.size():
-		return
-	var sel_s: Dictionary = _deposes[_selection]
-	print("FIO supprime : ", sel_s["nom"])
-	sel_s["mesh"].queue_free()
-	sel_s["corps"].queue_free()
-	sel_s["surbrillance"].queue_free()
-	_deposes[_selection] = {}   # marqueur vide : les indices restent stables
-	_selection = -1
 
 
 func sur_panneau(position_ecran: Vector2) -> bool:
@@ -588,5 +554,8 @@ func annuler() -> void:
 	_entree_courante = {}
 	_angle_fantome = 0.0
 	_fantome.rotation.y = 0.0
+	_fantome_cle = ""
+	for enfant in _fantome.get_children():
+		enfant.queue_free()
 	_grille.visible = false
 	_fantome.visible = false
