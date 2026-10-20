@@ -44,12 +44,10 @@ const WORKER_MODEL := "res://assets/characters/worker.glb"
 const PROF_MODEL := "res://assets/characters/prof.glb"
 const PROP_GONDOLA := "res://assets/props/gondola.glb"
 const PROP_MOTOR_COMPRESSOR := "res://assets/props/motor_compressor.glb"
-const PROP_IRON_MINER := "res://assets/props/iron_miner.glb"
 const PROP_BRIDGE := "res://assets/props/bridge_fragment.glb"
 const PROP_TOOL_TROLLEYS := "res://assets/props/tool_trolleys.glb"
 const PROP_STRETCHFAB := "res://assets/props/stretchfab.glb"
 const PROP_STORAGE_CART := "res://assets/props/storage_cart.glb"
-const PROP_VOXEL_MACHINE := "res://assets/props/voxel_machine.glb"
 const PROP_VOXEL_MACHINE_2 := "res://assets/props/voxel_machine_2.glb"
 const PROP_MODULAR_CONVEYOR := "res://assets/props/modular_conveyor.glb"
 const PROP_OFFICE_CHAIR := "res://assets/props/office_chair.glb"
@@ -136,8 +134,8 @@ static func heavy_resources() -> Array:
         "res://assets/textures/fire_01.png",
         EXTINGUISHER_MODEL, EXTINGUISHER_SIGN,
         PROP_PENDANT_LAMP, PROP_FLUO_FIXTURE, PROP_SECURITY_DOOR,
-        WORKER_MODEL, PROF_MODEL, PROP_GONDOLA, PROP_IRON_MINER, PROP_BRIDGE,
-        PROP_VOXEL_MACHINE, PROP_VOXEL_MACHINE_2, PROP_MODULAR_CONVEYOR,
+        WORKER_MODEL, PROF_MODEL, PROP_GONDOLA, PROP_BRIDGE,
+        PROP_VOXEL_MACHINE_2, PROP_MODULAR_CONVEYOR,
         PROP_OFFICE_CHAIR, PROP_GAME, PROP_DUMPSTER, PROP_ELEVATOR,
     ]
 
@@ -2291,6 +2289,11 @@ func _build_securite_signs() -> void:
     _placer_haas(-28.0)   # premiere machine
     _placer_haas(-18.0)   # deuxieme machine, 10 m devant (sud)
     _placer_haas(-38.0)   # troisieme machine, 10 m derriere (nord)
+    # Plaque de caillebotis (2 x 3 m) devant CHAQUE Haas, face sud :
+    # colle au bord de la machine (zc + 1,17), sol metallique de service
+    for zc_haas_plaque in [-18.0, -28.0, -38.0]:
+        _place_prop(PROP_DECK_PLATE,
+            Vector3(39.0, 0.0, zc_haas_plaque + 1.17 + 1.5), Vector3.ZERO, 1.0)
     _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
     _placer_rack()   # magasin de toles KASTO 96 m, bande sud du hall
     # Moteur electrique sorti du presentoir : pose en (55, -30), sans
@@ -2451,10 +2454,6 @@ func _build_props() -> void:
 ## tests/measure_props.gd (toutes debout a l'identite, echelle 1).
 func _build_expo() -> void:
     var items := [
-        {"path": PROP_IRON_MINER, "nom": "Mineur de fer automatique",
-         "x": -36.0, "y": 0.76, "col": Vector3(1.9, 1.51, 1.33)},
-        {"path": PROP_VOXEL_MACHINE, "nom": "Machine industrielle voxel 1",
-         "x": -29.0, "y": 0.67, "col": Vector3(1.9, 1.35, 1.9)},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -10.0), Vector3.ZERO)
@@ -3389,15 +3388,6 @@ func _build_office_cabin() -> void:
     # sur le sol de l'usine).
     _add_static_box(Vector3(-54.9, 1.1, -32.5),
         Vector3(1.2, 2.2, 0.1), "bureau")
-    var label := Label3D.new()
-    label.text = "Bureau de chantier"
-    label.font_size = 48
-    label.modulate = Color(1.0, 0.95, 0.8)
-    label.outline_size = 12
-    label.outline_modulate = Color(0.05, 0.05, 0.08)
-    label.position = Vector3(-54.9, 0.02, -34.0 + 2.83 / 2.0 + 1.1)
-    label.rotation = Vector3(-PI / 2.0, 0.0, 0.0)
-    add_child(label)
 
 
 ## Deuxieme ligne d'exposition (z = -16) : modeles fournis en unitees
