@@ -74,15 +74,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_J:
 			_panneau.visible = not _panneau.visible
 			if _panneau.visible:
-				# liberer la souris : sans cela les clics/glissers de
-				# vignettes n'atteignent jamais l'interface (souris
-				# capturee par le controleur FPS)
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			else:
 				annuler()
 				_attrapeur.terminer()
 				if not _attrapeur.visible:
 					Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			_maj_blocage_joueur()
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_R:
 			if _attrapeur.visible and not _entree_courante.is_empty():
@@ -394,6 +392,10 @@ func _position_sol(position_ecran: Vector2) -> Vector3:
 		snappedf(impact.position.z, PAS_AIMANT))
 
 
+func maj_blocage() -> void:
+	_maj_blocage_joueur()
+
+
 func montrer_references(entree: Dictionary, position_ecran: Vector2) -> void:
 	_entree_courante = entree
 	_charger_fantome(entree)
@@ -580,6 +582,8 @@ func _selectionner_sous_viseur() -> void:
 		_selection = -1
 		return
 	_deposes[_selection]["surbrillance"].visible = true
+	_grille.visible = true
+	_maj_blocage_joueur()
 	print("FIO selection : ", _deposes[_selection]["nom"],
 		" (R : rotation, molette : hauteur, SUPPR : supprimer)")
 
@@ -602,6 +606,9 @@ func deselectionner() -> void:
 			and not _deposes[_selection].is_empty():
 		_deposes[_selection]["surbrillance"].visible = false
 	_selection = -1
+	if _entree_courante.is_empty() and not _attrapeur.visible:
+		_grille.visible = false
+	_maj_blocage_joueur()
 
 
 func supprimer_selection() -> void:
@@ -615,6 +622,17 @@ func supprimer_selection() -> void:
 	sel_s["surbrillance"].queue_free()
 	_deposes[_selection] = {}
 	_selection = -1
+	_grille.visible = false
+	_maj_blocage_joueur()
+
+
+## Bloque/libere le personnage (fleches, physique) pendant les
+## operations du navigateur : plus de 'personnage qui bouge avec
+## l'objet'.
+func _maj_blocage_joueur() -> void:
+	var bloquer := _attrapeur.visible or _selection >= 0 or _panneau.visible
+	get_tree().call_group("joueur", "set_physics_process", not bloquer)
+	get_tree().call_group("joueur", "set_process_input", not bloquer)
 
 
 func panneau_ouvert() -> bool:
@@ -646,9 +664,7 @@ func masquer_references() -> void:
 func _get_drag_data_vignette(vignette: Control, _point: Vector2) -> Variant:
 	var entree: Dictionary = vignette.get_meta("fio")
 	_entree_courante = entree
-	var mesh = load("res://" + entree["obj"])
-	if mesh is Mesh:
-		_fantome.mesh = mesh
+	_charger_fantome(entree)
 	_maj_fantome(get_viewport().get_mouse_position())
 	var apercu := Label.new()
 	apercu.text = vignette.text

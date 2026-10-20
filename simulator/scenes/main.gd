@@ -273,6 +273,9 @@ func _ready() -> void:
     _spawn_robot()
     _spawn_player()
     _configurer_avatars_reseau()
+    # Navigateur d'assets (touche J) : disponible EN SOLO aussi
+    var navigateur := preload("res://ui/asset_browser.gd").new()
+    add_child(navigateur)
     # Pas metalliques sur la mezzanine et la plaque de caillebotis
     if player_node != null and player_node.has_method("set_zones_metal"):
         var zones_metalliques: Array[AABB] = [
@@ -1095,9 +1098,6 @@ func _configurer_avatars_reseau() -> void:
     add_child(chat)
     var voix := preload("res://ui/voix.gd").new()
     add_child(voix)
-    # Navigateur d'assets FIO (touche J) : disponible aussi en solo
-    var navigateur := preload("res://ui/asset_browser.gd").new()
-    add_child(navigateur)
     # Le serveur (pair 1) est deja pret ; cote eleve on le declare
     # immediatement, et chacun signale sa propre scene prete.
     if not NetworkSession.est_hote():
@@ -1264,6 +1264,7 @@ func _spawn_player() -> void:
         var decal := float(multiplayer.get_unique_id() % 7)
         player.position += Vector3(decal - 3.0, 0.0, 2.5)
     player_node = player
+    player.add_to_group("joueur")
     add_child(player)
 
 

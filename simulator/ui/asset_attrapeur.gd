@@ -22,6 +22,7 @@ func demarrer_manuel(donnee: Dictionary) -> void:
 	_mode_drag = false
 	_donnee = donnee
 	visible = true
+	(navire as Node).maj_blocage()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	# pas de position initiale : la grille n'apparait qu'au premier
 	# mouvement de souris (sinon elle surgissait pres du panneau)
@@ -69,6 +70,7 @@ func terminer() -> void:
 	_mode_drag = false
 	_depot_fait = false
 	visible = false
+	(navire as Node).maj_blocage()
 	(navire as Node).masquer_references()
 	if not (navire as Node).drag_gui_actif() 			and not (navire as Node).panneau_ouvert():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
