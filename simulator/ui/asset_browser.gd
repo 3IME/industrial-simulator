@@ -68,6 +68,30 @@ func _ready() -> void:
 	_panneau.visible = false
 
 
+func _input(event: InputEvent) -> void:
+	# fleches : deplacement de l'objet selectionne — traite AVANT le
+	# GUI sinon le ScrollContainer de la liste les intercepte
+	if event is InputEventKey and event.pressed and not event.echo \
+			and _selection >= 0 \
+			and [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN].has(event.keycode):
+		var sel_i: Dictionary = _deposes[_selection]
+		var deplacement := Vector3.ZERO
+		match event.keycode:
+			KEY_LEFT:
+				deplacement.x = -PAS_AIMANT
+			KEY_RIGHT:
+				deplacement.x = PAS_AIMANT
+			KEY_UP:
+				deplacement.z = -PAS_AIMANT
+			KEY_DOWN:
+				deplacement.z = PAS_AIMANT
+		for cible_i in ["mesh", "corps", "surbrillance"]:
+			sel_i[cible_i].position += deplacement
+		_cadrer_selection()
+		get_viewport().set_input_as_handled()
+		return
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	_sur_evenement_souris(event)
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -542,23 +566,6 @@ func _sur_evenement_souris(event: InputEvent) -> void:
 			and event.keycode == KEY_DELETE and _selection >= 0:
 		supprimer_selection()
 		get_viewport().set_input_as_handled()
-	elif event is InputEventKey and event.pressed and _selection >= 0 \
-			and [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN].has(event.keycode):
-		var sel_d: Dictionary = _deposes[_selection]
-		var deplacement := Vector3.ZERO
-		match event.keycode:
-			KEY_LEFT:
-				deplacement.x = -PAS_AIMANT
-			KEY_RIGHT:
-				deplacement.x = PAS_AIMANT
-			KEY_UP:
-				deplacement.z = -PAS_AIMANT
-			KEY_DOWN:
-				deplacement.z = PAS_AIMANT
-		for cible_d in ["mesh", "corps", "surbrillance"]:
-			sel_d[cible_d].position += deplacement
-		_cadrer_selection()
-		get_viewport().set_input_as_handled()
 
 
 func _selectionner_sous_viseur() -> void:
@@ -583,6 +590,8 @@ func _selectionner_sous_viseur() -> void:
 		return
 	_deposes[_selection]["surbrillance"].visible = true
 	_grille.visible = true
+	_panneau.visible = false
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_maj_blocage_joueur()
 	print("FIO selection : ", _deposes[_selection]["nom"],
 		" (R : rotation, molette : hauteur, SUPPR : supprimer)")
