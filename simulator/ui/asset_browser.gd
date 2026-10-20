@@ -16,7 +16,7 @@ var _recherche: LineEdit = null
 var _liste: VBoxContainer = null
 var _manifeste: Array = []
 var _grille: MeshInstance3D = null
-var _fantome: MeshInstance3D = null
+var _fantome: Node3D = null
 var _attrapeur: Control = null
 var _monde: Node3D = null
 var _entree_courante: Dictionary = {}
@@ -52,7 +52,7 @@ class VignetteAsset:
 		return null
 var _file_apercus: Array = []     # vignettes en attente de miniature
 var _rendu: SubViewport = null
-var _maquette: MeshInstance3D = null
+var _maquette: Node3D = null
 var _cache_apercus := {}          # chemin obj -> texture
 
 
@@ -92,6 +92,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				var sel_r: Dictionary = _deposes[_selection]
 				sel_r["mesh"].rotation.y += PI / 12.0   # 15 degres
 				sel_r["corps"].rotation.y = sel_r["mesh"].rotation.y
+				_cadrer_selection()
 			get_viewport().set_input_as_handled()
 		elif event.keycode == KEY_ESCAPE and _attrapeur.visible:
 			if get_viewport().gui_is_dragging():
@@ -531,11 +532,28 @@ func _sur_evenement_souris(event: InputEvent) -> void:
 		var sel_m: Dictionary = _deposes[_selection]
 		sel_m["mesh"].position.y = maxf(sel_m["mesh"].position.y + pas, 0.01)
 		sel_m["corps"].position.y = maxf(sel_m["corps"].position.y + pas, 0.01)
-		sel_m["surbrillance"].position.y = sel_m["mesh"].position.y
+		_cadrer_selection()
 		get_viewport().set_input_as_handled()
 	elif event is InputEventKey and event.pressed \
 			and event.keycode == KEY_DELETE and _selection >= 0:
 		supprimer_selection()
+		get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed and _selection >= 0 \
+			and [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN].has(event.keycode):
+		var sel_d: Dictionary = _deposes[_selection]
+		var deplacement := Vector3.ZERO
+		match event.keycode:
+			KEY_LEFT:
+				deplacement.x = -PAS_AIMANT
+			KEY_RIGHT:
+				deplacement.x = PAS_AIMANT
+			KEY_UP:
+				deplacement.z = -PAS_AIMANT
+			KEY_DOWN:
+				deplacement.z = PAS_AIMANT
+		for cible_d in ["mesh", "corps", "surbrillance"]:
+			sel_d[cible_d].position += deplacement
+		_cadrer_selection()
 		get_viewport().set_input_as_handled()
 
 
@@ -564,6 +582,19 @@ func _selectionner_sous_viseur() -> void:
 		" (R : rotation, molette : hauteur, SUPPR : supprimer)")
 
 
+## Recalcule la surbrillance apres rotation/deplacement.
+func _cadrer_selection() -> void:
+	if _selection < 0 or _selection >= _deposes.size() \
+			or _deposes[_selection].is_empty():
+		return
+	var sel_c: Dictionary = _deposes[_selection]
+	var noeud_c: Node3D = sel_c["mesh"]
+	var boite_c := _boite_de(noeud_c)
+	var cadre_c: MeshInstance3D = sel_c["surbrillance"]
+	cadre_c.position = noeud_c.position + boite_c.get_center()
+	cadre_c.rotation.y = noeud_c.rotation.y
+
+
 func deselectionner() -> void:
 	if _selection >= 0 and _selection < _deposes.size() \
 			and not _deposes[_selection].is_empty():
@@ -582,6 +613,10 @@ func supprimer_selection() -> void:
 	sel_s["surbrillance"].queue_free()
 	_deposes[_selection] = {}
 	_selection = -1
+
+
+func panneau_ouvert() -> bool:
+	return _panneau != null and _panneau.visible
 
 
 func sur_panneau(position_ecran: Vector2) -> bool:

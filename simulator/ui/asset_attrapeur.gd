@@ -70,7 +70,7 @@ func terminer() -> void:
 	_depot_fait = false
 	visible = false
 	(navire as Node).masquer_references()
-	if not (navire as Node).drag_gui_actif():
+	if not (navire as Node).drag_gui_actif() 			and not (navire as Node).panneau_ouvert():
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
