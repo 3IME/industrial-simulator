@@ -2,19 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://8abnn0s0gv5r"
-path="res://.godot/imported/ElectricSwitchBoard_OBJ_ElectricSwitchBoardN.png-4e33eae828c121046689afd165daad31.ctex"
+uid="uid://dl0liuq60wgae"
+path="res://.godot/imported/RetroReflectivePhotoelectricSensor_RetroReflectivePhotoelectricSensorD.png-a7d9fb0b8e575cb9ba314ab8a1e2b66a.ctex"
 metadata={
 "vram_texture": false
 }
 generator_parameters={
-"md5": "3dd7a57266918d866762ad5f7f2b9a8c"
+"md5": "df4d2209c42c5a9c3dc2e1f46917c16b"
 }
 
 [deps]
 
-source_file="res://assets/imported/ElectricSwitchBoard_OBJ_ElectricSwitchBoardN.png"
-dest_files=["res://.godot/imported/ElectricSwitchBoard_OBJ_ElectricSwitchBoardN.png-4e33eae828c121046689afd165daad31.ctex"]
+source_file="res://assets/imported/RetroReflectivePhotoelectricSensor_RetroReflectivePhotoelectricSensorD.png"
+dest_files=["res://.godot/imported/RetroReflectivePhotoelectricSensor_RetroReflectivePhotoelectricSensorD.png-a7d9fb0b8e575cb9ba314ab8a1e2b66a.ctex"]
 
 [params]
 

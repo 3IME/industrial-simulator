@@ -491,7 +491,15 @@ func _clic_interaction(event: InputEvent) -> void:
         Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
         get_tree().quit(0)
     elif collider.get_meta("interaction") == "bureau":
-        _entrer_bureau()
+        if NetworkSession.role == NetworkSession.Role.ELEVE:
+            # bureau reserve au professeur : l'eleve frappe a la porte
+            var knock = load("res://assets/sounds/door_knock.mp3")
+            if knock != null and _verre_player != null:
+                _verre_player.stream = knock
+                _verre_player.play()
+            print("Bureau : reserve au professeur (l'eleve frappe)")
+        else:
+            _entrer_bureau()
     elif collider.get_meta("interaction") == "porte_wc":
         _entrer_wc()
     elif collider.get_meta("interaction") == "porte_classe":

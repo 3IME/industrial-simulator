@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bfkuoqfaxg4xi"
-path="res://.godot/imported/ElectricSwitchBoard_OBJ.glb-9654c3faedc74e500ee22732a494e57e.scn"
+uid="uid://uwq5cl78vaxr"
+path="res://.godot/imported/Rack.glb-2ada25d58865df4aa4c45e2b1690c3aa.scn"
 
 [deps]
 
-source_file="res://assets/imported/ElectricSwitchBoard_OBJ.glb"
-dest_files=["res://.godot/imported/ElectricSwitchBoard_OBJ.glb-9654c3faedc74e500ee22732a494e57e.scn"]
+source_file="res://assets/imported/Rack.glb"
+dest_files=["res://.godot/imported/Rack.glb-2ada25d58865df4aa4c45e2b1690c3aa.scn"]
 
 [params]
 

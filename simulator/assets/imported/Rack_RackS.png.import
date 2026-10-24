@@ -2,19 +2,19 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgo57gdnjchnv"
-path="res://.godot/imported/ElectricSwitchBoard_OBJ_ElectricSwitchBoardS.png-31e01f7520ec71c43134d04abfab3526.ctex"
+uid="uid://cdryn55xx35tr"
+path="res://.godot/imported/Rack_RackS.png-6a8def77ec381e25e1faf2f7692d057b.ctex"
 metadata={
 "vram_texture": false
 }
 generator_parameters={
-"md5": "04ccfcf4ade94f3eb7a1614d11752fe4"
+"md5": "14ad38afd73f2461412eb5a64ab5c91a"
 }
 
 [deps]
 
-source_file="res://assets/imported/ElectricSwitchBoard_OBJ_ElectricSwitchBoardS.png"
-dest_files=["res://.godot/imported/ElectricSwitchBoard_OBJ_ElectricSwitchBoardS.png-31e01f7520ec71c43134d04abfab3526.ctex"]
+source_file="res://assets/imported/Rack_RackS.png"
+dest_files=["res://.godot/imported/Rack_RackS.png-6a8def77ec381e25e1faf2f7692d057b.ctex"]
 
 [params]
 
