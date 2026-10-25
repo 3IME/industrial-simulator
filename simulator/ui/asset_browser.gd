@@ -32,10 +32,13 @@ class VignetteAsset:
 
 	func _ready() -> void:
 		clip_text = true
-		icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		expand_icon = true
-		custom_minimum_size = Vector2(280, 38)
-		add_theme_font_size_override("font_size", 12)
+		icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
+		add_theme_constant_override("icon_max_width", 110)
+		custom_minimum_size = Vector2(130, 132)
+		add_theme_font_size_override("font_size", 10)
 
 	func _get_drag_data(_point: Vector2) -> Variant:
 		var navire := _trouver_navire()
@@ -201,8 +204,11 @@ func _construire_ui() -> void:
 	defilement.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	colonne.add_child(defilement)
 
-	_liste = VBoxContainer.new()
+	_liste = GridContainer.new()
+	_liste.columns = 2
 	_liste.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_liste.add_theme_constant_override("h_separation", 8)
+	_liste.add_theme_constant_override("v_separation", 8)
 	defilement.add_child(_liste)
 	_remplir()
 
@@ -217,10 +223,13 @@ func _remplir() -> void:
 		var vignette := VignetteAsset.new()
 		vignette.text = entree["nom"]
 		vignette.clip_text = true
-		vignette.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		vignette.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		vignette.expand_icon = true
-		vignette.custom_minimum_size = Vector2(280, 38)
-		vignette.add_theme_font_size_override("font_size", 12)
+		vignette.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		vignette.vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
+		vignette.add_theme_constant_override("icon_max_width", 110)
+		vignette.custom_minimum_size = Vector2(130, 132)
+		vignette.add_theme_font_size_override("font_size", 10)
 		vignette.pressed.connect(func() -> void:
 			_attrapeur.demarrer_manuel(entree))
 		vignette.set_meta("fio", entree)
