@@ -202,6 +202,7 @@ var _video_vp: SubViewport = null
 var _keypad_led_rouge: OmniLight3D = null
 var _keypad_led_verte: OmniLight3D = null
 var _verre_player: AudioStreamPlayer = null
+var _etiquette_charge: Label = null
 # --- Chantier 4 : avatars reseau (un par pair, vus de tous) ---
 var _avatars_joueurs := {}      # peer_id -> {noeud, cible: Vector3}
 var _pairs_prets := {}          # peer_id -> true : scene chargee, RPC acceptes
@@ -277,26 +278,27 @@ func _ready() -> void:
     # label (pas d'ecran noir 'au milieu de nulle part')
     rideau.color = Color(0.02, 0.02, 0.05, 0.35)
     rideau.set_anchors_preset(Control.PRESET_FULL_RECT)
-    var etiquette_charge := Label.new()
-    etiquette_charge.text = "Construction de l'usine..."
-    etiquette_charge.set_anchors_preset(Control.PRESET_CENTER)
-    etiquette_charge.add_theme_font_size_override("font_size", 26)
-    etiquette_charge.add_theme_color_override("font_color", Color(0.85, 0.9, 1.0))
-    rideau.add_child(etiquette_charge)
+    _etiquette_charge = Label.new()
+    _etiquette_charge.text = "Construction de l'usine..."
+    _etiquette_charge.set_anchors_preset(Control.PRESET_CENTER)
+    _etiquette_charge.add_theme_font_size_override("font_size", 26)
+    _etiquette_charge.add_theme_color_override("font_color", Color(0.85, 0.9, 1.0))
+    rideau.add_child(_etiquette_charge)
     couche_rideau.add_child(rideau)
     add_child(couche_rideau)
+    _etape_construction(0.05, "Initialisation...")
     await get_tree().process_frame
 
-    etiquette_charge.text = "Hall, murs et mezzanine..."
+    _etape_construction(0.15, "Hall, murs et mezzanine...")
     await get_tree().process_frame
     _build_hall(belt_length)
     await get_tree().process_frame
-    etiquette_charge.text = "Convoyeur et robot..."
+    _etape_construction(0.45, "Convoyeur et robot...")
     await get_tree().process_frame
     _build_visuals()
     _spawn_robot()
     await get_tree().process_frame
-    etiquette_charge.text = "Personnage et reseau..."
+    _etape_construction(0.75, "Personnage et reseau...")
     await get_tree().process_frame
     _spawn_player()
     _configurer_avatars_reseau()
@@ -307,7 +309,11 @@ func _ready() -> void:
     if player_node != null and player_node.has_method("set_zones_metal"):
         var zones_metalliques: Array[AABB] = [
             AABB(Vector3(-40.5, 2.4, -45.1), Vector3(72.0, 2.6, 3.4)),   # deck
-            AABB(Vector3(-44.6, 0.0, -17.6), Vector3(2.8, 1.8, 3.2)),    # caillebotis
+            AABB(Vector3(-44.6, 0.0, -17.6), Vector3(2.8, 1.8, 3.2)),    # caillebotis expo
+            AABB(Vector3(38.0, 0.0, -16.83), Vector3(2.0, 1.8, 3.0)),    # devant Haas z=-18
+            AABB(Vector3(38.0, 0.0, -26.83), Vector3(2.0, 1.8, 3.0)),    # devant Haas z=-28
+            AABB(Vector3(38.0, 0.0, -36.83), Vector3(2.0, 1.8, 3.0)),    # devant Haas z=-38
+            AABB(Vector3(28.0, 0.0, -24.65), Vector3(2.0, 1.8, 3.0)),    # devant VS-3
         ]
         player_node.set_zones_metal(zones_metalliques)
 
@@ -368,6 +374,8 @@ func _ready() -> void:
     add_child(_annonce_player)
     # retirer le rideau en fondu (une frame pour laisser l'usine se
     # dessiner une premiere fois dessous)
+    _etape_construction(1.0, "Usine prete")
+    Engine.set_meta("constr_fini", true)
     await get_tree().process_frame
     var fondu_rideau := create_tween()
     fondu_rideau.tween_property(rideau, "modulate:a", 0.0, 0.5)
@@ -1101,6 +1109,15 @@ func _process(delta: float) -> void:
         if hud.joueur == null and player_node != null:
             hud.joueur = player_node
         hud.refresh()
+
+
+## Publie l'etape de construction : le SPLASH lit ces metas pour
+## afficher le texte et avancer sa barre de 70 a 100 %.
+func _etape_construction(pourcent: float, texte: String) -> void:
+    Engine.set_meta("constr_progress", pourcent)
+    Engine.set_meta("constr_etape", texte)
+    if _etiquette_charge != null:
+        _etiquette_charge.text = texte
 
 
 func _unhandled_key_input(event: InputEvent) -> void:

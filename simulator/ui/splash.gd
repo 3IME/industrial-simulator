@@ -144,6 +144,8 @@ const ROBOT_VIEW = preload("res://ui/robot_kuka_view.gd")
 var _loading := false
 var _load_paths: Array = []
 var _load_bar: ProgressBar
+var _label_etape: Label
+var _phase_construction := false
 
 
 func _start_async_load() -> void:
@@ -190,6 +192,7 @@ func _start_async_load() -> void:
     label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     boite.add_child(label)
 
+    _label_etape = label
     _load_bar = ProgressBar.new()
     _load_bar.custom_minimum_size = Vector2(360, 14)
     _load_bar.show_percentage = false
@@ -198,6 +201,22 @@ func _start_async_load() -> void:
 
 
 func _process(_delta: float) -> void:
+    # Phase 2 : construction procedurale de main (70 -> 100 %), les
+    # etapes sont publiees par main.gd via Engine.set_meta
+    if _phase_construction:
+        var progression := 100.0
+        if Engine.has_meta("constr_progress"):
+            progression = 70.0 + 30.0 * float(Engine.get_meta("constr_progress"))
+        if Engine.has_meta("constr_etape"):
+            _label_etape.text = str(Engine.get_meta("constr_etape"))
+        _load_bar.value = progression
+        if Engine.has_meta("constr_fini") and bool(Engine.get_meta("constr_fini")):
+            _phase_construction = false
+            var tween_fin := create_tween()
+            tween_fin.tween_property(self, "modulate:a", 0.0, 0.3)
+            tween_fin.tween_callback(func() -> void:
+                get_parent().queue_free())
+        return
     if not _loading:
         return
     var termines := 0
@@ -217,10 +236,27 @@ func _process(_delta: float) -> void:
     if termines == _load_paths.size():
         _loading = false
         var packed = ResourceLoader.load_threaded_get(MAIN_SCENE)
-        var tween := create_tween()
-        tween.tween_property(self, "modulate:a", 0.0, 0.2)
-        tween.tween_callback(func() -> void:
-            get_tree().change_scene_to_packed(packed))
+        if "--capture" in OS.get_cmdline_user_args():
+            get_tree().change_scene_to_packed(packed)
+            return
+        _demarrer_construction(packed)
+
+
+## Phase 2 : instancie main SOUS le splash (qui monte sur un
+## CanvasLayer pour rester au-dessus) et suit ses etapes de
+## construction. En capture (CI), changement de scene direct.
+func _demarrer_construction(packed: PackedScene) -> void:
+    Engine.remove_meta("constr_fini")
+    var couche := CanvasLayer.new()
+    couche.layer = 100
+    get_tree().root.add_child(couche)
+    get_tree().root.remove_child(self)
+    couche.add_child(self)
+    var main = packed.instantiate()
+    get_tree().root.add_child(main)
+    get_tree().current_scene = main
+    _label_etape.text = "Construction de l'usine..."
+    _phase_construction = true
 
 
 func _capture_loading_screen() -> void:
