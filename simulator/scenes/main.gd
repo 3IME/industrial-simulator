@@ -208,6 +208,7 @@ var _pairs_prets := {}          # peer_id -> true : scene chargee, RPC acceptes
 var _noms_pairs := {}           # peer_id -> prenom affiche sur l avatar
 var _chrono_synchro := 0.0      # emission du transform a ~15 Hz
 var _chrono_pret := 0.0         # reemission du signal 'pret' toutes les 5 s
+var _dialogue_sortie: CanvasLayer = null
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
 var _extinguisher_model: PackedScene = null
@@ -285,6 +286,9 @@ func _ready() -> void:
     # Navigateur d'assets (touche J) : disponible EN SOLO aussi
     var navigateur := preload("res://ui/asset_browser.gd").new()
     add_child(navigateur)
+    # Fenetre de confirmation de sortie (design maintenance industrielle)
+    _dialogue_sortie = preload("res://ui/dialogue_quit.gd").new()
+    add_child(_dialogue_sortie)
     # Pas metalliques sur la mezzanine et la plaque de caillebotis
     if player_node != null and player_node.has_method("set_zones_metal"):
         var zones_metalliques: Array[AABB] = [
@@ -425,9 +429,7 @@ func _clic_interaction(event: InputEvent) -> void:
             elif hit_cl.collider.get_meta("interaction") == "interrupteur_classe":
                 _basculer_lumiere_classe()
             elif hit_cl.collider.get_meta("interaction") == "porte_sortie_jeu":
-                print("Porte de secours : sortie du simulateur")
-                Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-                get_tree().quit(0)
+                _demander_quitter()
         return
     if _dans_wc:
         var cam_wc := get_viewport().get_camera_3d()
@@ -469,9 +471,7 @@ func _clic_interaction(event: InputEvent) -> void:
         print("Trop loin : approchez-vous du boitier")
         return
     if collider.get_meta("interaction") == "porte_usine":
-        print("Porte de l'usine : sortie du simulateur")
-        Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-        get_tree().quit(0)
+        _demander_quitter()
     elif collider.get_meta("interaction") == "bureau":
         if NetworkSession.role == NetworkSession.Role.ELEVE:
             # bureau reserve au professeur : l'eleve frappe a la porte
@@ -1091,6 +1091,13 @@ func _etape_construction(pourcent: float, texte: String) -> void:
     Engine.set_meta("constr_progress", pourcent)
     Engine.set_meta("constr_etape", texte)
 
+
+
+func _demander_quitter() -> void:
+    ## Ouvre la fenetre de confirmation (OUI / NON) : l'arret n'a lieu
+    ## que si l'utilisateur confirme.
+    if _dialogue_sortie != null:
+        _dialogue_sortie.ouvrir()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
