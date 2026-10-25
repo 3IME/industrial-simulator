@@ -352,8 +352,7 @@ func _ready() -> void:
     _annonce_player = AudioStreamPlayer.new()
     _annonce_player.volume_db = -4.0
     add_child(_annonce_player)
-    # retirer le rideau en fondu (une frame pour laisser l'usine se
-    # dessiner une premiere fois dessous)
+    # signaler au splash que la construction est terminee (fondu)
     _etape_construction(1.0, "Usine prete")
     Engine.set_meta("constr_fini", true)
     if capture_mode:
