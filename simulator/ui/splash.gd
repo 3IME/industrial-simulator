@@ -255,7 +255,6 @@ func _demarrer_construction(packed: PackedScene) -> void:
     var main = packed.instantiate()
     get_tree().root.add_child(main)
     get_tree().current_scene = main
-    _label_etape.text = "Construction de l'usine..."
     _phase_construction = true
 
 

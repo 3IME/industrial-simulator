@@ -202,7 +202,6 @@ var _video_vp: SubViewport = null
 var _keypad_led_rouge: OmniLight3D = null
 var _keypad_led_verte: OmniLight3D = null
 var _verre_player: AudioStreamPlayer = null
-var _etiquette_charge: Label = null
 # --- Chantier 4 : avatars reseau (un par pair, vus de tous) ---
 var _avatars_joueurs := {}      # peer_id -> {noeud, cible: Vector3}
 var _pairs_prets := {}          # peer_id -> true : scene chargee, RPC acceptes
@@ -278,12 +277,6 @@ func _ready() -> void:
     # label (pas d'ecran noir 'au milieu de nulle part')
     rideau.color = Color(0.02, 0.02, 0.05, 0.35)
     rideau.set_anchors_preset(Control.PRESET_FULL_RECT)
-    _etiquette_charge = Label.new()
-    _etiquette_charge.text = "Construction de l'usine..."
-    _etiquette_charge.set_anchors_preset(Control.PRESET_CENTER)
-    _etiquette_charge.add_theme_font_size_override("font_size", 26)
-    _etiquette_charge.add_theme_color_override("font_color", Color(0.85, 0.9, 1.0))
-    rideau.add_child(_etiquette_charge)
     couche_rideau.add_child(rideau)
     add_child(couche_rideau)
     _etape_construction(0.05, "Initialisation...")
@@ -1116,8 +1109,7 @@ func _process(delta: float) -> void:
 func _etape_construction(pourcent: float, texte: String) -> void:
     Engine.set_meta("constr_progress", pourcent)
     Engine.set_meta("constr_etape", texte)
-    if _etiquette_charge != null:
-        _etiquette_charge.text = texte
+
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
