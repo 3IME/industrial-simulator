@@ -252,6 +252,11 @@ func _construire_rendu() -> void:
 	_rendu = SubViewport.new()
 	_rendu.size = Vector2i(96, 96)
 	_rendu.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	# MONDE PROPRE : un SubViewport partage par defaut le World3D de
+	# la scene parente — les echantillons de miniatures apparaissaient
+	# donc DANS l'usine (meme monde), un par un au rythme des vignettes
+	_rendu.own_world_3d = true
+	_rendu.world_3d = World3D.new()
 	add_child(_rendu)
 	var camera := Camera3D.new()
 	camera.fov = 30.0
@@ -347,7 +352,10 @@ func _process(_delta: float) -> void:
 		if _cache_apercus.has(chemin_obj):
 			vignette.icon = _cache_apercus[chemin_obj]
 			continue
+		# detacher IMMEDIATEMENT (queue_free est differe : l'objet
+		# resterait rendu une frame de plus)
 		for enfant_p in _maquette.get_children():
+			_maquette.remove_child(enfant_p)
 			enfant_p.queue_free()
 		var ressource_p = load("res://" + chemin_obj)
 		var echantillon: Node3D = null
@@ -355,8 +363,10 @@ func _process(_delta: float) -> void:
 			echantillon = ressource_p.instantiate()
 			_maquette.add_child(echantillon)
 		elif ressource_p is Mesh:
-			_maquette.mesh = ressource_p
-			echantillon = _maquette
+			var mi_p := MeshInstance3D.new()
+			mi_p.mesh = ressource_p
+			_maquette.add_child(mi_p)
+			echantillon = mi_p
 		if echantillon != null:
 			var boite: AABB = _boite_de(echantillon)
 			var rayon := boite.size.length() * 0.5
@@ -369,6 +379,10 @@ func _process(_delta: float) -> void:
 					_rendu.get_texture().get_image())
 				_cache_apercus[chemin_obj] = texture
 				vignette.icon = texture
+		# detacher APRES le rendu : rien ne traîne dans le monde
+		for enfant_p in _maquette.get_children():
+			_maquette.remove_child(enfant_p)
+			enfant_p.queue_free()
 		if _maquette.get_child_count() == 0:
 			_maquette.mesh = null
 
