@@ -545,48 +545,8 @@ func deposer(position_ecran: Vector2) -> void:
 				0.01,
 				clampf(snappedf(p_r.z, PAS_AIMANT), -44.0, 44.0))
 			print("FIO : raycast rate — repli au sol en ", point_dep)
-		var instance: Node3D = null
-		if ressource is PackedScene:
-			instance = ressource.instantiate()
-		elif ressource is Mesh:
-			var mi := MeshInstance3D.new()
-			mi.mesh = ressource
-			instance = mi
 		if instance != null:
-			instance.scale = Vector3.ONE * _echelle_de(_entree_courante["nom"])
-			# attacher AVANT de mesurer : global_transform invalide
-			# hors arbre (erreur 'is_inside_tree' + boite fausse)
-			_monde.add_child(instance)
-			instance.rotation.y = _angle_fantome
-			var boite: AABB = _boite_de(instance)
-			instance.position = Vector3(point_dep.x,
-				point_dep.y - boite.position.y, point_dep.z)
-			var corps := StaticBody3D.new()
-			corps.position = instance.position + boite.get_center()
-			corps.rotation.y = _angle_fantome
-			var forme := CollisionShape3D.new()
-			var cube := BoxShape3D.new()
-			cube.size = boite.size
-			forme.shape = cube
-			corps.add_child(forme)
-			corps.set_meta("fio_indice", _deposes.size())
-			_monde.add_child(corps)
-			var cadre := MeshInstance3D.new()
-			var cube_sel := BoxMesh.new()
-			cube_sel.size = boite.size + Vector3(0.06, 0.06, 0.06)
-			var mat_sel := StandardMaterial3D.new()
-			mat_sel.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-			mat_sel.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-			mat_sel.albedo_color = Color(1.0, 0.85, 0.1, 0.35)
-			cube_sel.material = mat_sel
-			cadre.mesh = cube_sel
-			cadre.position = instance.position + boite.get_center()
-			cadre.rotation.y = _angle_fantome
-			cadre.visible = false
-			_monde.add_child(cadre)
-			_deposes.append({"mesh": instance, "corps": corps,
-				"surbrillance": cadre, "nom": _entree_courante["nom"]})
-			print("Asset depose : ", _entree_courante["nom"],
+			_creer_objet(_entree_courante, point_dep, _angle_fantome)
 				" en ", instance.position, " (collision ", boite.size, ")")
 	annuler()
 
@@ -726,6 +686,54 @@ func _get_drag_data_vignette(vignette: Control, _point: Vector2) -> Variant:
 	apercu.text = vignette.text
 	vignette.set_drag_preview(apercu)
 	return {"fio": entree}
+
+
+## Instancie un objet FIO (Mesh ou PackedScene) + collision +
+## surbrillance, et l'inscrit dans le registre. Utilise par deposer()
+## ET par le chargement de sauvegarde.
+func _creer_objet(entree: Dictionary, point_dep: Vector3, angle: float) -> void:
+	var ressource = load("res://" + entree["obj"])
+	var instance: Node3D = null
+	if ressource is PackedScene:
+		instance = ressource.instantiate()
+	elif ressource is Mesh:
+		var mi := MeshInstance3D.new()
+		mi.mesh = ressource
+		instance = mi
+	if instance == null or _monde == null:
+		return
+	instance.scale = Vector3.ONE * _echelle_de(entree["nom"])
+	# attacher AVANT de mesurer : global_transform invalide hors arbre
+	_monde.add_child(instance)
+	instance.rotation.y = angle
+	var boite: AABB = _boite_de(instance)
+	instance.position = Vector3(point_dep.x,
+		point_dep.y - boite.position.y, point_dep.z)
+	var corps := StaticBody3D.new()
+	corps.position = instance.position + boite.get_center()
+	corps.rotation.y = angle
+	var forme := CollisionShape3D.new()
+	var cube := BoxShape3D.new()
+	cube.size = boite.size
+	forme.shape = cube
+	corps.add_child(forme)
+	corps.set_meta("fio_indice", _deposes.size())
+	_monde.add_child(corps)
+	var cadre := MeshInstance3D.new()
+	var cube_sel := BoxMesh.new()
+	cube_sel.size = boite.size + Vector3(0.06, 0.06, 0.06)
+	var mat_sel := StandardMaterial3D.new()
+	mat_sel.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat_sel.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat_sel.albedo_color = Color(1.0, 0.85, 0.1, 0.35)
+	cube_sel.material = mat_sel
+	cadre.mesh = cube_sel
+	cadre.position = instance.position + boite.get_center()
+	cadre.rotation.y = angle
+	cadre.visible = false
+	_monde.add_child(cadre)
+	_deposes.append({"mesh": instance, "corps": corps,
+		"surbrillance": cadre, "nom": entree["nom"], "obj": entree["obj"]})
 
 
 func annuler() -> void:
