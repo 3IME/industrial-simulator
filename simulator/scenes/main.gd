@@ -151,7 +151,6 @@ var box_timer := 0.0
 var capture_mode := false
 var _adult_node: Node3D = null
 var _dans_bureau := false
-var _fn_close_requested: Callable   # deconnectee dans _exit_tree
 var _dans_wc := false
 var _dans_classe := false
 var _alarme_active := false
@@ -307,12 +306,10 @@ func _ready() -> void:
 
     if conveyor != null:
         conveyor.spawn_box()
-    # Ceinture de securite : liberer la souris si la fenetre se ferme.
-    # Callable stocke : la racine SURVIT a un rechargement de scene, la
-    # connexion serait sinon accumulee a chaque reload -> debranchee dans
-    # _exit_tree().
-    _fn_close_requested = func() -> void: Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-    get_tree().root.close_requested.connect(_fn_close_requested)
+    # La croix de la fenetre n'est PAS acceptee automatiquement :
+    # close_requested ouvre la confirmation de sortie (OUI/NON).
+    get_tree().set_auto_accept_quit(false)
+    get_tree().root.close_requested.connect(_demander_quitter)
     print("Protocole reseau : ", NetworkSession.PROTOCOLE)
     print("Scene prete. Fleches : marcher | souris : regarder | Maj : courir | Ctrl : baisser | Espace : saut | B : boite | annonces : boutons du decor (boite 5BP, alarmes) | clic porte usine : quitter | clic bureau : entrer | clic urgence : alarme (M : couper)")
     if lod_manager != null:
@@ -893,13 +890,13 @@ func _eclats_de_verre(pos: Vector3) -> void:
 
 
 func _exit_tree() -> void:
-    ## La racine survit a la scene : sans deconnexion, un rechargement de
-    ## main.gd accumulerait les lambdas sur close_requested.
-    var racine := get_tree().root if get_tree() != null else null
-    if racine != null and _fn_close_requested.is_valid()             and racine.close_requested.is_connected(_fn_close_requested):
-        racine.close_requested.disconnect(_fn_close_requested)
-
-
+    ## Deconnexion propre du handler de fermeture (la racine survit a
+    ## un rechargement de scene).
+    if get_tree() == null:
+        return
+    var racine := get_tree().root
+    if racine.close_requested.is_connected(_demander_quitter):
+        racine.close_requested.disconnect(_demander_quitter)
 func _physics_process(delta: float) -> void:
     accumulator += delta
     var steps := 0
@@ -1095,9 +1092,11 @@ func _etape_construction(pourcent: float, texte: String) -> void:
 
 func _demander_quitter() -> void:
     ## Ouvre la fenetre de confirmation (OUI / NON) : l'arret n'a lieu
-    ## que si l'utilisateur confirme.
-    if _dialogue_sortie != null:
-        _dialogue_sortie.ouvrir()
+    ## que si l'utilisateur confirme. Lie a la croix de la fenetre ET
+    ## aux portes de sortie.
+    if _dialogue_sortie == null or _dialogue_sortie.visible:
+        return
+    _dialogue_sortie.ouvrir()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
