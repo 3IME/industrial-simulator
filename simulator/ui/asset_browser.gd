@@ -354,9 +354,6 @@ func _process(_delta: float) -> void:
 		return
 	_apercu_en_cours = true
 	_generer_apercus()
-			enfant_p.queue_free()
-		if _maquette.get_child_count() == 0:
-			_maquette.mesh = null
 
 
 ## Genere les miniatures SEQUENTIELLEMENT : _process etant rappele
