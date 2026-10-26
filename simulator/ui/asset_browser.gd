@@ -547,7 +547,6 @@ func deposer(position_ecran: Vector2) -> void:
 			print("FIO : raycast rate — repli au sol en ", point_dep)
 		if instance != null:
 			_creer_objet(_entree_courante, point_dep, _angle_fantome)
-				" en ", instance.position, " (collision ", boite.size, ")")
 	annuler()
 
 
