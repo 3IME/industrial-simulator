@@ -545,8 +545,7 @@ func deposer(position_ecran: Vector2) -> void:
 				0.01,
 				clampf(snappedf(p_r.z, PAS_AIMANT), -44.0, 44.0))
 			print("FIO : raycast rate — repli au sol en ", point_dep)
-		if instance != null:
-			_creer_objet(_entree_courante, point_dep, _angle_fantome)
+		_creer_objet(_entree_courante, point_dep, _angle_fantome)
 	annuler()
 
 
