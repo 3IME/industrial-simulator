@@ -1417,12 +1417,12 @@ func _build_hall(belt_length: float) -> void:
     for z_h in [-0.60, 0.60]:
         var strip := MeshInstance3D.new()
         var strip_box := BoxMesh.new()
-        strip_box.size = Vector3(belt_length + 0.4, 0.006, 0.30)
+        strip_box.size = Vector3(4.4, 0.006, 0.30)
         strip.mesh = strip_box
-        strip.position = Vector3(belt_length / 2.0, 0.003, z_h)
+        strip.position = Vector3(2.0, 0.003, z_h)
         var mat_h := StandardMaterial3D.new()
         mat_h.albedo_texture = texture_hachure
-        mat_h.uv1_scale = Vector3((belt_length + 0.4) / 4.0, 1.0, 1.0)
+        mat_h.uv1_scale = Vector3(1.1, 1.0, 1.0)
         strip.material_override = mat_h
         add_child(strip)
 
@@ -3459,20 +3459,15 @@ func _build_visuals() -> void:
         # centree (min.y = -0,5). Pivoter PI/2 (Z -> X), echelle sur la
         # longueur locale pour caler exactement belt_length, pose tel
         # que le HAUT de la bande soit a BELT_TOP.
-        var piece_4m := 4.0
-        var count := int(ceil(belt_length / piece_4m))
-        for i in range(count):
-            var reste: float = minf(belt_length - i * piece_4m, piece_4m)
-            var piece = conveyor_scene.instantiate()
-            piece.rotation.y = PI / 2.0
-            piece.scale = Vector3(1.0, 1.0, reste / piece_4m)
-            piece.position = Vector3(
-                i * piece_4m + reste / 2.0, BELT_TOP - 0.5, 0)
-            add_child(piece)
+        # TAILLE ORIGINE (4 m) : de x=0 a x=4, haut de bande a BELT_TOP
+        var piece = conveyor_scene.instantiate()
+        piece.rotation.y = PI / 2.0
+        piece.position = Vector3(2.0, BELT_TOP - 0.5, 0)
+        add_child(piece)
     else:
         _build_procedural_conveyor(belt_length)
-    # Le personnage ne traverse pas le convoyeur
-    _add_static_box(Vector3(belt_length / 2.0, BELT_TOP / 2.0, 0), Vector3(belt_length + 0.2, BELT_TOP, 1.0))
+    # Le personnage ne traverse pas le convoyeur (4 m physiques)
+    _add_static_box(Vector3(2.0, BELT_TOP / 2.0, 0), Vector3(4.2, BELT_TOP, 1.0))
 
     # Capteurs : potes lateraux + lampes sur la bande
     entry_lamp = _build_sensor(entry_x, "capteur_entree")
@@ -3577,9 +3572,11 @@ func _sync_visuals() -> void:
     box_visual.visible = present
     if present:
         # box_position = front de la boite ; le rendu place son centre.
-        # Les modeles Kenney ont leur base a y=0 : pose sur la bande (0.4).
+        # StackableBox a l'origine au centre (min.y = -0,177 a l'echelle
+        # 1) : poser a BELT_TOP + demi-hauteur echelonnee.
+        var y_box: float = BELT_TOP + 0.1774 * (conveyor.box_length / 0.6224)
         box_visual.position = Vector3(
-            conveyor.box_position - conveyor.box_length / 2.0, BELT_TOP, 0
+            conveyor.box_position - conveyor.box_length / 2.0, y_box, 0
         )
     if entry_lamp != null:
         _set_lamp(entry_lamp, conveyor.entry_sensor)
