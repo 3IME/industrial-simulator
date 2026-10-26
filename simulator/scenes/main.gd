@@ -106,8 +106,8 @@ const HALL_MAX_Z := 45.0
 const HALL_HEIGHT := 20.0
 
 # Assets CC0 — voir simulator/assets/CREDITS.md
-const CONVEYOR_PIECE := "res://assets/kenney_factory/conveyor.glb"
-const BOX_MODEL := "res://assets/kenney_factory/box-small.glb"
+const CONVEYOR_PIECE := "res://assets/imported/BeltConveyor4M.glb"
+const BOX_MODEL := "res://assets/imported/StackableBox.glb"
 const TEX_FLOOR_D := "res://assets/textures/floor_tiles_1k_diff.jpg"
 const TEX_FLOOR_N := "res://assets/textures/floor_tiles_1k_nor.jpg"
 const TEX_FLOOR_R := "res://assets/textures/floor_tiles_1k_rough.jpg"
@@ -121,7 +121,7 @@ const TEX_ROOF_N := "res://assets/textures/corrugated_iron_02_nor_gl.jpg"
 const CONVEYOR_LIFT := 0.5
 const BELT_TOP := 0.4 + 0.5
 # Largeur du modele box-small.glb (0.595 m), pour la mise a l'echelle
-const BOX_MODEL_WIDTH := 0.595
+const BOX_MODEL_WIDTH := 0.6224   # largeur X de StackableBox.glb
 
 ## Ressources lourdes chargees par le code (pre-chargees en arriere-plan
 ## par le splash — cf. ui/splash.gd) : le chargement threade de main.tscn
@@ -1400,8 +1400,6 @@ func _build_hall(belt_length: float) -> void:
     plinth_mat.albedo_color = Color(0.30, 0.33, 0.36)
     var beam_mat := StandardMaterial3D.new()
     beam_mat.albedo_color = Color(0.45, 0.48, 0.52)
-    var yellow_mat := StandardMaterial3D.new()
-    yellow_mat.albedo_color = Color(0.9, 0.75, 0.05)
 
     # Sol texture + collision (le personnage marche dessus)
     var floor_mesh := MeshInstance3D.new()
@@ -1413,14 +1411,19 @@ func _build_hall(belt_length: float) -> void:
     add_child(floor_mesh)
     _add_static_box(Vector3(center_x, -0.5, center_z), Vector3(hall_w + 0.3, 1.0, hall_d + 0.3))
 
-    # Marquage de securite : deux bandes jaunes le long du convoyeur
-    for z in [-0.65, 0.65]:
+    # Marquage de securite : bandes hachees jaune/noir le long du
+    # convoyeur (meme texture que le cadre du rack), 30 cm de large
+    var texture_hachure := _tex_rayures()
+    for z_h in [-0.60, 0.60]:
         var strip := MeshInstance3D.new()
         var strip_box := BoxMesh.new()
-        strip_box.size = Vector3(belt_length + 0.4, 0.005, 0.12)
+        strip_box.size = Vector3(belt_length + 0.4, 0.006, 0.30)
         strip.mesh = strip_box
-        strip.position = Vector3(belt_length / 2.0, 0.003, z)
-        strip.material_override = yellow_mat
+        strip.position = Vector3(belt_length / 2.0, 0.003, z_h)
+        var mat_h := StandardMaterial3D.new()
+        mat_h.albedo_texture = texture_hachure
+        mat_h.uv1_scale = Vector3((belt_length + 0.4) / 4.0, 1.0, 1.0)
+        strip.material_override = mat_h
         add_child(strip)
 
     # Murs (4) + plinthe + collision
@@ -3452,12 +3455,20 @@ func _build_visuals() -> void:
     # ou repli procedurale
     var conveyor_scene = load(CONVEYOR_PIECE)
     if conveyor_scene != null:
-        var count := int(ceil(belt_length))
+        # BeltConveyor4M : 4 m le long de Z, hauteur 1,0 m origine
+        # centree (min.y = -0,5). Pivoter PI/2 (Z -> X), echelle sur la
+        # longueur locale pour caler exactement belt_length, pose tel
+        # que le HAUT de la bande soit a BELT_TOP.
+        var piece_4m := 4.0
+        var count := int(ceil(belt_length / piece_4m))
         for i in range(count):
+            var reste: float = minf(belt_length - i * piece_4m, piece_4m)
             var piece = conveyor_scene.instantiate()
-            piece.position = Vector3(i + 0.5, CONVEYOR_LIFT, 0)
+            piece.rotation.y = PI / 2.0
+            piece.scale = Vector3(1.0, 1.0, reste / piece_4m)
+            piece.position = Vector3(
+                i * piece_4m + reste / 2.0, BELT_TOP - 0.5, 0)
             add_child(piece)
-        _build_conveyor_frame(belt_length)
     else:
         _build_procedural_conveyor(belt_length)
     # Le personnage ne traverse pas le convoyeur
@@ -3537,7 +3548,7 @@ func _build_sensor(x_position: float, sensor_name: String) -> MeshInstance3D:
     var post_mesh := BoxMesh.new()
     post_mesh.size = Vector3(0.05, BELT_TOP + 0.5, 0.05)
     post.mesh = post_mesh
-    post.position = Vector3(x_position, (BELT_TOP + 0.5) / 2.0, 0.6)
+    post.position = Vector3(x_position, (BELT_TOP + 0.5) / 2.0, 0.55)
     var post_mat := StandardMaterial3D.new()
     post_mat.albedo_color = Color(0.1, 0.1, 0.1)
     post.material_override = post_mat
@@ -3547,7 +3558,7 @@ func _build_sensor(x_position: float, sensor_name: String) -> MeshInstance3D:
     var lamp_mesh := BoxMesh.new()
     lamp_mesh.size = Vector3(0.08, 0.08, 0.35)
     lamp.mesh = lamp_mesh
-    lamp.position = Vector3(x_position, BELT_TOP + 0.12, 0.42)
+    lamp.position = Vector3(x_position, BELT_TOP + 0.12, 0.0)
     lamp.name = sensor_name
     var lamp_mat := StandardMaterial3D.new()
     lamp_mat.emission_enabled = true
