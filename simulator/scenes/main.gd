@@ -119,7 +119,10 @@ const TEX_ROOF_N := "res://assets/textures/corrugated_iron_02_nor_gl.jpg"
 # Modeles Kenney : conveyor.glb = 1 x 0.4 x 1 m, base a y=0.
 # Le convoyeur est rehausse (CONVEYOR_LIFT) a hauteur de travail reelle.
 const CONVEYOR_LIFT := 0.5
-const BELT_TOP := 0.4 + 0.5
+# Haut de la bande du BeltConveyor4M pose AU SOL a l'echelle 1
+# (hauteur du modele 0,9975 m, origine centree) : cohérent avec les
+# objets deposés via le navigateur J (meme echelle 1).
+const BELT_TOP := 0.9975
 # Largeur du modele box-small.glb (0.595 m), pour la mise a l'echelle
 const BOX_MODEL_WIDTH := 0.6224   # largeur X de StackableBox.glb
 
@@ -3465,8 +3468,7 @@ func _build_visuals() -> void:
         # TAILLE ORIGINE (4 m) : de x=0 a x=4, haut de bande a BELT_TOP
         var piece = conveyor_scene.instantiate()
         piece.rotation.y = PI / 2.0
-        piece.scale = Vector3(1.0, 0.9, 1.0)   # hauteur 1,0 -> 0,9 m
-        piece.position = Vector3(2.0, 0.9 - 0.498767 * 0.9, 0)
+        piece.position = Vector3(2.0, 0.498767, 0)   # base au sol
         add_child(piece)
     else:
         _build_procedural_conveyor(belt_length)
@@ -3483,8 +3485,7 @@ func _build_visuals() -> void:
         box_visual = box_scene.instantiate()
         # echelle anisotrope : la boite visuelle fait EXACTEMENT
         # box_size dans les 3 dimensions (StackableBox 0,62x0,35x0,77)
-        s_box = box_size / 0.3548
-        box_visual.scale = Vector3(s_box, s_box, s_box)
+        box_visual.scale = Vector3.ONE   # echelle 1 : identique au J
     else:
         var box_mesh_node := MeshInstance3D.new()
         var box_mesh := BoxMesh.new()
@@ -3580,7 +3581,7 @@ func _sync_visuals() -> void:
         # box_position = front de la boite ; le rendu place son centre.
         # StackableBox a l'origine au centre (min.y = -0,177 a l'echelle
         # 1) : poser a BELT_TOP + demi-hauteur echelonnee.
-        var y_box: float = BELT_TOP + 0.1774 * s_box
+        var y_box: float = BELT_TOP + 0.1774
         box_visual.position = Vector3(
             conveyor.box_position - conveyor.box_length / 2.0, y_box, 0
         )
