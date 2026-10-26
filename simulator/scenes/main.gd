@@ -1422,7 +1422,9 @@ func _build_hall(belt_length: float) -> void:
         strip.position = Vector3(2.0, 0.003, z_h)
         var mat_h := StandardMaterial3D.new()
         mat_h.albedo_texture = texture_hachure
-        mat_h.uv1_scale = Vector3(1.1, 1.0, 1.0)
+        # U : 0,4 m par tuile le long ; V : 0,4 m par tuile en travers
+        # -> hachures a 45 deg TRAVERSANT les 30 cm de la bande
+        mat_h.uv1_scale = Vector3(4.4 / 0.4, 0.30 / 0.4, 1.0)
         strip.material_override = mat_h
         add_child(strip)
 
@@ -3462,7 +3464,7 @@ func _build_visuals() -> void:
         # TAILLE ORIGINE (4 m) : de x=0 a x=4, haut de bande a BELT_TOP
         var piece = conveyor_scene.instantiate()
         piece.rotation.y = PI / 2.0
-        piece.position = Vector3(2.0, BELT_TOP - 0.5, 0)
+        piece.position = Vector3(2.0, BELT_TOP - 0.498767, 0)
         add_child(piece)
     else:
         _build_procedural_conveyor(belt_length)
@@ -3477,8 +3479,10 @@ func _build_visuals() -> void:
     var box_scene = load(BOX_MODEL)
     if box_scene != null:
         box_visual = box_scene.instantiate()
-        var scale_factor := box_size / BOX_MODEL_WIDTH
-        box_visual.scale = Vector3(scale_factor, scale_factor, scale_factor)
+        # echelle anisotrope : la boite visuelle fait EXACTEMENT
+        # box_size dans les 3 dimensions (StackableBox 0,62x0,35x0,77)
+        box_visual.scale = Vector3(
+            box_size / 0.6224, box_size / 0.3548, box_size / 0.7724)
     else:
         var box_mesh_node := MeshInstance3D.new()
         var box_mesh := BoxMesh.new()
@@ -3574,7 +3578,7 @@ func _sync_visuals() -> void:
         # box_position = front de la boite ; le rendu place son centre.
         # StackableBox a l'origine au centre (min.y = -0,177 a l'echelle
         # 1) : poser a BELT_TOP + demi-hauteur echelonnee.
-        var y_box: float = BELT_TOP + 0.1774 * (conveyor.box_length / 0.6224)
+        var y_box: float = BELT_TOP + 0.1774 * (conveyor.box_length / 0.3548)
         box_visual.position = Vector3(
             conveyor.box_position - conveyor.box_length / 2.0, y_box, 0
         )
