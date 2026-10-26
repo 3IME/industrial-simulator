@@ -3464,7 +3464,8 @@ func _build_visuals() -> void:
         # TAILLE ORIGINE (4 m) : de x=0 a x=4, haut de bande a BELT_TOP
         var piece = conveyor_scene.instantiate()
         piece.rotation.y = PI / 2.0
-        piece.position = Vector3(2.0, BELT_TOP - 0.498767, 0)
+        piece.scale = Vector3(1.0, 0.9, 1.0)   # hauteur 1,0 -> 0,9 m
+        piece.position = Vector3(2.0, 0.9 - 0.498767 * 0.9, 0)
         add_child(piece)
     else:
         _build_procedural_conveyor(belt_length)
@@ -3481,8 +3482,8 @@ func _build_visuals() -> void:
         box_visual = box_scene.instantiate()
         # echelle anisotrope : la boite visuelle fait EXACTEMENT
         # box_size dans les 3 dimensions (StackableBox 0,62x0,35x0,77)
-        box_visual.scale = Vector3(
-            box_size / 0.6224, box_size / 0.3548, box_size / 0.7724)
+        var s_box: float = box_size / 0.3548
+        box_visual.scale = Vector3(s_box, s_box, s_box)
     else:
         var box_mesh_node := MeshInstance3D.new()
         var box_mesh := BoxMesh.new()
@@ -3578,7 +3579,7 @@ func _sync_visuals() -> void:
         # box_position = front de la boite ; le rendu place son centre.
         # StackableBox a l'origine au centre (min.y = -0,177 a l'echelle
         # 1) : poser a BELT_TOP + demi-hauteur echelonnee.
-        var y_box: float = BELT_TOP + 0.1774 * (conveyor.box_length / 0.3548)
+        var y_box: float = BELT_TOP + 0.1774 * s_box
         box_visual.position = Vector3(
             conveyor.box_position - conveyor.box_length / 2.0, y_box, 0
         )
