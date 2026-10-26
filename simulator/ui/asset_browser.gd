@@ -23,7 +23,18 @@ var _entree_courante: Dictionary = {}
 var _derniere_pos_souris := Vector2.ZERO
 var _angle_fantome := 0.0            # rotation du fantome (R, pas 45)
 var _fantome_cle := ""
-var _apercu_en_cours := false     # generation serialisee des miniatures               # chemin du fantome charge
+var _apercu_en_cours := false     # generation serialisee des miniatures
+
+## Echelle manuelle pour les modeles dont les unites ne sont pas en
+## metres (ex : RetroReflectiveMirror exporte en ~1 cm) ; 1.0 sinon.
+const ECHELLES := {"RetroReflectiveMirror": 35.0}
+
+
+func _echelle_de(nom: String) -> float:
+	for cle in ECHELLES:
+		if nom.findn(cle) >= 0:
+			return float(ECHELLES[cle])
+	return 1.0               # chemin du fantome charge
 var _deposes: Array = []             # [{mesh, corps, surbrillance}]
 var _selection := -1                 # indice dans _deposes (-1 : aucun)
 
@@ -387,7 +398,9 @@ func _generer_apercus() -> void:
 		if echantillon != null:
 			var boite: AABB = _boite_de(echantillon)
 			var rayon := boite.size.length() * 0.5
-			var echelle := clampf(1.4 / maxf(rayon, 0.001), 0.25, 1.5)
+			var echelle := _echelle_de(entree["nom"])
+			if echelle == 1.0:
+				echelle = clampf(1.4 / maxf(rayon, 0.001), 0.25, 1.5)
 			_maquette.scale = Vector3.ONE * echelle
 			_maquette.position = -boite.get_center() * echelle
 			# 2 frames de rendu avant capture (materiaux + draw)
@@ -455,6 +468,7 @@ func maj_blocage() -> void:
 func montrer_references(entree: Dictionary, position_ecran: Vector2) -> void:
 	_entree_courante = entree
 	_charger_fantome(entree)
+	_fantome.scale = Vector3.ONE * _echelle_de(entree["nom"])
 	_maj_fantome(position_ecran)
 
 
@@ -539,6 +553,7 @@ func deposer(position_ecran: Vector2) -> void:
 			mi.mesh = ressource
 			instance = mi
 		if instance != null:
+			instance.scale = Vector3.ONE * _echelle_de(_entree_courante["nom"])
 			# attacher AVANT de mesurer : global_transform invalide
 			# hors arbre (erreur 'is_inside_tree' + boite fausse)
 			_monde.add_child(instance)
