@@ -22,7 +22,8 @@ var _monde: Node3D = null
 var _entree_courante: Dictionary = {}
 var _derniere_pos_souris := Vector2.ZERO
 var _angle_fantome := 0.0            # rotation du fantome (R, pas 45)
-var _fantome_cle := ""               # chemin du fantome charge
+var _fantome_cle := ""
+var _apercu_en_cours := false     # generation serialisee des miniatures               # chemin du fantome charge
 var _deposes: Array = []             # [{mesh, corps, surbrillance}]
 var _selection := -1                 # indice dans _deposes (-1 : aucun)
 
@@ -347,11 +348,22 @@ func _process(_delta: float) -> void:
 		# SELECTION (la grille reste affichee tant qu un objet est
 		# selectionne en jaune) — auto-guerison a la frame suivante
 		annuler()
+	if _apercu_en_cours:
+		return
 	if not _panneau.visible or _file_apercus.is_empty() or _rendu == null:
 		return
-	for _i in range(2):
-		if _file_apercus.is_empty():
-			return
+	_apercu_en_cours = true
+	_generer_apercus()
+			enfant_p.queue_free()
+		if _maquette.get_child_count() == 0:
+			_maquette.mesh = null
+
+
+## Genere les miniatures SEQUENTIELLEMENT : _process etant rappele
+## chaque frame, deux chaines d'await paralleles capturaient la
+## maquette d'un AUTRE objet (icones melangees/grises/orange-noir).
+func _generer_apercus() -> void:
+	while _panneau.visible and not _file_apercus.is_empty():
 		var travail: Dictionary = _file_apercus.pop_front()
 		var vignette: Button = travail["vignette"]
 		var entree: Dictionary = travail["entree"]
@@ -361,8 +373,7 @@ func _process(_delta: float) -> void:
 		if _cache_apercus.has(chemin_obj):
 			vignette.icon = _cache_apercus[chemin_obj]
 			continue
-		# detacher IMMEDIATEMENT (queue_free est differe : l'objet
-		# resterait rendu une frame de plus)
+		# detacher IMMEDIATEMENT (queue_free est differe d'une frame)
 		for enfant_p in _maquette.get_children():
 			_maquette.remove_child(enfant_p)
 			enfant_p.queue_free()
@@ -379,21 +390,22 @@ func _process(_delta: float) -> void:
 		if echantillon != null:
 			var boite: AABB = _boite_de(echantillon)
 			var rayon := boite.size.length() * 0.5
-			var echelle := 1.4 / maxf(rayon, 0.001)
+			var echelle := clampf(1.4 / maxf(rayon, 0.001), 0.25, 1.5)
 			_maquette.scale = Vector3.ONE * echelle
 			_maquette.position = -boite.get_center() * echelle
+			# 2 frames de rendu avant capture (materiaux + draw)
+			await RenderingServer.frame_post_draw
 			await RenderingServer.frame_post_draw
 			if is_instance_valid(vignette):
 				var texture := ImageTexture.create_from_image(
 					_rendu.get_texture().get_image())
 				_cache_apercus[chemin_obj] = texture
 				vignette.icon = texture
-		# detacher APRES le rendu : rien ne traîne dans le monde
 		for enfant_p in _maquette.get_children():
 			_maquette.remove_child(enfant_p)
 			enfant_p.queue_free()
-		if _maquette.get_child_count() == 0:
-			_maquette.mesh = null
+		await get_tree().process_frame
+	_apercu_en_cours = false
 
 
 func _construire_references_3d() -> void:
