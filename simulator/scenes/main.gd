@@ -208,6 +208,7 @@ var _noms_pairs := {}           # peer_id -> prenom affiche sur l avatar
 var _chrono_synchro := 0.0      # emission du transform a ~15 Hz
 var _chrono_pret := 0.0         # reemission du signal 'pret' toutes les 5 s
 var _dialogue_sortie: CanvasLayer = null
+var s_box := 1.0   # echelle uniforme de la boite visualisee
 var _alarme_player: AudioStreamPlayer = null
 var _adult_check := 0.0
 var _extinguisher_model: PackedScene = null
@@ -3482,7 +3483,7 @@ func _build_visuals() -> void:
         box_visual = box_scene.instantiate()
         # echelle anisotrope : la boite visuelle fait EXACTEMENT
         # box_size dans les 3 dimensions (StackableBox 0,62x0,35x0,77)
-        var s_box: float = box_size / 0.3548
+        s_box = box_size / 0.3548
         box_visual.scale = Vector3(s_box, s_box, s_box)
     else:
         var box_mesh_node := MeshInstance3D.new()
