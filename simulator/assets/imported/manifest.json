@@ -150,8 +150,8 @@
   {
    "nom": "StopBlade",
    "type": "scene",
-   "obj": "assets/imported/StopBlade.glb",
-   "statut": "prêt"
+   "obj": "assets/imported/StopBlade.tscn",
+   "statut": "prêt (scene composee)"
   },
   {
    "nom": "VisionSensor",
