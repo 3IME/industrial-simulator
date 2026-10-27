@@ -206,12 +206,29 @@ func _construire_ui() -> void:
 	_recherche.text_changed.connect(func(_t: String) -> void: _remplir())
 	colonne.add_child(_recherche)
 
+	var rangee_boutons := HBoxContainer.new()
+	rangee_boutons.add_theme_constant_override("separation", 6)
+	colonne.add_child(rangee_boutons)
+
 	var bouton := Button.new()
 	bouton.text = "Actualiser"
+	bouton.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bouton.pressed.connect(func() -> void:
 		_charger_manifeste()
 		_remplir())
-	colonne.add_child(bouton)
+	rangee_boutons.add_child(bouton)
+
+	var bouton_enregistrer := Button.new()
+	bouton_enregistrer.text = "Enregistrer"
+	bouton_enregistrer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bouton_enregistrer.pressed.connect(_sauvegarder)
+	rangee_boutons.add_child(bouton_enregistrer)
+
+	var bouton_ouvrir := Button.new()
+	bouton_ouvrir.text = "Ouvrir"
+	bouton_ouvrir.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bouton_ouvrir.pressed.connect(_charger)
+	rangee_boutons.add_child(bouton_ouvrir)
 
 	var defilement := ScrollContainer.new()
 	defilement.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -756,6 +773,62 @@ func _creer_objet(entree: Dictionary, point_dep: Vector3, angle: float) -> void:
 	_monde.add_child(cadre)
 	_deposes.append({"mesh": instance, "corps": corps,
 		"surbrillance": cadre, "nom": entree["nom"], "obj": entree["obj"]})
+
+
+## --- Enregistrer / Ouvrir l'amenagement pose avec J --------------
+
+const FICHIER_USINE := "user://usine_j.json"
+
+
+func _sauvegarder() -> void:
+	var objets: Array = []
+	for depose in _deposes:
+		if depose.is_empty():
+			continue
+		objets.append({
+			"nom": depose["nom"],
+			"obj": depose["obj"],
+			"pos": [depose["mesh"].position.x, depose["mesh"].position.y,
+				depose["mesh"].position.z],
+			"rot_y": depose["mesh"].rotation.y,
+		})
+	var fichier := FileAccess.open(FICHIER_USINE, FileAccess.WRITE)
+	if fichier == null:
+		print("Enregistrement IMPOSSIBLE : ", FICHIER_USINE)
+		return
+	fichier.store_string(JSON.stringify({"usine": objets}, "\t"))
+	print("Usine enregistree : ", objets.size(), " objets -> ",
+		ProjectSettings.globalize_path(FICHIER_USINE))
+
+
+func _charger() -> void:
+	annuler()
+	_attrapeur.terminer()
+	deselectionner()
+	for depose in _deposes:
+		if depose.is_empty():
+			continue
+		depose["mesh"].queue_free()
+		depose["corps"].queue_free()
+		depose["surbrillance"].queue_free()
+	_deposes.clear()
+	if not FileAccess.file_exists(FICHIER_USINE):
+		print("Ouverture : aucune sauvegarde (", FICHIER_USINE, ")")
+		return
+	var brut = JSON.parse_string(FileAccess.get_file_as_string(FICHIER_USINE))
+	if brut == null or not brut.has("usine"):
+		print("Ouverture : fichier illisible")
+		return
+	var nb := 0
+	for objet in brut["usine"]:
+		for entree in _manifeste:
+			if entree["nom"] == objet["nom"] and entree["obj"] == objet["obj"]:
+				var p: Array = objet["pos"]
+				_creer_objet(entree, Vector3(p[0], p[1], p[2]),
+					float(objet["rot_y"]))
+				nb += 1
+				break
+	print("Usine ouverte : ", nb, " objets")
 
 
 func annuler() -> void:
