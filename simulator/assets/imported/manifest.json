@@ -1,6 +1,6 @@
 {
  "stats": {
-  "objets": 25
+  "objets": 26
  },
  "assets": [
   {
@@ -139,6 +139,12 @@
    "nom": "StackableBox",
    "type": "scene",
    "obj": "assets/imported/StackableBox.glb",
+   "statut": "pr\u00eat"
+  },
+  {
+   "nom": "Steel_Pillar",
+   "type": "scene",
+   "obj": "assets/imported/Steel_Pillar.glb",
    "statut": "pr\u00eat"
   },
   {
