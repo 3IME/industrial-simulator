@@ -400,21 +400,22 @@ func _clic_interaction(event: InputEvent) -> void:
                 cam_in.global_position - cam_in.global_transform.basis.z * 6.0)
             var hit_in: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_in)
             if not hit_in.is_empty() and hit_in.collider is StaticBody3D                     and hit_in.collider.has_meta("interaction"):
-                if hit_in.collider.get_meta("interaction") == "porte_bureau_interieur":
+                var meta_in: String = hit_in.collider.get_meta("interaction", "")
+                if meta_in == "porte_bureau_interieur":
                     _sortir_bureau()
-                elif hit_in.collider.get_meta("interaction") == "alarme_incendie":
+                elif meta_in == "alarme_incendie":
                     _declencher_alarme(hit_in.position)
-                elif hit_in.collider.get_meta("interaction") == "confinement":
+                elif meta_in == "confinement":
                     _declencher_confinement()
-                elif hit_in.collider.get_meta("interaction") == "evacuation":
+                elif meta_in == "evacuation":
                     _declencher_evacuation_bouton()
-                elif String(hit_in.collider.get_meta("interaction")).begins_with("bouton_boite_"):
-                    _bouton_boite(int(str(hit_in.collider.get_meta("interaction")).split("_")[-1]))
-                elif hit_in.collider.get_meta("interaction") == "keypad_code":
+                elif String(meta_in).begins_with("bouton_boite_"):
+                    _bouton_boite(int(str(meta_in).split("_")[-1]))
+                elif meta_in == "keypad_code":
                     _activer_keypad()
-                elif hit_in.collider.get_meta("interaction") == "interrupteur_bureau":
+                elif meta_in == "interrupteur_bureau":
                     _basculer_lumiere_bureau()
-                elif hit_in.collider.get_meta("interaction") == "switch_sprinkler":
+                elif meta_in == "switch_sprinkler":
                     _basculer_sprinklers()
         return
     if _dans_classe:
@@ -424,12 +425,14 @@ func _clic_interaction(event: InputEvent) -> void:
                 cam_cl.global_position,
                 cam_cl.global_position - cam_cl.global_transform.basis.z * 6.0)
             var hit_cl: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_cl)
-            if not hit_cl.is_empty() and hit_cl.collider is StaticBody3D                     and hit_cl.collider.has_meta("interaction")                 and hit_cl.collider.get_meta("interaction") == "porte_classe_sortie":
-                _sortir_classe()
-            elif hit_cl.collider.get_meta("interaction") == "interrupteur_classe":
-                _basculer_lumiere_classe()
-            elif hit_cl.collider.get_meta("interaction") == "porte_sortie_jeu":
-                _demander_quitter()
+            if not hit_cl.is_empty() and hit_cl.collider is StaticBody3D                     and hit_cl.collider.has_meta("interaction"):
+                var meta_cl: String = hit_cl.collider.get_meta("interaction", "")
+                if meta_cl == "porte_classe_sortie":
+                    _sortir_classe()
+                elif meta_cl == "interrupteur_classe":
+                    _basculer_lumiere_classe()
+                elif meta_cl == "porte_sortie_jeu":
+                    _demander_quitter()
         return
     if _dans_wc:
         var cam_wc := get_viewport().get_camera_3d()
@@ -439,11 +442,12 @@ func _clic_interaction(event: InputEvent) -> void:
                 cam_wc.global_position - cam_wc.global_transform.basis.z * 6.0)
             var hit_wc: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_wc)
             if not hit_wc.is_empty() and hit_wc.collider is StaticBody3D                     and hit_wc.collider.has_meta("interaction"):
-                if hit_wc.collider.get_meta("interaction") == "porte_wc_sortie":
+                var meta_wc: String = hit_wc.collider.get_meta("interaction", "")
+                if meta_wc == "porte_wc_sortie":
                     _sortir_wc()
-                elif hit_wc.collider.get_meta("interaction") == "toilettes_wc":
+                elif meta_wc == "toilettes_wc":
                     _tirer_chasse()
-                elif hit_wc.collider.get_meta("interaction") == "lavabo_wc":
+                elif meta_wc == "lavabo_wc":
                     _ouvrir_robinet()
         return
     var cam := get_viewport().get_camera_3d()
@@ -459,20 +463,27 @@ func _clic_interaction(event: InputEvent) -> void:
         var query := PhysicsRayQueryParameters3D.create(
             cam.global_position, cam.global_position + direction * 12.0)
         var essai: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
-        if not essai.is_empty() and essai.collider is StaticBody3D                 and essai.collider.has_meta("interaction"):
+        if not essai.is_empty() and essai.collider is StaticBody3D                 and (essai.collider.has_meta("interaction")                     or essai.collider.has_meta("stop_blade")):
             impact = essai
             break
     if impact.is_empty():
         return
     # Un brise-vitre se casse a bout de bras : portee courte imposee.
     var collider = impact.collider
-    if (collider.get_meta("interaction") == "alarme_incendie"
-            or collider.get_meta("interaction") == "confinement")             and cam.global_position.distance_to(impact.position) > 2.5:
+    var meta_interaction: String = collider.get_meta("interaction", "")
+    if collider.has_meta("stop_blade"):
+        # clic gauche sur un objet interactif depose (ex : StopBlade)
+        var indice_fio: int = collider.get_meta("fio_indice")
+        for nav_fio in get_tree().get_nodes_in_group("navigateur_fio"):
+            nav_fio.basculer_objet(indice_fio)
+        return
+    if (meta_interaction == "alarme_incendie"
+            or meta_interaction == "confinement")             and cam.global_position.distance_to(impact.position) > 2.5:
         print("Trop loin : approchez-vous du boitier")
         return
-    if collider.get_meta("interaction") == "porte_usine":
+    if meta_interaction == "porte_usine":
         _demander_quitter()
-    elif collider.get_meta("interaction") == "bureau":
+    elif meta_interaction == "bureau":
         if NetworkSession.role == NetworkSession.Role.ELEVE:
             # bureau reserve au professeur : l'eleve frappe a la porte
             var knock = load("res://assets/sounds/door_knock.mp3")
@@ -482,11 +493,11 @@ func _clic_interaction(event: InputEvent) -> void:
             print("Bureau : reserve au professeur (l'eleve frappe)")
         else:
             _entrer_bureau()
-    elif collider.get_meta("interaction") == "porte_wc":
+    elif meta_interaction == "porte_wc":
         _entrer_wc()
-    elif collider.get_meta("interaction") == "porte_classe":
+    elif meta_interaction == "porte_classe":
         _entrer_classe()
-    elif collider.get_meta("interaction") == "chaudiere_pas_touche":
+    elif meta_interaction == "chaudiere_pas_touche":
         var avertissement = load("res://assets/sounds/ne_touche_pas.mp3")
         if avertissement != null and _verre_player != null:
             _verre_player.stream = avertissement
@@ -496,25 +507,25 @@ func _clic_interaction(event: InputEvent) -> void:
         var indice_fio: int = collider.get_meta("fio_indice")
         for nav_fio in get_tree().get_nodes_in_group("navigateur_fio"):
             nav_fio.basculer_objet(indice_fio)
-    elif collider.get_meta("interaction") == "oreilles_audio":
+    elif meta_interaction == "oreilles_audio":
         var bouchon = load("res://assets/sounds/bouchon.mp3")
         if bouchon != null and _verre_player != null:
             _verre_player.stream = bouchon
             _verre_player.play()
         print("Protections auditives : bouchons mis")
-    elif collider.get_meta("interaction") == "switch_sprinkler":
+    elif meta_interaction == "switch_sprinkler":
         _basculer_sprinklers()
-    elif collider.get_meta("interaction") == "alarme_incendie":
+    elif meta_interaction == "alarme_incendie":
         _declencher_alarme(impact.position)
-    elif collider.get_meta("interaction") == "confinement":
+    elif meta_interaction == "confinement":
         _declencher_confinement()
-    elif collider.get_meta("interaction") == "evacuation":
+    elif meta_interaction == "evacuation":
         _declencher_evacuation_bouton()
-    elif String(collider.get_meta("interaction")).begins_with("bouton_boite_"):
-        _bouton_boite(int(str(collider.get_meta("interaction")).split("_")[-1]))
-    elif collider.get_meta("interaction") == "keypad_code":
+    elif String(meta_interaction).begins_with("bouton_boite_"):
+        _bouton_boite(int(str(meta_interaction).split("_")[-1]))
+    elif meta_interaction == "keypad_code":
         _activer_keypad()
-    elif collider.get_meta("interaction") == "distributeur_cafe":
+    elif meta_interaction == "distributeur_cafe":
         _utiliser_distributeur_cafe()
 
 
@@ -3623,7 +3634,7 @@ func _capture_and_quit() -> void:
         var q_a := PhysicsRayQueryParameters3D.create(
             Vector3(8.6, 1.46, -40.6), Vector3(8.6, 1.46, -44.90))
         var h_a: Dictionary = get_world_3d().direct_space_state.intersect_ray(q_a)
-        if not h_a.is_empty() and h_a.collider.has_meta("interaction")                 and h_a.collider.get_meta("interaction") == "alarme_incendie":
+        if not h_a.is_empty() and h_a.collider.has_meta("interaction")                 and h_a.collider.get_meta("interaction", "") == "alarme_incendie":
             print("AUTOTEST ALARME: panneau touche -> declenchement")
             _declencher_alarme(h_a.position)
             await get_tree().create_timer(1.2).timeout
@@ -3636,7 +3647,7 @@ func _capture_and_quit() -> void:
             print("AUTOTEST ALARME: ECHEC (rien touche)")
         else:
             print("AUTOTEST ALARME: ECHEC (meta=",
-                h_a.collider.get_meta("interaction") if h_a.collider.has_meta("interaction") else "-", ")")
+                h_a.collider.get_meta("interaction", "-") if h_a.collider.has_meta("interaction") else "-", ")")
     # Gros plan sur le bras robot : preuve de l'articulation corrigee
     if player_node != null:
         player_node.position = Vector3(1.2, 0.0, 0.6)
