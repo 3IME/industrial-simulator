@@ -708,6 +708,9 @@ func _creer_objet(entree: Dictionary, point_dep: Vector3, angle: float) -> void:
 	instance.position = Vector3(point_dep.x,
 		point_dep.y - boite.position.y, point_dep.z)
 	var corps := StaticBody3D.new()
+	# non-pickable : les clics doivent atteindre les colliders INTERNES
+	# de la scene (ex : lame du StopBlade cliquable)
+	corps.input_ray_pickable = false
 	corps.position = instance.position + boite.get_center()
 	corps.rotation.y = angle
 	var forme := CollisionShape3D.new()
