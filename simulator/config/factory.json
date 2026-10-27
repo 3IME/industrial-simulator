@@ -16,10 +16,10 @@
       "type": "conveyor",
       "id": "conveyor_01",
       "params": {
-        "length": 2.0,
+        "length": 4.0,
         "max_speed": 0.5,
         "entry_position": 0.3,
-        "exit_position": 1.7
+        "exit_position": 3.7
       }
     },
     {

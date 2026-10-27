@@ -3446,7 +3446,7 @@ func _build_expo2() -> void:
 func _build_visuals() -> void:
     var belt_length := 2.0
     var entry_x := 0.3
-    var exit_x := 1.7
+    var exit_x := 3.7
     var box_size := 0.2
     if conveyor != null:
         belt_length = conveyor.length
@@ -3557,7 +3557,7 @@ func _build_sensor(x_position: float, sensor_name: String) -> MeshInstance3D:
     var lamp_mesh := BoxMesh.new()
     lamp_mesh.size = Vector3(0.08, 0.08, 0.35)
     lamp.mesh = lamp_mesh
-    lamp.position = Vector3(x_position, BELT_TOP + 0.12, 0.0)
+    lamp.position = Vector3(x_position, BELT_TOP + 0.12, 0.55)   # collée au poteau
     lamp.name = sensor_name
     var lamp_mat := StandardMaterial3D.new()
     lamp_mat.emission_enabled = true
