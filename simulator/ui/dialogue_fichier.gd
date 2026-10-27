@@ -20,8 +20,8 @@ var _bouton_valider: Button = null
 func _ready() -> void:
 	layer = 101
 	visible = false
-	DirAccess.make_dir_recursive_absolute(DOSSIER)
-	dossier = ProjectSettings.globalize_path(DOSSIER)
+	DirAccess.make_dir_recursive_absolute(DOSSIER_DEFAUT)
+	dossier = ProjectSettings.globalize_path(DOSSIER_DEFAUT)
 	_construire()
 
 
