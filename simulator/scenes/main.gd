@@ -296,11 +296,10 @@ func _ready() -> void:
     if player_node != null and player_node.has_method("set_zones_metal"):
         var zones_metalliques: Array[AABB] = [
             AABB(Vector3(-40.5, 2.4, -45.1), Vector3(72.0, 2.6, 3.4)),   # deck
-            AABB(Vector3(-44.6, 0.0, -17.6), Vector3(2.8, 1.8, 3.2)),    # caillebotis expo
             AABB(Vector3(38.0, 0.0, -16.83), Vector3(2.0, 1.8, 3.0)),    # devant Haas z=-18
             AABB(Vector3(38.0, 0.0, -26.83), Vector3(2.0, 1.8, 3.0)),    # devant Haas z=-28
             AABB(Vector3(38.0, 0.0, -36.83), Vector3(2.0, 1.8, 3.0)),    # devant Haas z=-38
-            AABB(Vector3(28.0, 0.0, -24.65), Vector3(2.0, 1.8, 3.0)),    # devant VS-3
+            AABB(Vector3(23.0, 0.0, -29.5), Vector3(2.0, 1.8, 3.0)),     # cote ouest VS-3
         ]
         player_node.set_zones_metal(zones_metalliques)
 
@@ -2312,7 +2311,7 @@ func _build_securite_signs() -> void:
     # ... et devant la VS-3 (4e machine, collision z -31,35..-24,65) :
     # plaque collee a sa face sud
     _place_prop(PROP_DECK_PLATE,
-        Vector3(29.0, 0.0, -24.65 + 1.5), Vector3.ZERO, 1.0)
+        Vector3(24.0, 0.0, -28.0), Vector3.ZERO, 1.0)
     _placer_vs3()   # CN 5 axes + table palettes, un peu plus loin a l'ouest
     _placer_rack()   # magasin de toles KASTO 96 m, bande sud du hall
     # Moteur electrique sorti du presentoir : pose en (55, -30), sans
@@ -3417,8 +3416,6 @@ func _build_expo2() -> void:
     var items := [
         {"path": PROP_BOLLARD, "nom": "Borne de securite jaune",
          "x": -56.0, "y": 0.0, "s": 1.0, "col": Vector3(0.24, 0.90, 0.24)},
-        {"path": PROP_DECK_PLATE, "nom": "Plaque de caillebotis",
-         "x": -43.2, "y": 0.0, "s": 1.0, "col": Vector3.ZERO},
     ]
     for item in items:
         var node := _place_prop(item.path, Vector3(item.x, item.y, -16.0),
