@@ -103,11 +103,11 @@ func _construire() -> void:
 	oui.custom_minimum_size = Vector2(190, 46)
 	oui.add_theme_font_size_override("font_size", 18)
 	var style_oui := StyleBoxFlat.new()
-	style_oui.bg_color = Color(1.0, 0.42, 0.0)
+	style_oui.bg_color = Color(0.486, 0.227, 0.929)   # violet
 	style_oui.set_corner_radius_all(8)
 	oui.add_theme_stylebox_override("normal", style_oui)
 	var style_oui_hover := StyleBoxFlat.new()
-	style_oui_hover.bg_color = Color(1.0, 0.54, 0.2)
+	style_oui_hover.bg_color = Color(0.545, 0.361, 0.965)
 	style_oui_hover.set_corner_radius_all(8)
 	oui.add_theme_stylebox_override("hover", style_oui_hover)
 	oui.pressed.connect(_quitter)

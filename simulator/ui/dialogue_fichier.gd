@@ -127,11 +127,11 @@ func _construire() -> void:
 	_bouton_valider.custom_minimum_size = Vector2(180, 44)
 	_bouton_valider.add_theme_font_size_override("font_size", 16)
 	var style_valider := StyleBoxFlat.new()
-	style_valider.bg_color = Color(1.0, 0.42, 0.0)
+	style_valider.bg_color = Color(0.486, 0.227, 0.929)   # violet
 	style_valider.set_corner_radius_all(8)
 	_bouton_valider.add_theme_stylebox_override("normal", style_valider)
 	var style_valider_hover := StyleBoxFlat.new()
-	style_valider_hover.bg_color = Color(1.0, 0.54, 0.2)
+	style_valider_hover.bg_color = Color(0.545, 0.361, 0.965)
 	style_valider_hover.set_corner_radius_all(8)
 	_bouton_valider.add_theme_stylebox_override("hover", style_valider_hover)
 	_bouton_valider.pressed.connect(_valider)
