@@ -720,6 +720,11 @@ func _creer_objet(entree: Dictionary, point_dep: Vector3, angle: float) -> void:
 	corps.add_child(forme)
 	corps.set_meta("fio_indice", _deposes.size())
 	_monde.add_child(corps)
+	# les colliders INTERNES de la scene (ex : StopBlade) recoivent la
+	# meme meta : le raycast de selection peut les toucher en premier
+	for corps_interne in instance.find_children("*", "StaticBody3D",
+			true, false):
+		corps_interne.set_meta("fio_indice", _deposes.size())
 	var cadre := MeshInstance3D.new()
 	var cube_sel := BoxMesh.new()
 	cube_sel.size = boite.size + Vector3(0.06, 0.06, 0.06)
