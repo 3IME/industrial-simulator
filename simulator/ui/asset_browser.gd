@@ -24,6 +24,8 @@ var _derniere_pos_souris := Vector2.ZERO
 var _angle_fantome := 0.0            # rotation du fantome (R, pas 45)
 var _fantome_cle := ""
 var _apercu_en_cours := false     # generation serialisee des miniatures
+var _dialogue_fichier: CanvasLayer = null
+var _mode_fichier := "save"
 
 ## Echelle manuelle pour les modeles dont les unites ne sont pas en
 ## metres (ex : RetroReflectiveMirror exporte en ~1 cm) ; 1.0 sinon.
@@ -74,6 +76,9 @@ var _cache_apercus := {}          # chemin obj -> texture
 func _ready() -> void:
 	add_to_group("navigateur_fio")   # accessible pour les clics metier
 	layer = 4
+	_dialogue_fichier = preload("res://ui/dialogue_fichier.gd").new()
+	_dialogue_fichier.fichier_choisi.connect(_sur_fichier_choisi)
+	add_child(_dialogue_fichier)
 	_monde = get_node_or_null("/root/Main")
 	if _monde == null:
 		_monde = get_tree().current_scene
@@ -221,13 +226,17 @@ func _construire_ui() -> void:
 	var bouton_enregistrer := Button.new()
 	bouton_enregistrer.text = "Enregistrer"
 	bouton_enregistrer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bouton_enregistrer.pressed.connect(_sauvegarder)
+	bouton_enregistrer.pressed.connect(func() -> void:
+		_mode_fichier = "save"
+		_sauvegarder())
 	rangee_boutons.add_child(bouton_enregistrer)
 
 	var bouton_ouvrir := Button.new()
 	bouton_ouvrir.text = "Ouvrir"
 	bouton_ouvrir.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bouton_ouvrir.pressed.connect(_charger)
+	bouton_ouvrir.pressed.connect(func() -> void:
+		_mode_fichier = "open"
+		_charger())
 	rangee_boutons.add_child(bouton_ouvrir)
 
 	var defilement := ScrollContainer.new()
@@ -781,6 +790,21 @@ const FICHIER_USINE := "user://usine_j.json"
 
 
 func _sauvegarder() -> void:
+	_dialogue_fichier.ouvrir("save", "atelier")
+
+
+func _charger() -> void:
+	_dialogue_fichier.ouvrir("open")
+
+
+func _sur_fichier_choisi(chemin: String) -> void:
+	if _mode_fichier == "save":
+		_sauvegarder_vers(chemin)
+	else:
+		_charger_depuis(chemin)
+
+
+func _sauvegarder_vers(chemin: String) -> void:
 	var objets: Array = []
 	for depose in _deposes:
 		if depose.is_empty():
@@ -792,16 +816,16 @@ func _sauvegarder() -> void:
 				depose["mesh"].position.z],
 			"rot_y": depose["mesh"].rotation.y,
 		})
-	var fichier := FileAccess.open(FICHIER_USINE, FileAccess.WRITE)
+	var fichier := FileAccess.open(chemin, FileAccess.WRITE)
 	if fichier == null:
-		print("Enregistrement IMPOSSIBLE : ", FICHIER_USINE)
+		print("Enregistrement IMPOSSIBLE : ", chemin)
 		return
 	fichier.store_string(JSON.stringify({"usine": objets}, "\t"))
 	print("Usine enregistree : ", objets.size(), " objets -> ",
-		ProjectSettings.globalize_path(FICHIER_USINE))
+		ProjectSettings.globalize_path(chemin))
 
 
-func _charger() -> void:
+func _charger_depuis(chemin: String) -> void:
 	annuler()
 	_attrapeur.terminer()
 	deselectionner()
@@ -812,10 +836,10 @@ func _charger() -> void:
 		depose["corps"].queue_free()
 		depose["surbrillance"].queue_free()
 	_deposes.clear()
-	if not FileAccess.file_exists(FICHIER_USINE):
-		print("Ouverture : aucune sauvegarde (", FICHIER_USINE, ")")
+	if not FileAccess.file_exists(chemin):
+		print("Ouverture : fichier illisible ou absent (", chemin, ")")
 		return
-	var brut = JSON.parse_string(FileAccess.get_file_as_string(FICHIER_USINE))
+	var brut = JSON.parse_string(FileAccess.get_file_as_string(chemin))
 	if brut == null or not brut.has("usine"):
 		print("Ouverture : fichier illisible")
 		return
@@ -828,7 +852,7 @@ func _charger() -> void:
 					float(objet["rot_y"]))
 				nb += 1
 				break
-	print("Usine ouverte : ", nb, " objets")
+	print("Usine ouverte : ", nb, " objets depuis ", chemin)
 
 
 func annuler() -> void:
