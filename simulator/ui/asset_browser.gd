@@ -72,6 +72,7 @@ var _cache_apercus := {}          # chemin obj -> texture
 
 
 func _ready() -> void:
+	add_to_group("navigateur_fio")   # accessible pour les clics metier
 	layer = 4
 	_monde = get_node_or_null("/root/Main")
 	if _monde == null:
@@ -666,6 +667,15 @@ func forcer_entree(entree: Dictionary) -> void:
 	_entree_courante = entree
 
 
+## Clic gauche sur un StopBlade depose : coulisse la lame.
+func basculer_objet(indice: int) -> void:
+	if indice < 0 or indice >= _deposes.size() or _deposes[indice].is_empty():
+		return
+	var noeud: Node3D = _deposes[indice]["mesh"]
+	if noeud.has_method("basculer"):
+		noeud.basculer()
+
+
 func drag_gui_actif() -> bool:
 	return get_viewport().gui_is_dragging()
 
@@ -725,6 +735,12 @@ func _creer_objet(entree: Dictionary, point_dep: Vector3, angle: float) -> void:
 	for corps_interne in instance.find_children("*", "StaticBody3D",
 			true, false):
 		corps_interne.set_meta("fio_indice", _deposes.size())
+	# asset interactif (ex : StopBlade) : meta pour le clic gauche
+	if instance.has_method("basculer"):
+		corps.set_meta("stop_blade", true)
+		for corps_interne in instance.find_children("*", "StaticBody3D",
+				true, false):
+			corps_interne.set_meta("stop_blade", true)
 	var cadre := MeshInstance3D.new()
 	var cube_sel := BoxMesh.new()
 	cube_sel.size = boite.size + Vector3(0.06, 0.06, 0.06)

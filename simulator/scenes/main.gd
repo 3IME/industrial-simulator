@@ -492,6 +492,10 @@ func _clic_interaction(event: InputEvent) -> void:
             _verre_player.stream = avertissement
             _verre_player.play()
         print("CHAUDIERE : Ne touche pas !")
+    elif collider.has_meta("stop_blade"):
+        var indice_fio: int = collider.get_meta("fio_indice")
+        for nav_fio in get_tree().get_nodes_in_group("navigateur_fio"):
+            nav_fio.basculer_objet(indice_fio)
     elif collider.get_meta("interaction") == "oreilles_audio":
         var bouchon = load("res://assets/sounds/bouchon.mp3")
         if bouchon != null and _verre_player != null:
