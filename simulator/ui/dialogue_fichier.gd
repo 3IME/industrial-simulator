@@ -84,6 +84,15 @@ func _construire() -> void:
 	titre.add_theme_color_override("font_color", Color(1.0, 0.42, 0.0))
 	colonne.add_child(titre)
 
+	# Chemin du dossier de sauvegardes (affiche, copiable a la main)
+	var chemin := Label.new()
+	chemin.text = "Dossier : " + ProjectSettings.globalize_path(DOSSIER)
+	chemin.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	chemin.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	chemin.add_theme_font_size_override("font_size", 11)
+	chemin.add_theme_color_override("font_color", Color(0.55, 0.72, 0.9))
+	colonne.add_child(chemin)
+
 	_champ_nom = LineEdit.new()
 	_champ_nom.placeholder_text = "nom_de_la_sauvegarde"
 	_champ_nom.add_theme_font_size_override("font_size", 16)
