@@ -1,163 +1,193 @@
 {
  "stats": {
-  "objets": 26
+  "objets": 31
  },
  "assets": [
   {
    "nom": "BeltConveyor2M",
    "type": "scene",
    "obj": "assets/imported/BeltConveyor2M.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "BeltConveyor4M",
    "type": "scene",
    "obj": "assets/imported/BeltConveyor4M.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "BeltConveyor6M",
    "type": "scene",
    "obj": "assets/imported/BeltConveyor6M.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "BoxRectangularBig",
    "type": "scene",
    "obj": "assets/imported/BoxRectangularBig.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "BoxRectangularSmall",
    "type": "scene",
    "obj": "assets/imported/BoxRectangularSmall.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "BoxSquare",
    "type": "scene",
    "obj": "assets/imported/BoxSquare.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "CapacitiveSensor",
    "type": "scene",
    "obj": "assets/imported/CapacitiveSensor.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
+  },
+  {
+   "nom": "ChuteConveyor",
+   "type": "scene",
+   "obj": "assets/imported/ChuteConveyor.glb",
+   "statut": "pr\u00eat"
+  },
+  {
+   "nom": "ChuteConveyor_grand",
+   "type": "scene",
+   "obj": "assets/imported/ChuteConveyor_grand.glb",
+   "statut": "pr\u00eat"
   },
   {
    "nom": "Claw",
    "type": "scene",
    "obj": "assets/imported/Claw.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "DigitalDisplay.NEW",
    "type": "scene",
    "obj": "assets/imported/DigitalDisplay.NEW.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "ElectricSwitchBoard",
    "type": "scene",
    "obj": "assets/imported/ElectricSwitchBoard.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "Emitter.ambre",
    "type": "scene",
    "obj": "assets/imported/Emitter.ambre.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "Emitter.rouge",
    "type": "scene",
    "obj": "assets/imported/Emitter.rouge.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "Emitter.vert",
    "type": "scene",
    "obj": "assets/imported/Emitter.vert.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "EmitterCubes",
    "type": "scene",
    "obj": "assets/imported/EmitterCubes.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "Encoder",
    "type": "scene",
    "obj": "assets/imported/Encoder.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "MetalBracket",
    "type": "scene",
    "obj": "assets/imported/MetalBracket.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
+  },
+  {
+   "nom": "Platform",
+   "type": "scene",
+   "obj": "assets/imported/Platform.glb",
+   "statut": "pr\u00eat"
+  },
+  {
+   "nom": "PlatformPillar",
+   "type": "scene",
+   "obj": "assets/imported/PlatformPillar.glb",
+   "statut": "pr\u00eat"
   },
   {
    "nom": "RFID",
    "type": "scene",
    "obj": "assets/imported/RFID.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "Rack",
    "type": "scene",
    "obj": "assets/imported/Rack.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "RetroReflectiveMirror",
    "type": "scene",
    "obj": "assets/imported/RetroReflectiveMirror.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "RetroReflectivePhotoelectricSensor",
    "type": "scene",
    "obj": "assets/imported/RetroReflectivePhotoelectricSensor.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "Siren",
    "type": "scene",
    "obj": "assets/imported/Siren.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "StackLight",
    "type": "scene",
    "obj": "assets/imported/StackLight.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "StackableBox",
    "type": "scene",
    "obj": "assets/imported/StackableBox.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "Steel_Pillar",
    "type": "scene",
    "obj": "assets/imported/Steel_Pillar.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   },
   {
    "nom": "StopBlade",
    "type": "scene",
-   "obj": "assets/imported/StopBlade.tscn",
-   "statut": "prêt (scene composee)"
+   "obj": "assets/imported/StopBlade.glb",
+   "statut": "pr\u00eat"
+  },
+  {
+   "nom": "StopBladeStruct",
+   "type": "scene",
+   "obj": "assets/imported/StopBladeStruct.glb",
+   "statut": "pr\u00eat"
   },
   {
    "nom": "VisionSensor",
    "type": "scene",
    "obj": "assets/imported/VisionSensor.glb",
-   "statut": "prêt"
+   "statut": "pr\u00eat"
   }
  ]
 }
